@@ -1,0 +1,51 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AVOID_DUPLICATE_BDDs	FsmBuilder.c	112;"	d	file:
+BddFsmMemoize	FsmBuilder.c	/^} BddFsmMemoize;$/;"	t	typeref:struct:BddFsmMemoize_TAG	file:
+BddFsmMemoize_TAG	FsmBuilder.c	/^typedef struct BddFsmMemoize_TAG {$/;"	s	file:
+FsmBuilder	FsmBuilder.c	/^} FsmBuilder;$/;"	t	typeref:struct:FsmBuilder_TAG	file:
+FsmBuilder_TAG	FsmBuilder.c	/^typedef struct FsmBuilder_TAG$/;"	s	file:
+FsmBuilder_clusterize_expr	FsmBuilder.c	/^ClusterList_ptr FsmBuilder_clusterize_expr(FsmBuilder_ptr self,$/;"	f
+FsmBuilder_create	FsmBuilder.c	/^FsmBuilder_ptr FsmBuilder_create(DdManager* dd)$/;"	f
+FsmBuilder_create_bdd_fsm	FsmBuilder.c	/^BddFsm_ptr FsmBuilder_create_bdd_fsm(const FsmBuilder_ptr self,$/;"	f
+FsmBuilder_create_bdd_fsm_of_vars	FsmBuilder.c	/^BddFsm_ptr FsmBuilder_create_bdd_fsm_of_vars(const FsmBuilder_ptr self,$/;"	f
+FsmBuilder_create_boolean_sexp_fsm	FsmBuilder.c	/^FsmBuilder_create_boolean_sexp_fsm(const FsmBuilder_ptr self,$/;"	f
+FsmBuilder_create_scalar_sexp_fsm	FsmBuilder.c	/^FsmBuilder_create_scalar_sexp_fsm(const FsmBuilder_ptr self,$/;"	f
+FsmBuilder_destroy	FsmBuilder.c	/^void FsmBuilder_destroy(FsmBuilder_ptr self)$/;"	f
+Fsm_init	fsm.c	/^void Fsm_init()$/;"	f
+Fsm_quit	fsm.c	/^void Fsm_quit()$/;"	f
+UTIL_UNUSED	FsmBuilder.c	/^static char rcsid[] UTIL_UNUSED = "$Id: FsmBuilder.c,v 1.1.2.1.6.21 2010-02-11 17:13:46 nusmv Exp $";$/;"	v	file:
+bdd_fsm_hash	FsmBuilder.c	/^  hash_ptr bdd_fsm_hash;$/;"	m	struct:FsmBuilder_TAG	file:
+bool_fsm_hash	FsmBuilder.c	/^  hash_ptr bool_fsm_hash;$/;"	m	struct:FsmBuilder_TAG	file:
+dd	FsmBuilder.c	/^  DdManager*  dd; \/* for performance, readability, etc. *\/$/;"	m	struct:FsmBuilder_TAG	file:
+fsm_builder_clusterize_expr	FsmBuilder.c	/^static ClusterList_ptr fsm_builder_clusterize_expr(FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_clusterize_expr_aux	FsmBuilder.c	/^fsm_builder_clusterize_expr_aux(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_compassion_sexp_to_bdd	FsmBuilder.c	/^fsm_builder_compassion_sexp_to_bdd(FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_compute_hierarchy_id	FsmBuilder.c	/^fsm_builder_compute_hierarchy_id(const FlatHierarchy_ptr fh)$/;"	f	file:
+fsm_builder_compute_scalar_fsm_id	FsmBuilder.c	/^fsm_builder_compute_scalar_fsm_id(const SexpFsm_ptr sexp)$/;"	f	file:
+fsm_builder_deinit	FsmBuilder.c	/^static void fsm_builder_deinit(FsmBuilder_ptr self)$/;"	f	file:
+fsm_builder_init	FsmBuilder.c	/^static void fsm_builder_init(FsmBuilder_ptr self, DdManager* dd)$/;"	f	file:
+fsm_builder_insert_bdd_fsm	FsmBuilder.c	/^static void fsm_builder_insert_bdd_fsm(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_insert_bool_sexp_fsm	FsmBuilder.c	/^static void fsm_builder_insert_bool_sexp_fsm(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_insert_sexp_fsm	FsmBuilder.c	/^static void fsm_builder_insert_sexp_fsm(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_justice_sexp_to_bdd	FsmBuilder.c	/^fsm_builder_justice_sexp_to_bdd(FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_lookup_bdd_fsm	FsmBuilder.c	/^static BddFsm_ptr fsm_builder_lookup_bdd_fsm(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_lookup_bool_sexp_fsm	FsmBuilder.c	/^fsm_builder_lookup_bool_sexp_fsm(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_lookup_sexp_fsm	FsmBuilder.c	/^static SexpFsm_ptr fsm_builder_lookup_sexp_fsm(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_order_vars_list	FsmBuilder.c	/^static Set_t fsm_builder_order_vars_list(const FsmBuilder_ptr self,$/;"	f	file:
+fsm_builder_remove_dupl	FsmBuilder.c	/^static Expr_ptr fsm_builder_remove_dupl(FsmBuilder_ptr self, Expr_ptr expr)$/;"	f	file:
+fsm_builder_set_contains_infinite_variables	FsmBuilder.c	/^fsm_builder_set_contains_infinite_variables(const SymbTable_ptr st,$/;"	f	file:
+hash_bdd_key_free	FsmBuilder.c	/^static assoc_retval hash_bdd_key_free(char* key, char* data, char* arg)$/;"	f	file:
+input_cube	FsmBuilder.c	/^  BddVarSet_ptr input_cube;$/;"	m	struct:BddFsmMemoize_TAG	file:
+next_cube	FsmBuilder.c	/^  BddVarSet_ptr next_cube;$/;"	m	struct:BddFsmMemoize_TAG	file:
+print_ids_list	FsmBuilder.c	/^void print_ids_list(FILE* fout, const NodeList_ptr list)$/;"	f
+sexp_fsm	FsmBuilder.c	/^  SexpFsm_ptr sexp_fsm;$/;"	m	struct:BddFsmMemoize_TAG	file:
+sexp_fsm_hash	FsmBuilder.c	/^  hash_ptr sexp_fsm_hash;$/;"	m	struct:FsmBuilder_TAG	file:
+simpl_hash	FsmBuilder.c	/^  hash_ptr simpl_hash; \/* hash used when removing duplicates *\/$/;"	m	struct:FsmBuilder_TAG	file:
+state_cube	FsmBuilder.c	/^  BddVarSet_ptr state_cube;$/;"	m	struct:BddFsmMemoize_TAG	file:
+trans_type	FsmBuilder.c	/^  TransType trans_type;$/;"	m	struct:BddFsmMemoize_TAG	file:
+vars	FsmBuilder.c	/^  Set_t vars;$/;"	m	struct:BddFsmMemoize_TAG	file:

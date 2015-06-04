@@ -1,0 +1,6 @@
+read_model -i "/home/sankur/work/ulb/syntcomp/bench-syntcomp14/amba5c5y.smv"
+flatten_hierarchy
+encode_variables
+build_model
+check_realizable
+quit
