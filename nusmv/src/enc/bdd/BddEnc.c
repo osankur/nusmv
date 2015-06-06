@@ -3915,21 +3915,18 @@ void bdd_enc_commit_layer(BaseEnc_ptr enc_base, const char* layer_name)
         gr_iter = NodeList_get_first_iter(group);
         while (!ListIter_is_end(gr_iter)) {
           node_ptr name = NodeList_get_elem_at(group, gr_iter);
-					fprintf(nusmv_stderr, "--- lineno: %d, type: %d \n", name->lineno, name->type);
 
           /* state variable */
           if (SymbTable_is_symbol_state_var(symbTable, name)) {
             int cindex = dd_get_index_at_level(self->dd, level++);
             int nindex = dd_get_index_at_level(self->dd, level++);
             bdd_enc_add_state_var(self, block_layer, name, cindex, nindex);
-						fprintf(nusmv_stderr, "\tstate\n");
           }
 
           /* input variable */
           else if (SymbTable_is_symbol_input_var(symbTable, name)) {
             int cindex = dd_get_index_at_level(self->dd, level++);
             bdd_enc_add_input_var(self, name, cindex);	
-						fprintf(nusmv_stderr, "\tinput\n");
           }
 
           /* frozen variable */
@@ -3938,7 +3935,6 @@ void bdd_enc_commit_layer(BaseEnc_ptr enc_base, const char* layer_name)
             nusmv_assert(SymbTable_is_symbol_frozen_var(symbTable, name));
             cindex = dd_get_index_at_level(self->dd, level++);
             bdd_enc_add_frozen_var(self, name, cindex);
-						fprintf(nusmv_stderr, "\t frozen\n");
           }
 
           gr_iter = ListIter_get_next(gr_iter);
@@ -7637,53 +7633,9 @@ static int bdd_enc_dump_addarray_dot_davinci(BddEnc_ptr self,
 
 
 /**AutomaticEnd***************************************************************/
-int aux(BddEnc_ptr self, bdd_ptr bdd, VPFNNF p_fun, FILE* file)
-{
-  BddEncPrintInfo* info;
-  node_ptr iter;
-  node_ptr valueList;
-  int count;
 
+void cpre(bdd_ptr target, bdd_ptr result){
 
-  BDD_ENC_CHECK_INSTANCE(self);
-  nusmv_assert(self->print_stack != Nil); /*print_bdd_begin previously called*/
-
-  if (bdd_is_false(self->dd, bdd)) {
-    fprintf(file, "FALSE\n");
-    return 0;
-  }
-
-  info = ( BddEncPrintInfo*) car(self->print_stack);
-
-  valueList = BddEnc_assign_symbols(self, bdd, info->symbols,
-                                    false, (bdd_ptr*)NULL);
-
-  for (count = 0, iter = valueList; iter != Nil; iter = cdr(iter)) {
-    node_ptr cur_sym = car(car(iter));
-    node_ptr cur_sym_value = cdr(car(iter));
-
-    /* if required, print only symbols with changed values */
-    if (info->changes_only) {
-      if (cur_sym_value == find_assoc(info->hash, cur_sym)) continue;
-      insert_assoc(info->hash, cur_sym, cur_sym_value);
-    }
-
-    if (p_fun == (VPFNNF) NULL) {
-      /* Default printing */
-      indent_node(file, "", cur_sym, " = ");
-      print_node(file, cur_sym_value);
-      fprintf(file, "\n");
-    } else {
-      /* Custom printing */
-      (*p_fun)(file, cur_sym, cur_sym_value);
-    }
-
-    ++count;
-  } /* while loop */
-
-  free_list(valueList);
-
-  return count;
 }
 
 int is_varname_uinput(char * s){
@@ -7695,9 +7647,17 @@ int is_varname_cinput(char * s){
 int is_varname_latch(char *s){
 	return !is_varname_cinput(s) && !is_varname_uinput(s);
 }
+int is_varname_error(char *s){
+	return strstr(s, "o0") == s;
+}
 
 
-void retrieve_var_names(BddEnc_ptr self, bdd_ptr states)
+void retrieve_var_names(BddEnc_ptr self, bdd_ptr states,
+		BddVarSet_ptr * latch_cube, 
+		BddVarSet_ptr * uinput_cube, 
+		BddVarSet_ptr * cinput_cube, 
+		BddVarSet_ptr * platch_cube,
+		bdd_ptr * error)
 {
 	int j;
 	const boolean show_defines = false;
@@ -7710,10 +7670,6 @@ void retrieve_var_names(BddEnc_ptr self, bdd_ptr states)
 	latches = NodeList_create();
 	uinputs = NodeList_create();
 	cinputs = NodeList_create();
-
-  BddVarSet_ptr latch_cube = bdd_true(self->dd);
-  BddVarSet_ptr uinput_cube = bdd_true(self->dd);
-  BddVarSet_ptr cinput_cube = bdd_true(self->dd);
 
 	/*
   array_size = BddEnc_count_states_of_bdd(self, states);
@@ -7763,26 +7719,48 @@ void retrieve_var_names(BddEnc_ptr self, bdd_ptr states)
 							if (is_varname_cinput(varname)){
 								NodeList_append(cinputs, symbol);
 								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
-								bdd_and_accumulate(self->dd, &cinput_cube, curr);
+								bdd_and_accumulate(self->dd, cinput_cube, curr);
 								bdd_free(self->dd, curr);
 							} else if (is_varname_uinput(varname)){
 								NodeList_append(uinputs, symbol);
 								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
-								bdd_and_accumulate(self->dd, &uinput_cube, curr);
+								bdd_and_accumulate(self->dd, uinput_cube, curr);
 								bdd_free(self->dd, curr);
 							} else {
 								NodeList_append(latches, symbol);
+								// Add variable BDD to the latch
 								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
-								bdd_and_accumulate(self->dd, &latch_cube, curr);
+								bdd_and_accumulate(self->dd, latch_cube, curr);
+								// Get the primed variable and add it to the platch_cube
+								bdd_ptr pcurr = BddEnc_state_var_to_next_state_var(self, curr);
+								bdd_and_accumulate(self->dd, platch_cube, pcurr);
 								bdd_free(self->dd, curr);
+								bdd_free(self->dd, pcurr);
 							}
 							free(varname);
             }
-          }
+          } else {
+						// Among the define variables, we only extract the output "o0"
+						char * varname = sprint_node(symbol);
+						if (is_varname_error(varname)){
+								NodeList_append(latches, symbol);
+								// Add variable BDD to the latch
+								*error = BddEnc_expr_to_bdd(self, symbol, Nil);
+								bdd_and_accumulate(self->dd, latch_cube, *error);
+								// Get the primed variable and add it to the platch_cube
+								bdd_ptr perror = BddEnc_state_var_to_next_state_var(self, *error);
+								bdd_and_accumulate(self->dd, platch_cube, perror);
+								bdd_free(self->dd, perror);
+						}
+					}
         }
       }
     }
   }
+	if (error == NULL){
+		fprintf(nusmv_stderr, "The model contains no error output \"o0\" required for synthesis\n");
+		exit(-1);
+	}
 	ListIter_ptr iter;
 	printf("Printing latches\n\t");
 	NODE_LIST_FOREACH(latches, iter){
@@ -7802,9 +7780,13 @@ void retrieve_var_names(BddEnc_ptr self, bdd_ptr states)
 		print_node(file, symbol);
 		printf(" ");
 	}
-  BddEnc_print_bdd_begin(self, latches, false);
-	BddEnc_print_set_of_states(self, uinput_cube, false, false, (VPFNNF)NULL, stdout);
+
+	/*
+  BddEnc_print_bdd_begin(self, committed_vars, false);
+	bdd_ptr tmp_bdd = BddEnc_next_state_var_to_state_var(self, platch_cube);
+	BddEnc_print_set_of_states(self, tmp_bdd, false, false, (VPFNNF)NULL, stdout);
   BddEnc_print_bdd_end(self);
+	*/
 	/*
 	NODE_LIST_FOREACH(committed_vars, iter){
 		node_ptr symbol = NodeList_get_elem_at(committed_vars,iter);
@@ -7823,11 +7805,9 @@ void retrieve_var_names(BddEnc_ptr self, bdd_ptr states)
   dec_indent_size();
 	*/
 
-  NodeList_destroy(committed_vars);
   NodeList_destroy(latches);
   NodeList_destroy(uinputs);
   NodeList_destroy(cinputs);
-	bdd_free(self->dd,latch_cube);
 }
 
 

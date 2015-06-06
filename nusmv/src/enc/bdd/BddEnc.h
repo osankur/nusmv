@@ -408,6 +408,12 @@ EXTERN int BddEnc_dump_addarray_davinci ARGS((BddEnc_ptr self,
                                               const char** labels,
                                               FILE* outfile));
 
+EXTERN void retrieve_var_names(BddEnc_ptr self, bdd_ptr states,
+		BddVarSet_ptr * latch_cube, 
+		BddVarSet_ptr * uinput_cube, 
+		BddVarSet_ptr * cinput_cube, 
+		BddVarSet_ptr * platch_cube,
+		bdd_ptr * error);
 /**AutomaticEnd**************************************************************/
 
 #endif /* __BDD_ENC_H__ */
