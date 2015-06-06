@@ -139,7 +139,6 @@ VIRTUAL int
 PrinterBase_print_node(PrinterBase_ptr self, node_ptr n, int priority)
 {
   PRINTER_BASE_CHECK_INSTANCE(self);
-  
   return self->print_node(self, n, priority);
 }
 

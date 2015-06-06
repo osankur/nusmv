@@ -212,7 +212,7 @@
 #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
 
 /* Library build date */
-#define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+#define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 
 /* Library Email */
 #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
@@ -244,7 +244,7 @@
 #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
 
 /* Build date */
-#define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+#define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "NuSMV"

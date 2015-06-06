@@ -45,15 +45,25 @@
 
 #include <math.h>
 
+#include "enc/encInt.h"
+#include "enc/bdd/BddEnc.h"
 #include "bddInt.h"
 #include "BddFsm.h"
 #include "FairnessList.h"
+#include "dd/dd.h"
+#include "enc/bdd/BddEnc.h"
+#include "enc/bdd/BddEnc_private.h"
 
+#include "parser/symbols.h"
+#include "fsm/sexp/BoolSexpFsm.h"
 #include "compile/compile.h"
 #include "compile/symb_table/SymbTable.h"
 #include "enc/enc.h"
+#include "utils/utils.h"
 #include "utils/utils_io.h"
 #include "utils/error.h"
+#include "utils/assoc.h"
+#include "trans/bdd/ClusterList.h"
 
 
 static char rcsid[] UTIL_UNUSED = "$Id: BddFsm.c,v 1.1.2.44.4.12.4.29 2010-03-02 08:45:22 nusmv Exp $";
@@ -2231,7 +2241,34 @@ boolean BddFsm_expand_cached_reachable_states(BddFsm_ptr self,
   return result;
 }
 
+//extern void retrieve_var_names(BddFsm_ptr);
+
+extern void retrieve_var_names(BddEnc_ptr self, bdd_ptr states);
 EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
+  node_ptr iter;
+  node_ptr valueList;
+  int count;
+  BddVarSet_ptr state_vars_bdd = BddEnc_get_state_vars_cube(self->enc);
+	//assert(state_vars_bdd);
+	//BddEnc_print_set_of_states(self->enc, state_vars_bdd,false, false, (VPFNNF) NULL, nusmv_stdout);
+	retrieve_var_names(self->enc, state_vars_bdd);
+	// int idx = BddEnc_get_var_index_from_name(self->enc, (node_ptr)"o0");
+	// fprintf(nusmv_stdout, "index: %d\n", idx);
+	// BddEnc_print_set_of_inputs(self->enc, input_vars_bdd, false, (VPFNNF) NULL, nusmv_stdout );
+	// BddEnc_print_bdd(self->enc, input_vars_bdd, (VPFNNF) NULL, nusmv_stdout);
+	/*
+	for (count = 0; count < 5; count++){
+		node_ptr root_node = BddEnc_get_var_name_from_index(self->enc,count);
+		assert(root_node);
+		boolean is_next = node_get_type(root_node) == NEXT;
+		node_ptr var_name = (is_next)
+			? car(root_node)
+			: root_node;
+		fprintf(nusmv_stdout, "Will now print\n");
+		fflush(nusmv_stdout);
+		fprintf(nusmv_stdout, "Var name: %s\n", (char*)var_name);
+	}
+	*/
 	return true;
 }
 

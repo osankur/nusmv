@@ -153,10 +153,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -178,10 +178,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -314,10 +314,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -385,10 +385,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -421,10 +421,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -544,10 +544,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -646,12 +646,12 @@ configure:17657: checking lex output file root
 configure:17673: result: lex.yy
 configure:17678: checking lex library
 configure:17697: gcc -o conftest -fno-strict-aliasing -g -O2   conftest.c   >&5
-/tmp/cccM7owk.o: In function `input':
-/home/sankur/tools/NuSMV-2.5.4/nusmv/lex.yy.c:1185: undefined reference to `yywrap'
-/tmp/cccM7owk.o: In function `yylex':
-/home/sankur/tools/NuSMV-2.5.4/nusmv/lex.yy.c:883: undefined reference to `yywrap'
-/tmp/cccM7owk.o: In function `main':
-/home/sankur/tools/NuSMV-2.5.4/nusmv/conftest.l:16: undefined reference to `yywrap'
+/tmp/cc6kKnI9.o: In function `input':
+/home/sankur/tools/nusmv/nusmv/lex.yy.c:1185: undefined reference to `yywrap'
+/tmp/cc6kKnI9.o: In function `yylex':
+/home/sankur/tools/nusmv/nusmv/lex.yy.c:883: undefined reference to `yywrap'
+/tmp/cc6kKnI9.o: In function `main':
+/home/sankur/tools/nusmv/nusmv/conftest.l:16: undefined reference to `yywrap'
 collect2: error: ld returned 1 exit status
 configure:17704: $? = 1
 configure: failed program was:
@@ -2493,10 +2493,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -2711,63 +2711,20 @@ configure:20546: $? = 0
 configure:20567: result: yes
 configure:20620: checking for util_cpu_time in -lcudd_util
 configure:20656: gcc -std=gnu99 -o conftest -fno-strict-aliasing -g -O2   conftest.c -lcudd_util    -L./../cudd-2.4.1.1/lib -lm  >&5
-/usr/bin/ld: cannot find -lcudd_util
-collect2: error: ld returned 1 exit status
-configure:20663: $? = 1
-configure: failed program was:
-| /* confdefs.h.  */
-| #define PACKAGE_NAME "NuSMV"
-| #define PACKAGE_TARNAME "nusmv"
-| #define PACKAGE_VERSION "2.5.4"
-| #define PACKAGE_STRING "NuSMV 2.5.4"
-| #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
-| #define LIBRARY_NAME "NuSMV"
-| #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
-| #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
-| #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
-| #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
-| #define STDC_HEADERS 1
-| #define HAVE_SYS_TYPES_H 1
-| #define HAVE_SYS_STAT_H 1
-| #define HAVE_STDLIB_H 1
-| #define HAVE_STRING_H 1
-| #define HAVE_MEMORY_H 1
-| #define HAVE_STRINGS_H 1
-| #define HAVE_INTTYPES_H 1
-| #define HAVE_STDINT_H 1
-| #define HAVE_UNISTD_H 1
-| #define FUNCATTR_NORETURN __attribute__ ((noreturn))
-| #define HAVE_CPP 1
-| #define PROG_CPP "gcc -E -x c"
-| #define HAVE_DLFCN_H 1
-| #define LT_OBJDIR ".libs/"
-| #define YYTEXT_POINTER 1
-| #define SIZEOF_VOID_P 8
-| #define SIZEOF_INT 4
-| #define SIZEOF_LONG 8
-| #define SIZEOF_LONG_LONG 8
-| #define HAVE_LIBM 1
-| #define HAVE_LIBREADLINE 1
-| #define HAVE_LIBEXPAT 1
-| /* end confdefs.h.  */
-| 
-| /* Override any GCC internal prototype to avoid an error.
-|    Use char because int might match the return type of a GCC
-|    builtin and then its argument prototype would still apply.  */
-| #ifdef __cplusplus
-| extern "C"
-| #endif
-| char util_cpu_time ();
-| int
-| main ()
-| {
-| return util_cpu_time ();
-|   ;
-|   return 0;
-| }
-configure:20684: result: no
+configure:20663: $? = 0
+configure:20684: result: yes
+configure:20695: checking for Mtr_AllocNode in -lmtr
+configure:20731: gcc -std=gnu99 -o conftest -fno-strict-aliasing -g -O2   conftest.c -lmtr      -L./../cudd-2.4.1.1/lib -lcudd_util -lm  >&5
+configure:20738: $? = 0
+configure:20759: result: yes
+configure:20770: checking for st_init_table in -lst
+configure:20806: gcc -std=gnu99 -o conftest -fno-strict-aliasing -g -O2   conftest.c -lst        -L./../cudd-2.4.1.1/lib -lmtr -lcudd_util -lm  >&5
+configure:20813: $? = 0
+configure:20834: result: yes
+configure:20845: checking for Cudd_Ref in -lcudd
+configure:20881: gcc -std=gnu99 -o conftest -fno-strict-aliasing -g -O2   conftest.c -lcudd 	 -L./../cudd-2.4.1.1/lib -lst -lmtr -lcudd_util -lm  >&5
+configure:20888: $? = 0
+configure:20909: result: yes
 configure:21246: WARNING: Header file "Solver_C.h" has not been found in "./../MiniSat_v070721".
 See configure option --with-minisat-incdir to specify where the header file is located.
 Minisat will not be linked to the system.
@@ -2935,10 +2892,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -3053,10 +3010,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -3191,10 +3148,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -3291,8 +3248,8 @@ configure:24223: $? = 0
 configure:24245: result: yes
 configure:24254: checking for _doprnt
 configure:24310: gcc -std=gnu99 -o conftest -fno-strict-aliasing -g -O2   conftest.c -lm  >&5
-/tmp/ccALVOFm.o: In function `main':
-/home/sankur/tools/NuSMV-2.5.4/nusmv/conftest.c:106: undefined reference to `_doprnt'
+/tmp/ccWBSg8W.o: In function `main':
+/home/sankur/tools/nusmv/nusmv/conftest.c:106: undefined reference to `_doprnt'
 collect2: error: ld returned 1 exit status
 configure:24317: $? = 1
 configure: failed program was:
@@ -3302,10 +3259,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -3488,10 +3445,10 @@ configure: failed program was:
 | #define PACKAGE_VERSION "2.5.4"
 | #define PACKAGE_STRING "NuSMV 2.5.4"
 | #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-| #define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_NAME "NuSMV"
 | #define LIBRARY_VERSION "2.5.4"
-| #define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+| #define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 | #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 | #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 | #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
@@ -3618,14 +3575,14 @@ configure:24439: $? = 0
 configure:24461: result: yes
 configure:24376: checking for mktemp
 configure:24432: gcc -std=gnu99 -o conftest -fno-strict-aliasing -g -O2   conftest.c -lm  >&5
-/tmp/cco4MAJ1.o: In function `main':
-/home/sankur/tools/NuSMV-2.5.4/nusmv/conftest.c:118: warning: the use of `mktemp' is dangerous, better use `mkstemp' or `mkdtemp'
+/tmp/ccDNU06A.o: In function `main':
+/home/sankur/tools/nusmv/nusmv/conftest.c:118: warning: the use of `mktemp' is dangerous, better use `mkstemp' or `mkdtemp'
 configure:24439: $? = 0
 configure:24461: result: yes
 configure:24376: checking for tmpnam
 configure:24432: gcc -std=gnu99 -o conftest -fno-strict-aliasing -g -O2   conftest.c -lm  >&5
-/tmp/ccopYU17.o: In function `main':
-/home/sankur/tools/NuSMV-2.5.4/nusmv/conftest.c:119: warning: the use of `tmpnam' is dangerous, better use `mkstemp'
+/tmp/ccI31CXG.o: In function `main':
+/home/sankur/tools/nusmv/nusmv/conftest.c:119: warning: the use of `tmpnam' is dangerous, better use `mkstemp'
 configure:24439: $? = 0
 configure:24461: result: yes
 configure:24376: checking for getenv
@@ -3823,12 +3780,15 @@ ac_cv_header_sys_time_h=yes
 ac_cv_header_sys_types_h=yes
 ac_cv_header_unistd_h=yes
 ac_cv_host=x86_64-unknown-linux-gnu
-ac_cv_lib_cudd_util_util_cpu_time=no
+ac_cv_lib_cudd_Cudd_Ref=yes
+ac_cv_lib_cudd_util_util_cpu_time=yes
 ac_cv_lib_expat_XML_ParserCreate=yes
 ac_cv_lib_lex=-lfl
 ac_cv_lib_m_exp=yes
+ac_cv_lib_mtr_Mtr_AllocNode=yes
 ac_cv_lib_ncurses_main=yes
 ac_cv_lib_readline_readline=yes
+ac_cv_lib_st_st_init_table=yes
 ac_cv_objext=o
 ac_cv_path_EGREP='/bin/grep -E'
 ac_cv_path_EPSTOPDF=/usr/bin/epstopdf
@@ -3903,16 +3863,16 @@ qef_cv_c_noreturn=yes
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run aclocal-1.11'
+ACLOCAL='${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run aclocal-1.11'
 ADDONS_PKGS='compass '
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
-AMTAR='${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run tar'
+AMTAR='${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run tar'
 AR='ar'
-AUTOCONF='${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run autoconf'
-AUTOHEADER='${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run autoheader'
-AUTOMAKE='${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run automake-1.11'
+AUTOCONF='${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoconf'
+AUTOHEADER='${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoheader'
+AUTOMAKE='${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run automake-1.11'
 AWK='mawk'
 CC='gcc -std=gnu99'
 CCDEPMODE='depmode=gcc3'
@@ -3949,8 +3909,8 @@ HAVE_LTL2SMV_TRUE=''
 HAVE_MINISAT=''
 HAVE_MINISAT_FALSE=''
 HAVE_MINISAT_TRUE='#'
-HAVE_NOT_CUDD_FALSE='#'
-HAVE_NOT_CUDD_TRUE=''
+HAVE_NOT_CUDD_FALSE=''
+HAVE_NOT_CUDD_TRUE='#'
 HAVE_PDFLATEXETAL_FALSE='#'
 HAVE_PDFLATEXETAL_TRUE=''
 HAVE_PSL_PARSER_FALSE=''
@@ -3976,7 +3936,7 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 LIPO=''
 LN_S='ln -s'
 LTLIBOBJS=''
-MAKEINFO='${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run makeinfo'
+MAKEINFO='${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run makeinfo'
 MKDIR_P='/bin/mkdir -p'
 NM='/usr/bin/nm -B'
 NMEDIT=''
@@ -4030,7 +3990,7 @@ build_cpu='x86_64'
 build_os='linux-gnu'
 build_vendor='unknown'
 cudd_mkf='Makefile_64bit'
-cudddir='/home/sankur/tools/NuSMV-2.5.4/cudd-2.4.1.1'
+cudddir='/home/sankur/tools/nusmv/cudd-2.4.1.1'
 cuddname='cudd-2.4.1.1'
 datadir='${datarootdir}'
 datarootdir='${prefix}/share'
@@ -4048,7 +4008,7 @@ host_vendor='unknown'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/install-sh'
+install_sh='${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'
@@ -4093,10 +4053,10 @@ zchafflibdir='./../zchaff_v2007.3.12'
 #define PACKAGE_VERSION "2.5.4"
 #define PACKAGE_STRING "NuSMV 2.5.4"
 #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
-#define PACKAGE_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+#define PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 #define LIBRARY_NAME "NuSMV"
 #define LIBRARY_VERSION "2.5.4"
-#define LIBRARY_BUILD_DATE "Wed Jun  3 07:15:26 UTC 2015"
+#define LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
 #define LIBRARY_WEBSITE "http://nusmv.fbk.eu"
 #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
 #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"

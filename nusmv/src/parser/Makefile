@@ -177,13 +177,13 @@ am__relativize = \
     dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
   done; \
   reldir="$$dir2"
-ACLOCAL = ${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run aclocal-1.11
+ACLOCAL = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run aclocal-1.11
 ADDONS_PKGS = compass 
-AMTAR = ${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run tar
+AMTAR = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run automake-1.11
+AUTOCONF = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run automake-1.11
 AWK = mawk
 CC = gcc -std=gnu99
 CCDEPMODE = depmode=gcc3
@@ -230,7 +230,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
@@ -260,10 +260,10 @@ VERSION = 2.5.4
 YACC = bison -y
 YFLAGS = 
 _have_bison = yes
-abs_builddir = /home/sankur/tools/NuSMV-2.5.4/nusmv/src/parser
-abs_srcdir = /home/sankur/tools/NuSMV-2.5.4/nusmv/src/parser
-abs_top_builddir = /home/sankur/tools/NuSMV-2.5.4/nusmv
-abs_top_srcdir = /home/sankur/tools/NuSMV-2.5.4/nusmv
+abs_builddir = /home/sankur/tools/nusmv/nusmv/src/parser
+abs_srcdir = /home/sankur/tools/nusmv/nusmv/src/parser
+abs_top_builddir = /home/sankur/tools/nusmv/nusmv
+abs_top_srcdir = /home/sankur/tools/nusmv/nusmv
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
@@ -280,7 +280,7 @@ build_os = linux-gnu
 build_vendor = unknown
 builddir = .
 cudd_mkf = Makefile_64bit
-cudddir = /home/sankur/tools/NuSMV-2.5.4/cudd-2.4.1.1
+cudddir = /home/sankur/tools/nusmv/cudd-2.4.1.1
 cuddname = cudd-2.4.1.1
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
@@ -298,7 +298,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/sankur/tools/NuSMV-2.5.4/nusmv/helpers/install-sh
+install_sh = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -342,13 +342,13 @@ CUDD_DIR = ../$(CUDD_NAME)
 INCLUDES = -I$(top_srcdir)/src -I$(top_builddir)/src -I$(top_srcdir)/$(CUDD_DIR)/include
 SUBDIRS = ord psl idlist
 GRAMMAR_START = begin # initial smv grammar non-terminal symbol
-#BUILT_SOURCES = grammar.h grammar.c grammar.y \
-#		 	        	grammar.y.1 grammar.y.2 grammar.y.3 \
-#                input.c input.l input.l.1 input.l.2 input.l.3 
-
 BUILT_SOURCES = grammar.h grammar.c grammar.y \
-                input.c input.l input.l.1 input.l.2 input.l.3 \
-	        			$(top_srcdir)/$(CUDD_DIR)/include/cudd.h
+		 	        	grammar.y.1 grammar.y.2 grammar.y.3 \
+                input.c input.l input.l.1 input.l.2 input.l.3 
+
+#BUILT_SOURCES = grammar.h grammar.c grammar.y \
+#                input.c input.l input.l.1 input.l.2 input.l.3 \
+#	        			$(top_srcdir)/$(CUDD_DIR)/include/cudd.h
 
 MOSTLYCLEANFILES = grammar.h grammar.c grammar.y \
 		   grammar.y.1 grammar.y.2 grammar.y.3 \

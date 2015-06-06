@@ -66,8 +66,8 @@
 #include "utils/array.h"
 #include "utils/defs.h"
 #include "cinit/cinit.h"
-
 #include <math.h>
+#include "string.h"
 
 
 /*---------------------------------------------------------------------------*/
@@ -3820,6 +3820,7 @@ void bdd_enc_commit_layer(BaseEnc_ptr enc_base, const char* layer_name)
      been created from the layer that is being committed. If there
      exists such a layer, commit that as well. */
   bool_layer_name = BoolEnc_scalar_layer_to_bool_layer(layer_name);
+	//fprintf(nusmv_stdout, "*** DEBUG *** bool_layer_name: %s\n", bool_layer_name);
 
   layers[1] = SymbTable_get_layer(symbTable, bool_layer_name);
   if (layers[1] != SYMB_LAYER(NULL)) {
@@ -3914,18 +3915,21 @@ void bdd_enc_commit_layer(BaseEnc_ptr enc_base, const char* layer_name)
         gr_iter = NodeList_get_first_iter(group);
         while (!ListIter_is_end(gr_iter)) {
           node_ptr name = NodeList_get_elem_at(group, gr_iter);
+					fprintf(nusmv_stderr, "--- lineno: %d, type: %d \n", name->lineno, name->type);
 
           /* state variable */
           if (SymbTable_is_symbol_state_var(symbTable, name)) {
             int cindex = dd_get_index_at_level(self->dd, level++);
             int nindex = dd_get_index_at_level(self->dd, level++);
             bdd_enc_add_state_var(self, block_layer, name, cindex, nindex);
+						fprintf(nusmv_stderr, "\tstate\n");
           }
 
           /* input variable */
           else if (SymbTable_is_symbol_input_var(symbTable, name)) {
             int cindex = dd_get_index_at_level(self->dd, level++);
-            bdd_enc_add_input_var(self, name, cindex);
+            bdd_enc_add_input_var(self, name, cindex);	
+						fprintf(nusmv_stderr, "\tinput\n");
           }
 
           /* frozen variable */
@@ -3934,6 +3938,7 @@ void bdd_enc_commit_layer(BaseEnc_ptr enc_base, const char* layer_name)
             nusmv_assert(SymbTable_is_symbol_frozen_var(symbTable, name));
             cindex = dd_get_index_at_level(self->dd, level++);
             bdd_enc_add_frozen_var(self, name, cindex);
+						fprintf(nusmv_stderr, "\t frozen\n");
           }
 
           gr_iter = ListIter_get_next(gr_iter);
@@ -7632,3 +7637,197 @@ static int bdd_enc_dump_addarray_dot_davinci(BddEnc_ptr self,
 
 
 /**AutomaticEnd***************************************************************/
+int aux(BddEnc_ptr self, bdd_ptr bdd, VPFNNF p_fun, FILE* file)
+{
+  BddEncPrintInfo* info;
+  node_ptr iter;
+  node_ptr valueList;
+  int count;
+
+
+  BDD_ENC_CHECK_INSTANCE(self);
+  nusmv_assert(self->print_stack != Nil); /*print_bdd_begin previously called*/
+
+  if (bdd_is_false(self->dd, bdd)) {
+    fprintf(file, "FALSE\n");
+    return 0;
+  }
+
+  info = ( BddEncPrintInfo*) car(self->print_stack);
+
+  valueList = BddEnc_assign_symbols(self, bdd, info->symbols,
+                                    false, (bdd_ptr*)NULL);
+
+  for (count = 0, iter = valueList; iter != Nil; iter = cdr(iter)) {
+    node_ptr cur_sym = car(car(iter));
+    node_ptr cur_sym_value = cdr(car(iter));
+
+    /* if required, print only symbols with changed values */
+    if (info->changes_only) {
+      if (cur_sym_value == find_assoc(info->hash, cur_sym)) continue;
+      insert_assoc(info->hash, cur_sym, cur_sym_value);
+    }
+
+    if (p_fun == (VPFNNF) NULL) {
+      /* Default printing */
+      indent_node(file, "", cur_sym, " = ");
+      print_node(file, cur_sym_value);
+      fprintf(file, "\n");
+    } else {
+      /* Custom printing */
+      (*p_fun)(file, cur_sym, cur_sym_value);
+    }
+
+    ++count;
+  } /* while loop */
+
+  free_list(valueList);
+
+  return count;
+}
+
+int is_varname_uinput(char * s){
+	return strstr(s, "i_") == s;
+}
+int is_varname_cinput(char * s){
+	return strstr(s, "controllable_") == s;
+}
+int is_varname_latch(char *s){
+	return !is_varname_cinput(s) && !is_varname_uinput(s);
+}
+
+
+void retrieve_var_names(BddEnc_ptr self, bdd_ptr states)
+{
+	int j;
+	const boolean show_defines = false;
+	const boolean changes_only = false;
+	FILE * file = nusmv_stdout;
+	VPFNNF p_fun = (VPFNNF) NULL;
+  NodeList_ptr committed_vars, latches, uinputs, cinputs;
+
+  BDD_ENC_CHECK_INSTANCE(self);
+	latches = NodeList_create();
+	uinputs = NodeList_create();
+	cinputs = NodeList_create();
+
+  BddVarSet_ptr latch_cube = bdd_true(self->dd);
+  BddVarSet_ptr uinput_cube = bdd_true(self->dd);
+  BddVarSet_ptr cinput_cube = bdd_true(self->dd);
+
+	/*
+  array_size = BddEnc_count_states_of_bdd(self, states);
+  array = ALLOC(bdd_ptr, array_size);
+  nusmv_assert(array != (bdd_ptr*) NULL);
+
+  res = BddEnc_pick_all_terms_states(self, states, array, array_size);
+  nusmv_assert(!res);
+	*/
+  /* Retrieve the vars list from committed layers */
+  {
+    const array_t* layer_names;
+    const char* layer_name;
+    int i;
+
+    SymbTableIter sfiter;
+    SymbTable_ptr st;
+
+    layer_names = BaseEnc_get_committed_layer_names(BASE_ENC(self));
+    committed_vars = NodeList_create();
+    st = BaseEnc_get_symb_table(BASE_ENC(self));
+
+    /* Retrieve ALL state frozen symbols */
+    SYMB_TABLE_FOREACH_FILTER(st, sfiter, STT_DEFINE | STT_VAR,
+                              SymbTable_iter_filter_sf_symbols, NULL) {
+      node_ptr symbol = SymbTable_iter_get_symbol(st, &sfiter);
+
+      arrayForEachItem(const char*, layer_names, i, layer_name) {
+        SymbLayer_ptr layer;
+
+        layer = SymbTable_get_layer(BASE_ENC(self)->symb_table, layer_name);
+
+        if (SymbLayer_is_symbol_in_layer(layer, symbol)) {
+          if (!SymbTable_is_symbol_define(st, symbol)) {
+            BoolEnc_ptr bool_enc;
+
+            nusmv_assert(SymbTable_is_symbol_var(st, symbol));
+						// print_node(file, symbol);
+
+            bool_enc = BoolEncClient_get_bool_enc(BOOL_ENC_CLIENT(self));
+			
+            /* Append everything but bits */
+            if (!BoolEnc_is_var_bit(bool_enc, symbol)) {
+              NodeList_append(committed_vars, symbol);
+							char * varname = sprint_node(symbol);
+							printf("Read variable: %s\n", varname);
+							if (is_varname_cinput(varname)){
+								NodeList_append(cinputs, symbol);
+								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
+								bdd_and_accumulate(self->dd, &cinput_cube, curr);
+								bdd_free(self->dd, curr);
+							} else if (is_varname_uinput(varname)){
+								NodeList_append(uinputs, symbol);
+								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
+								bdd_and_accumulate(self->dd, &uinput_cube, curr);
+								bdd_free(self->dd, curr);
+							} else {
+								NodeList_append(latches, symbol);
+								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
+								bdd_and_accumulate(self->dd, &latch_cube, curr);
+								bdd_free(self->dd, curr);
+							}
+							free(varname);
+            }
+          }
+        }
+      }
+    }
+  }
+	ListIter_ptr iter;
+	printf("Printing latches\n\t");
+	NODE_LIST_FOREACH(latches, iter){
+		node_ptr symbol = NodeList_get_elem_at(latches,iter);
+		print_node(file, symbol);
+		printf(" ");
+	}
+	printf("\nPrinting cinputs\n\t");
+	NODE_LIST_FOREACH(cinputs, iter){
+		node_ptr symbol = NodeList_get_elem_at(cinputs,iter);
+		print_node(file, symbol);
+		printf(" ");
+	}
+	printf("\nPrinting uinputs\n\t");
+	NODE_LIST_FOREACH(uinputs, iter){
+		node_ptr symbol = NodeList_get_elem_at(uinputs,iter);
+		print_node(file, symbol);
+		printf(" ");
+	}
+  BddEnc_print_bdd_begin(self, latches, false);
+	BddEnc_print_set_of_states(self, uinput_cube, false, false, (VPFNNF)NULL, stdout);
+  BddEnc_print_bdd_end(self);
+	/*
+	NODE_LIST_FOREACH(committed_vars, iter){
+		node_ptr symbol = NodeList_get_elem_at(committed_vars,iter);
+		//print_node(file, symbol);
+		// indent_node(file, "", car(car(symbol)), " = ");
+		// print_node(file, cur_sym_value);
+		// printf("%p\n", symbol);
+	}
+	*/
+	/*
+  inc_indent_size();
+  for (j=0; j < array_size; ++j) {
+    aux(self, array[j], p_fun, file);
+    bdd_free(self->dd, array[j]);
+  }
+  dec_indent_size();
+	*/
+
+  NodeList_destroy(committed_vars);
+  NodeList_destroy(latches);
+  NodeList_destroy(uinputs);
+  NodeList_destroy(cinputs);
+	bdd_free(self->dd,latch_cube);
+}
+
+
