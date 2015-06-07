@@ -408,12 +408,16 @@ EXTERN int BddEnc_dump_addarray_davinci ARGS((BddEnc_ptr self,
                                               const char** labels,
                                               FILE* outfile));
 
-EXTERN void retrieve_var_names(BddEnc_ptr self, bdd_ptr states,
+EXTERN void BddEnc_synth_get_game ARGS((BddEnc_ptr self, bdd_ptr states,
+    NodeList_ptr * all_vars,
+    NodeList_ptr * latches,
 		BddVarSet_ptr * latch_cube, 
+    NodeList_ptr * uinputs,
 		BddVarSet_ptr * uinput_cube, 
+    NodeList_ptr * cinputs,
 		BddVarSet_ptr * cinput_cube, 
-		BddVarSet_ptr * platch_cube,
-		bdd_ptr * error);
+    NodeList_ptr * outputs,
+		bdd_ptr * error));
 /**AutomaticEnd**************************************************************/
 
 #endif /* __BDD_ENC_H__ */

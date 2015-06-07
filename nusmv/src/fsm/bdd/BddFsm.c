@@ -2245,13 +2245,32 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
   node_ptr iter;
   node_ptr valueList;
   int count;
-  BddVarSet_ptr state_vars_bdd = BddEnc_get_state_vars_cube(self->enc);
+  NodeList_ptr latches, uinputs, cinputs, outputs, all_vars;
+	latches = NodeList_create();
+	uinputs = NodeList_create();
+	cinputs = NodeList_create();
+  outputs = NodeList_create();
+  all_vars = NodeList_create();
 	BddVarSet_ptr latch_cube = bdd_true(self->dd);
 	BddVarSet_ptr uinput_cube = bdd_true(self->dd);
 	BddVarSet_ptr cinput_cube = bdd_true(self->dd);
 	BddVarSet_ptr platch_cube = bdd_true(self->dd);
 	bdd_ptr error = NULL;
-	retrieve_var_names(self->enc, state_vars_bdd, &latch_cube, &uinput_cube, &cinput_cube, &platch_cube, &error);
+  BddVarSet_ptr state_vars_bdd = BddEnc_get_state_vars_cube(self->enc);
+	BddEnc_synth_get_game(self->enc, state_vars_bdd, 
+      &all_vars,
+      &latches, &latch_cube, 
+      &uinputs, &uinput_cube, 
+      &cinputs, &cinput_cube, 
+      &outputs, &error);
+  printf("-->\n");
+  BddEnc_print_bdd_begin(self->enc, all_vars, false);
+  BddEnc_print_bdd(self->enc, latch_cube, (VPFNNF)NULL, stdout);
+  BddEnc_print_bdd_end(self->enc);
+  printf("\n<--\n");
+  BddEnc_print_bdd_begin(self->enc, latches, false);
+  BddEnc_print_set_of_states(self->enc, latch_cube, false, true, (VPFNNF)NULL, stdout);
+  BddEnc_print_bdd_end(self->enc);
 	// int idx = BddEnc_get_var_index_from_name(self->enc, (node_ptr)"o0");
 	// fprintf(nusmv_stdout, "index: %d\n", idx);
 	// BddEnc_print_set_of_inputs(self->enc, input_vars_bdd, false, (VPFNNF) NULL, nusmv_stdout );

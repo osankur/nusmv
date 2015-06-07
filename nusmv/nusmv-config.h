@@ -94,7 +94,7 @@
 
 /* Uses the private readline */
 #ifndef NUSMV_HAVE_LIBREADLINE
-#define NUSMV_HAVE_LIBREADLINE 1
+#define NUSMV_HAVE_LIBREADLINE 0
 #endif
 
 /* Define to 1 if you have the <limits.h> header file. */
@@ -335,7 +335,7 @@
 
 /* Library build date */
 #ifndef NUSMV_LIBRARY_BUILD_DATE
-#define NUSMV_LIBRARY_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
+#define NUSMV_LIBRARY_BUILD_DATE "Sun Jun  7 13:41:34 UTC 2015"
 #endif
 
 /* Library Email */
@@ -385,7 +385,7 @@
 
 /* Build date */
 #ifndef NUSMV_PACKAGE_BUILD_DATE
-#define NUSMV_PACKAGE_BUILD_DATE "Sat Jun  6 08:41:09 UTC 2015"
+#define NUSMV_PACKAGE_BUILD_DATE "Sun Jun  7 13:41:34 UTC 2015"
 #endif
 
 /* Define to the full name of this package. */

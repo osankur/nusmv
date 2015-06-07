@@ -135,7 +135,7 @@ AR = ar
 AUTOCONF = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoconf
 AUTOHEADER = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoheader
 AUTOMAKE = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run automake-1.11
-AWK = mawk
+AWK = gawk
 CC = gcc -std=gnu99
 CCDEPMODE = depmode=gcc3
 CFLAGS = -fno-strict-aliasing -g -O2
@@ -270,7 +270,7 @@ pdfdir = ${docdir}
 prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
-readline_libs = -lreadline -lncurses
+readline_libs = 
 regex_libs = 
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
