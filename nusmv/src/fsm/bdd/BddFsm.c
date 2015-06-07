@@ -2263,14 +2263,15 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       &uinputs, &uinput_cube, 
       &cinputs, &cinput_cube, 
       &outputs, &error);
-  printf("-->\n");
+  printf("\n-->\n");
   BddEnc_print_bdd_begin(self->enc, all_vars, false);
-  BddEnc_print_bdd(self->enc, latch_cube, (VPFNNF)NULL, stdout);
+  BddEnc_print_set_of_states(self->enc, error, false, false, (VPFNNF)NULL, stdout);
+  //BddEnc_print_bdd(self->enc, bdd_true(self->dd), (VPFNNF)NULL, stdout);
   BddEnc_print_bdd_end(self->enc);
-  printf("\n<--\n");
-  BddEnc_print_bdd_begin(self->enc, latches, false);
-  BddEnc_print_set_of_states(self->enc, latch_cube, false, true, (VPFNNF)NULL, stdout);
-  BddEnc_print_bdd_end(self->enc);
+  printf("<--\n");
+  // BddEnc_print_bdd_begin(self->enc, latches, false);
+  // BddEnc_print_set_of_states(self->enc, latch_cube, false, true, (VPFNNF)NULL, stdout);
+  // BddEnc_print_bdd_end(self->enc);
 	// int idx = BddEnc_get_var_index_from_name(self->enc, (node_ptr)"o0");
 	// fprintf(nusmv_stdout, "index: %d\n", idx);
 	// BddEnc_print_set_of_inputs(self->enc, input_vars_bdd, false, (VPFNNF) NULL, nusmv_stdout );

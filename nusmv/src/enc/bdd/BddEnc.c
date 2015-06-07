@@ -7648,7 +7648,7 @@ int is_varname_latch(char *s){
 	return !is_varname_cinput(s) && !is_varname_uinput(s);
 }
 int is_varname_error(char *s){
-	return strstr(s, "o0") == s;
+	return strstr(s, "out_") == s;
 }
 
 
@@ -7724,7 +7724,14 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
 								bdd_and_accumulate(self->dd, uinput_cube, curr);
 								bdd_free(self->dd, curr);
-							} else {
+							} else if(is_varname_error(varname)){
+								NodeList_append(*latches, symbol);
+								NodeList_append(*outputs, symbol);
+								NodeList_append(*committed_vars, symbol);
+								// Add variable BDD to the latch
+								*error = BddEnc_expr_to_bdd(self, symbol, Nil);
+								bdd_and_accumulate(self->dd, latch_cube, *error);
+              } else {
 								NodeList_append(*latches, symbol);
 								// Add variable BDD to the latch
 								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
@@ -7738,19 +7745,7 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 							free(varname);
             }
           } else {
-						// Among the define variables, we only extract the output "o0"
-						char * varname = sprint_node(symbol);
-						if (is_varname_error(varname)){
-								NodeList_append(*latches, symbol);
-								NodeList_append(*outputs, symbol);
-								// Add variable BDD to the latch
-								*error = BddEnc_expr_to_bdd(self, symbol, Nil);
-								bdd_and_accumulate(self->dd, latch_cube, *error);
-								// Get the primed variable and add it to the platch_cube
-								// bdd_ptr perror = BddEnc_state_var_to_next_state_var(self, *error);
-								// bdd_and_accumulate(self->dd, platch_cube, perror);
-								// bdd_free(self->dd, perror);
-						}
+            // Defines go here.
 					}
         }
       }

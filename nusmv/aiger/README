@@ -1,0 +1,5 @@
+Just a fix to the aigtosmv program in aiger-1.9.4
+
+Changes:
+- The outputs are now created as variables rather than defines.
+- I also fixed the double init problem.
