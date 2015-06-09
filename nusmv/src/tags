@@ -140,7 +140,7 @@ ADD_ARRAY	enc/utils/AddArray.h	79;"	d
 ADD_ARRAY_BINARY_OP	enc/bdd/BddEnc.c	/^typedef AddArray_ptr (*ADD_ARRAY_BINARY_OP)(DdManager *,$/;"	t	file:
 ADD_ARRAY_CHECK_INSTANCE	enc/utils/AddArray.h	82;"	d
 ADD_ARRAY_UNARY_OP	enc/bdd/BddEnc.c	/^typedef AddArray_ptr (*ADD_ARRAY_UNARY_OP)(DdManager *, AddArray_ptr);$/;"	t	file:
-ADD_FOREACH_NODE	dd/dd.h	117;"	d
+ADD_FOREACH_NODE	dd/dd.h	118;"	d
 AF	parser/symbols.h	/^  AF,$/;"	e	enum:NUSMV_CORE_SYMBOLS
 AFFINITY_CLUSTERING	opt/optInt.h	119;"	d
 AG	parser/symbols.h	/^  AG,$/;"	e	enum:NUSMV_CORE_SYMBOLS
@@ -621,7 +621,7 @@ BDD_ENC_MIN_BLOCK_SIZE	dd/VarsHandler.c	90;"	d	file:
 BDD_ENC_MIN_BLOCK_SIZE	dd/VarsHandler.c	92;"	d	file:
 BDD_EXEC_ENGINE	trace/exec/traceExec.h	50;"	d
 BDD_EXEC_ENGINE	trace/exec/traceExec.h	87;"	d
-BDD_FOREACH_NODE	dd/dd.h	120;"	d
+BDD_FOREACH_NODE	dd/dd.h	121;"	d
 BDD_FSM	fsm/bdd/BddFsm.h	69;"	d
 BDD_FSM_CACHE	fsm/bdd/bddInt.h	90;"	d
 BDD_FSM_CACHE_CHECK_INSTANCE	fsm/bdd/bddInt.h	93;"	d
@@ -902,6 +902,7 @@ BddEnc_ptr	enc/bdd/BddEnc.h	/^typedef struct BddEnc_TAG*  BddEnc_ptr;$/;"	t	type
 BddEnc_reset_reordering_count	enc/bdd/BddEnc.c	/^void BddEnc_reset_reordering_count(BddEnc_ptr self)$/;"	f
 BddEnc_state_var_to_next_state_var	enc/bdd/BddEnc.c	/^bdd_ptr BddEnc_state_var_to_next_state_var(const BddEnc_ptr self, bdd_ptr bdd)$/;"	f
 BddEnc_state_var_to_next_state_var_add	enc/bdd/BddEnc.c	/^add_ptr BddEnc_state_var_to_next_state_var_add(const BddEnc_ptr self,$/;"	f
+BddEnc_synth_get_game	enc/bdd/BddEnc.c	/^void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,$/;"	f
 BddEnc_write_var_ordering	enc/bdd/BddEnc.c	/^void BddEnc_write_var_ordering(const BddEnc_ptr self,$/;"	f
 BddFsm	fsm/bdd/BddFsm.c	/^} BddFsm;$/;"	t	typeref:struct:BddFsm_TAG	file:
 BddFsmCache	fsm/bdd/bddInt.h	/^} BddFsmCache;$/;"	t	typeref:struct:BddFsmCache_TAG
@@ -926,6 +927,7 @@ BddFsm_check_realizable	fsm/bdd/BddFsm.c	/^EXTERN boolean BddFsm_check_realizabl
 BddFsm_copy	fsm/bdd/BddFsm.c	/^BddFsm_ptr BddFsm_copy(const BddFsm_ptr self)$/;"	f
 BddFsm_copy_cache	fsm/bdd/BddFsm.c	/^void BddFsm_copy_cache(BddFsm_ptr self, const BddFsm_ptr other,$/;"	f
 BddFsm_copy_reachable_states	fsm/bdd/BddFsm.c	/^void BddFsm_copy_reachable_states(BddFsm_ptr self, BddFsm_ptr other,$/;"	f
+BddFsm_cpre	fsm/bdd/BddFsm.c	/^bdd_ptr BddFsm_cpre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube, $/;"	f
 BddFsm_create	fsm/bdd/BddFsm.c	/^BddFsm_ptr BddFsm_create(BddEnc_ptr encoding,$/;"	f
 BddFsm_destroy	fsm/bdd/BddFsm.c	/^void BddFsm_destroy(BddFsm_ptr self)$/;"	f
 BddFsm_dir	fsm/bdd/BddFsm.h	/^typedef enum Bdd_Fsm_dir_TAG BddFsm_dir;$/;"	t	typeref:enum:Bdd_Fsm_dir_TAG
@@ -1332,7 +1334,7 @@ CACHE_GET_BDD	fsm/bdd/bddInt.h	106;"	d
 CACHE_IS_EQUAL	fsm/bdd/bddInt.h	110;"	d
 CACHE_SET	fsm/bdd/bddInt.h	97;"	d
 CACHE_SET_BDD	fsm/bdd/bddInt.h	103;"	d
-CACHE_SLOTS	dd/dd.h	87;"	d
+CACHE_SLOTS	dd/dd.h	88;"	d
 CACHE_UNREF_BDD	fsm/bdd/BddFsmCache.c	60;"	d	file:
 CASE	parser/symbols.h	/^  CASE,$/;"	e	enum:NUSMV_CORE_SYMBOLS
 CAST_BOOL	parser/symbols.h	/^  CAST_BOOL,$/;"	e	enum:NUSMV_CORE_SYMBOLS
@@ -2603,12 +2605,12 @@ DEFAULT_INPUT_FILE	opt/opt.h	68;"	d
 DEFAULT_INPUT_ORDER_FILE	opt/opt.h	69;"	d
 DEFAULT_INVAR_CHECK_STRATEGY	opt/opt.h	113;"	d
 DEFAULT_INVAR_DIMACS_FILENAME	bmc/bmcInt.h	83;"	d
-DEFAULT_MINSIZE	dd/dd.h	115;"	d
+DEFAULT_MINSIZE	dd/dd.h	116;"	d
 DEFAULT_OREG_JUSTICE_EMPTINESS_BDD_ALGORITHM	opt/opt.h	95;"	d
 DEFAULT_OUTPUT_ORDER_FILE	opt/opt.h	70;"	d
 DEFAULT_PGM_NAME	opt/opt.h	66;"	d
 DEFAULT_PGM_PATH	opt/opt.h	67;"	d
-DEFAULT_REORDER	dd/dd.h	114;"	d
+DEFAULT_REORDER	dd/dd.h	115;"	d
 DEFAULT_SAT_SOLVER	opt/opt.h	84;"	d
 DEFAULT_SAT_SOLVER	opt/opt.h	87;"	d
 DEFAULT_SAT_SOLVER	opt/opt.h	89;"	d
@@ -5520,7 +5522,7 @@ MAX_MATCHES	bmc/bmcCheck.c	54;"	d	file:
 MAX_PRINT_WIDTH	cinit/cinitData.c	167;"	d	file:
 MAX_SHOWN_STATES	opt/opt.h	81;"	d
 MAX_STR	cmd/cmdMisc.c	59;"	d	file:
-MAX_VAR_INDEX	dd/dd.h	80;"	d
+MAX_VAR_INDEX	dd/dd.h	81;"	d
 MAX_VL_LEN	trace/loaders/TraceXmlLoader_private.h	59;"	d
 MC_MODEL_DEBUG	mc/mcTrace.c	54;"	d	file:
 MC_REWRITE_LAYER_NAME	mc/mcInvar.c	73;"	d	file:
@@ -7668,28 +7670,28 @@ REJECT	parser/input.c	745;"	d	file:
 REJECT	parser/ord/ord_input.c	508;"	d	file:
 REJECT	parser/psl/psl_input.c	714;"	d	file:
 RELEASES	parser/symbols.h	/^  RELEASES,$/;"	e	enum:NUSMV_CORE_SYMBOLS
-REORDER_ANNEALING	dd/dd.h	108;"	d
-REORDER_EXACT	dd/dd.h	112;"	d
-REORDER_GENETIC	dd/dd.h	109;"	d
-REORDER_GROUP_SIFT	dd/dd.h	106;"	d
-REORDER_GROUP_SIFT_CONV	dd/dd.h	107;"	d
-REORDER_LINEAR	dd/dd.h	110;"	d
-REORDER_LINEAR_CONV	dd/dd.h	111;"	d
+REORDER_ANNEALING	dd/dd.h	109;"	d
+REORDER_EXACT	dd/dd.h	113;"	d
+REORDER_GENETIC	dd/dd.h	110;"	d
+REORDER_GROUP_SIFT	dd/dd.h	107;"	d
+REORDER_GROUP_SIFT_CONV	dd/dd.h	108;"	d
+REORDER_LINEAR	dd/dd.h	111;"	d
+REORDER_LINEAR_CONV	dd/dd.h	112;"	d
 REORDER_METHOD	opt/optInt.h	105;"	d
-REORDER_NONE	dd/dd.h	92;"	d
-REORDER_RANDOM	dd/dd.h	94;"	d
-REORDER_RANDOM_PIVOT	dd/dd.h	95;"	d
-REORDER_SAME	dd/dd.h	90;"	d
-REORDER_SIFT	dd/dd.h	96;"	d
-REORDER_SIFT_CONV	dd/dd.h	97;"	d
-REORDER_SYMM_SIFT	dd/dd.h	98;"	d
-REORDER_SYMM_SIFT_CONV	dd/dd.h	99;"	d
-REORDER_WINDOW2	dd/dd.h	100;"	d
-REORDER_WINDOW2_CONV	dd/dd.h	103;"	d
-REORDER_WINDOW3	dd/dd.h	101;"	d
-REORDER_WINDOW3_CONV	dd/dd.h	104;"	d
-REORDER_WINDOW4	dd/dd.h	102;"	d
-REORDER_WINDOW4_CONV	dd/dd.h	105;"	d
+REORDER_NONE	dd/dd.h	93;"	d
+REORDER_RANDOM	dd/dd.h	95;"	d
+REORDER_RANDOM_PIVOT	dd/dd.h	96;"	d
+REORDER_SAME	dd/dd.h	91;"	d
+REORDER_SIFT	dd/dd.h	97;"	d
+REORDER_SIFT_CONV	dd/dd.h	98;"	d
+REORDER_SYMM_SIFT	dd/dd.h	99;"	d
+REORDER_SYMM_SIFT_CONV	dd/dd.h	100;"	d
+REORDER_WINDOW2	dd/dd.h	101;"	d
+REORDER_WINDOW2_CONV	dd/dd.h	104;"	d
+REORDER_WINDOW3	dd/dd.h	102;"	d
+REORDER_WINDOW3_CONV	dd/dd.h	105;"	d
+REORDER_WINDOW4	dd/dd.h	103;"	d
+REORDER_WINDOW4_CONV	dd/dd.h	106;"	d
 RESET_DAG_HITS_NUMBER	compile/compileWrite.c	89;"	d	file:
 RESET_DAG_HITS_NUMBER	compile/compileWriteUdg.c	146;"	d	file:
 RESOLVE_SYMBOL	compile/symb_table/ResolveSymbol.h	66;"	d
@@ -11164,7 +11166,7 @@ UINT8_MAX	parser/psl/psl_input.c	97;"	d	file:
 ULLONG_MAX	utils/portability.h	104;"	d
 UMINUS	parser/symbols.h	/^  UMINUS,$/;"	e	enum:NUSMV_CORE_SYMBOLS
 UNION	parser/symbols.h	/^  UNION,$/;"	e	enum:NUSMV_CORE_SYMBOLS
-UNIQUE_SLOTS	dd/dd.h	84;"	d
+UNIQUE_SLOTS	dd/dd.h	85;"	d
 UNKNOWN_OP	bmc/bmcUtils.h	56;"	d
 UNSIGNED_WORD	parser/symbols.h	/^  UNSIGNED_WORD, \/* identifies expressions and types *\/$/;"	e	enum:NUSMV_CORE_SYMBOLS
 UNTIL	parser/symbols.h	/^  UNTIL,$/;"	e	enum:NUSMV_CORE_SYMBOLS
@@ -14741,6 +14743,7 @@ bdd_trans_deinit	trans/bdd/BddTrans.c	/^static void bdd_trans_deinit(BddTrans_pt
 bdd_trans_finalize	trans/bdd/BddTrans.c	/^static void bdd_trans_finalize(Object_ptr object, void* dummy)$/;"	f	file:
 bdd_trans_init	trans/bdd/BddTrans.c	/^static void bdd_trans_init(BddTrans_ptr self, $/;"	f	file:
 bdd_true	dd/dd.c	/^bdd_ptr bdd_true(DdManager * dd)$/;"	f
+bdd_vector_compose	dd/dd.c	/^bdd_ptr bdd_vector_compose(DdManager *dd, bdd_ptr f, bdd_ptr * X){$/;"	f
 bdd_xor	dd/dd.c	/^bdd_ptr bdd_xor(DdManager * dd, bdd_ptr a, bdd_ptr b)$/;"	f
 bddtype	node/node.h	/^  void * bddtype;$/;"	m	union:value_
 be	be/beInt.h	/^  be_ptr  be;$/;"	m	struct:shift_memoize_key_TAG
@@ -20584,7 +20587,6 @@ result	rbc/rbcCnfSimple.c	/^  int result;$/;"	m	struct:CnfDfsData	file:
 result	rbc/rbcSubst.c	/^  Rbc_t          * result;$/;"	m	struct:SubstRbcDfsData	file:
 result	rbc/rbcSubst.c	/^  Rbc_t         * result;$/;"	m	struct:ShiftDfsData	file:
 result	rbc/rbcSubst.c	/^  Rbc_t         * result;$/;"	m	struct:SubstDfsData	file:
-retrieve_var_names	enc/bdd/BddEnc.c	/^void retrieve_var_names(BddEnc_ptr self, bdd_ptr states,$/;"	f
 return_type	compile/symb_table/NFunction.c	/^  SymbType_ptr return_type;$/;"	m	struct:NFunction_TAG	file:
 return_zero	dag/dagDfs.c	/^static int return_zero(Dag_Vertex_t* f, char* cleanData, nusmv_ptrint sign)$/;"	f	file:
 reverse	node/node.c	/^node_ptr reverse(node_ptr x)$/;"	f
@@ -21859,6 +21861,7 @@ trans_copy	trans/bdd/BddTrans.c	/^  void* (*trans_copy)(void* transition);$/;"	m
 trans_declarations	ltl/ltl2smv/ltl2smv.c	/^static node_ptr trans_declarations;$/;"	v	file:
 trans_destroy	trans/bdd/BddTrans.c	/^  void  (*trans_destroy)(void* transition);$/;"	m	struct:BddTrans_TAG	file:
 trans_expr	compile/FlatHierarchy.c	/^  node_ptr trans_expr;$/;"	m	struct:FlatHierarchy	file:
+trans_expr	fsm/bdd/BddFsm.c	/^  NodeList_ptr trans_expr;$/;"	m	struct:BddFsm_TAG	file:
 trans_get_monolithic_bdd	trans/bdd/BddTrans.c	/^  bdd_ptr (*trans_get_monolithic_bdd)(void* transition);$/;"	m	struct:BddTrans_TAG	file:
 trans_print_short_info	trans/bdd/BddTrans.c	/^  void (*trans_print_short_info)(void* transition, FILE* file);$/;"	m	struct:BddTrans_TAG	file:
 trans_synchronous_product	trans/bdd/BddTrans.c	/^  void (*trans_synchronous_product)(void* transition1,$/;"	m	struct:BddTrans_TAG	file:

@@ -2293,6 +2293,7 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       &uinputs, &uinput_cube, 
       &cinputs, &cinput_cube, 
       &outputs, &error);
+  BddEnc_print_bdd_begin(self->enc, all_vars, false);
   
   // Prepare initial state
   bdd_ptr init = bdd_true(self->dd);
@@ -2300,16 +2301,20 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
   NODE_LIST_FOREACH(latches,iter){
     node_ptr var = NodeList_get_elem_at(latches,iter);
     bdd_ptr varbdd = BddEnc_expr_to_bdd(self->enc, var, Nil);
+    // printf("latch var: %d\n", Cudd_NodeReadIndex(varbdd));
+    //BddEnc_print_bdd(self->enc, varbdd, NULL, stdout);
+    //printf("\n");
     bdd_and_accumulate(self->dd, &init, bdd_not(self->dd, varbdd));
   }
 
+  // printf("Creating platches...\n");
   // Create the list of primed latches
   NodeList_ptr platch_bdds = NodeList_create();
   iter = NodeList_get_first_iter(latches);
   NODE_LIST_FOREACH(latches,iter){
     node_ptr var = NodeList_get_elem_at(latches,iter);
     bdd_ptr varbdd = BddEnc_expr_to_bdd(self->enc, var, Nil);
-    BddEnc_state_var_to_next_state_var(self->enc, varbdd);
+    varbdd = BddEnc_state_var_to_next_state_var(self->enc, varbdd);
     NodeList_append(platch_bdds, (node_ptr) varbdd);
   }
 
@@ -2327,6 +2332,10 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       if (tFunc != t){
         if (trans != NULL){
           fprintf(stderr, "[ERR] Two transition relations depend on the same next-state variable!\n");
+          fprintf(stderr, "[ERR] Are the two funcs the same? %d\n", 
+              NodeList_count_elem(trans_funcs, (node_ptr)trans));
+          //BddEnc_print_bdd(self->enc, 
+          //  BddEnc_next_state_var_to_state_var(self->enc, pvar), NULL, stdout);
           exit(-1);
         } else {
           trans = tFunc;
@@ -2375,6 +2384,7 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
   if (bdd_isnot_false(self->dd, check)){
     ret = true;
   }
+  BddEnc_print_bdd_end(self->enc);
   // TODO: cleanup
   return ret;
   /*

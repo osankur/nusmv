@@ -7727,7 +7727,6 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 							} else if(is_varname_error(varname)){
 								NodeList_append(*latches, symbol);
 								NodeList_append(*outputs, symbol);
-								NodeList_append(*committed_vars, symbol);
 								// Add variable BDD to the latch
 								*error = BddEnc_expr_to_bdd(self, symbol, Nil);
 								bdd_and_accumulate(self->dd, latch_cube, *error);
