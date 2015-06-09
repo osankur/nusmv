@@ -42,11 +42,11 @@ sigref/sigrefWrite.lo: sigref/sigrefWrite.c /usr/include/stdc-predef.h \
  ../../../src/addons_core/compass/compass.h ../../../src/enc/bdd/BddEnc.h \
  ../../../src/enc/bdd/bdd.h ../../../src/dd/dd.h \
  ../../../src/utils/array.h ../../../src/utils/avl.h \
- ../../../src/node/node.h ../../../../cudd-2.4.1.1/include/cudd.h \
+ ../../../src/utils/NodeList.h ../../../src/node/node.h \
+ ../../../src/utils/utils.h ../../../../cudd-2.4.1.1/include/cudd.h \
  ../../../../cudd-2.4.1.1/include/mtr.h ../../../src/opt/OptsHandler.h \
  ../../../src/enc/base/BoolEncClient.h ../../../src/enc/bool/BoolEnc.h \
- ../../../src/enc/bool/BitValues.h ../../../src/utils/NodeList.h \
- ../../../src/utils/utils.h ../../../src/enc/base/BaseEnc.h \
+ ../../../src/enc/bool/BitValues.h ../../../src/enc/base/BaseEnc.h \
  ../../../src/compile/symb_table/SymbTable.h \
  ../../../src/compile/symb_table/SymbLayer.h \
  ../../../src/compile/symb_table/SymbType.h \
@@ -221,7 +221,11 @@ sigref/sigrefWrite.lo: sigref/sigrefWrite.c /usr/include/stdc-predef.h \
 
 ../../../src/utils/avl.h:
 
+../../../src/utils/NodeList.h:
+
 ../../../src/node/node.h:
+
+../../../src/utils/utils.h:
 
 ../../../../cudd-2.4.1.1/include/cudd.h:
 
@@ -234,10 +238,6 @@ sigref/sigrefWrite.lo: sigref/sigrefWrite.c /usr/include/stdc-predef.h \
 ../../../src/enc/bool/BoolEnc.h:
 
 ../../../src/enc/bool/BitValues.h:
-
-../../../src/utils/NodeList.h:
-
-../../../src/utils/utils.h:
 
 ../../../src/enc/base/BaseEnc.h:
 

@@ -37,20 +37,21 @@ utils/AddArray.lo: utils/AddArray.c /usr/include/stdc-predef.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h ../utils/list.h \
- ../utils/array.h ../utils/avl.h ../node/node.h \
- ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
- ../opt/OptsHandler.h ../utils/WordNumber.h ../enc/operators.h \
- ../parser/symbols.h ../opt/opt.h /usr/include/regex.h ../sat/sat.h \
- ../be/be.h /usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed/limits.h \
+ ../utils/array.h ../utils/avl.h ../utils/NodeList.h ../node/node.h \
+ ../utils/utils.h ../../../cudd-2.4.1.1/include/cudd.h \
+ ../../../cudd-2.4.1.1/include/mtr.h ../opt/OptsHandler.h \
+ ../utils/WordNumber.h ../enc/operators.h ../parser/symbols.h \
+ ../opt/opt.h /usr/include/regex.h ../sat/sat.h ../be/be.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed/limits.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h ../be/beRbcManager.h \
  ../be/be.h ../utils/Slist.h ../sat/SatSolver.h ../utils/object.h \
- /usr/include/memory.h ../utils/utils.h ../sat/SatIncSolver.h \
- ../utils/Olist.h ../trans/trans.h ../enc/enc.h ../enc/bool/BoolEnc.h \
- ../enc/bool/BitValues.h ../utils/NodeList.h ../enc/base/BaseEnc.h \
+ /usr/include/memory.h ../sat/SatIncSolver.h ../utils/Olist.h \
+ ../trans/trans.h ../enc/enc.h ../enc/bool/BoolEnc.h \
+ ../enc/bool/BitValues.h ../enc/base/BaseEnc.h \
  ../compile/symb_table/SymbTable.h ../compile/symb_table/SymbLayer.h \
  ../compile/symb_table/SymbType.h ../compile/symb_table/NFunction.h \
  ../compile/symb_table/SymbType.h ../set/set.h \
@@ -195,7 +196,11 @@ utils/AddArray.h:
 
 ../utils/avl.h:
 
+../utils/NodeList.h:
+
 ../node/node.h:
+
+../utils/utils.h:
 
 ../../../cudd-2.4.1.1/include/cudd.h:
 
@@ -243,8 +248,6 @@ utils/AddArray.h:
 
 /usr/include/memory.h:
 
-../utils/utils.h:
-
 ../sat/SatIncSolver.h:
 
 ../utils/Olist.h:
@@ -256,8 +259,6 @@ utils/AddArray.h:
 ../enc/bool/BoolEnc.h:
 
 ../enc/bool/BitValues.h:
-
-../utils/NodeList.h:
 
 ../enc/base/BaseEnc.h:
 

@@ -38,12 +38,12 @@ traceCmd.lo: traceCmd.c /usr/include/stdc-predef.h ../../nusmv-config.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h ../utils/list.h \
  ../utils/utils_io.h ../utils/utils.h ../dd/dd.h ../utils/array.h \
- ../utils/avl.h ../node/node.h ../../../cudd-2.4.1.1/include/cudd.h \
- ../../../cudd-2.4.1.1/include/mtr.h ../opt/OptsHandler.h ../prop/Prop.h \
- ../fsm/FsmBuilder.h ../fsm/sexp/SexpFsm.h ../fsm/sexp/sexp.h \
- ../fsm/sexp/Expr.h ../compile/symb_table/SymbTable.h \
- ../compile/symb_table/SymbLayer.h ../compile/symb_table/SymbType.h \
- ../utils/NodeList.h ../compile/symb_table/NFunction.h \
+ ../utils/avl.h ../utils/NodeList.h ../node/node.h \
+ ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
+ ../opt/OptsHandler.h ../prop/Prop.h ../fsm/FsmBuilder.h \
+ ../fsm/sexp/SexpFsm.h ../fsm/sexp/sexp.h ../fsm/sexp/Expr.h \
+ ../compile/symb_table/SymbTable.h ../compile/symb_table/SymbLayer.h \
+ ../compile/symb_table/SymbType.h ../compile/symb_table/NFunction.h \
  ../compile/symb_table/SymbType.h ../set/set.h \
  ../compile/symb_table/SymbCache.h ../compile/type_checking/TypeChecker.h \
  ../node/MasterNodeWalker.h ../node/NodeWalker.h ../utils/object.h \
@@ -212,6 +212,8 @@ pkg_traceInt.h:
 
 ../utils/avl.h:
 
+../utils/NodeList.h:
+
 ../node/node.h:
 
 ../../../cudd-2.4.1.1/include/cudd.h:
@@ -235,8 +237,6 @@ pkg_traceInt.h:
 ../compile/symb_table/SymbLayer.h:
 
 ../compile/symb_table/SymbType.h:
-
-../utils/NodeList.h:
 
 ../compile/symb_table/NFunction.h:
 

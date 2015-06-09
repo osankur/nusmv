@@ -37,10 +37,10 @@ traceTest.lo: traceTest.c /usr/include/stdc-predef.h ../../nusmv-config.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h ../utils/list.h \
- ../utils/array.h ../utils/avl.h ../node/node.h \
- ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
- ../opt/OptsHandler.h ../utils/error.h ../utils/NodeList.h \
- ../utils/utils.h ../prop/Prop.h ../fsm/FsmBuilder.h \
+ ../utils/array.h ../utils/avl.h ../utils/NodeList.h ../node/node.h \
+ ../utils/utils.h ../../../cudd-2.4.1.1/include/cudd.h \
+ ../../../cudd-2.4.1.1/include/mtr.h ../opt/OptsHandler.h \
+ ../utils/error.h ../prop/Prop.h ../fsm/FsmBuilder.h \
  ../fsm/sexp/SexpFsm.h ../fsm/sexp/sexp.h ../fsm/sexp/Expr.h \
  ../compile/symb_table/SymbTable.h ../compile/symb_table/SymbLayer.h \
  ../compile/symb_table/SymbType.h ../compile/symb_table/NFunction.h \
@@ -206,7 +206,11 @@ TraceManager.h:
 
 ../utils/avl.h:
 
+../utils/NodeList.h:
+
 ../node/node.h:
+
+../utils/utils.h:
 
 ../../../cudd-2.4.1.1/include/cudd.h:
 
@@ -215,10 +219,6 @@ TraceManager.h:
 ../opt/OptsHandler.h:
 
 ../utils/error.h:
-
-../utils/NodeList.h:
-
-../utils/utils.h:
 
 ../prop/Prop.h:
 

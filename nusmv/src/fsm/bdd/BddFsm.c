@@ -64,7 +64,7 @@
 #include "utils/error.h"
 #include "utils/assoc.h"
 #include "trans/bdd/ClusterList.h"
-
+#include "cudd.h"
 
 static char rcsid[] UTIL_UNUSED = "$Id: BddFsm.c,v 1.1.2.44.4.12.4.29 2010-03-02 08:45:22 nusmv Exp $";
 
@@ -2246,7 +2246,7 @@ boolean BddFsm_expand_cached_reachable_states(BddFsm_ptr self,
   /* True if fixpoint, false otherwise */
   return result;
 }
-
+/*
 static void get_trans_list_bdd(BddFsm_ptr self, Expr_ptr expr, NodeList_ptr list){
   node_ptr node = (node_ptr) expr;
   bdd_ptr tmp;
@@ -2260,10 +2260,23 @@ static void get_trans_list_bdd(BddFsm_ptr self, Expr_ptr expr, NodeList_ptr list
       NodeList_append(list, (node_ptr)tmp);
   }
 }
+*/
+
+bdd_ptr BddFsm_cpre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube, 
+                    bdd_ptr cinput_cube, bdd_ptr * trans, bdd_ptr states){
+  bdd_ptr pstates = BddEnc_next_state_var_to_state_var(self->enc, states);
+  bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, trans);
+  bdd_ptr pre2 = bdd_forsome(self->dd, pre1, cinput_cube);
+  bdd_ptr pre3 = bdd_forall(self->dd, pre2, uinput_cube);
+  // TODO free pstates, pre1, pre2
+  return pre3;
+}
 
 EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
   int count;
   NodeList_ptr latches, uinputs, cinputs, outputs, all_vars;
+  ListIter_ptr iter = NULL;
+  ListIter_ptr trans_iter = NULL;
 	latches = NodeList_create();
 	uinputs = NodeList_create();
 	cinputs = NodeList_create();
@@ -2281,32 +2294,110 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       &cinputs, &cinput_cube, 
       &outputs, &error);
   
-  NodeList_ptr trans_rels = self->trans_expr;
-  printf("--- trans_rels size: %d\n", NodeList_get_length(trans_rels));
-  fflush(stdout);
+  // Prepare initial state
+  bdd_ptr init = bdd_true(self->dd);
+  iter = NodeList_get_first_iter(latches);
+  NODE_LIST_FOREACH(latches,iter){
+    node_ptr var = NodeList_get_elem_at(latches,iter);
+    bdd_ptr varbdd = BddEnc_expr_to_bdd(self->enc, var, Nil);
+    bdd_and_accumulate(self->dd, &init, bdd_not(self->dd, varbdd));
+  }
 
+  // Create the list of primed latches
+  NodeList_ptr platch_bdds = NodeList_create();
+  iter = NodeList_get_first_iter(latches);
+  NODE_LIST_FOREACH(latches,iter){
+    node_ptr var = NodeList_get_elem_at(latches,iter);
+    bdd_ptr varbdd = BddEnc_expr_to_bdd(self->enc, var, Nil);
+    BddEnc_state_var_to_next_state_var(self->enc, varbdd);
+    NodeList_append(platch_bdds, (node_ptr) varbdd);
+  }
+
+  // List of pairs of primed latch and trans. function
+  NodeList_ptr trans_rels = self->trans_expr;
+  NodeList_ptr trans_funcs = NodeList_create();
+  iter = NodeList_get_first_iter(platch_bdds);
+  NODE_LIST_FOREACH(platch_bdds, iter){
+    bdd_ptr pvar = (bdd_ptr) NodeList_get_elem_at(platch_bdds, iter);
+    bdd_ptr trans = NULL;
+    trans_iter = NodeList_get_first_iter(trans_rels);
+    NODE_LIST_FOREACH(trans_rels, trans_iter){
+      bdd_ptr t = (bdd_ptr)NodeList_get_elem_at(trans_rels, trans_iter);
+      bdd_ptr tFunc = bdd_and_abstract(self->dd, pvar, t, pvar);
+      if (tFunc != t){
+        if (trans != NULL){
+          fprintf(stderr, "[ERR] Two transition relations depend on the same next-state variable!\n");
+          exit(-1);
+        } else {
+          trans = tFunc;
+          NodeList_append(trans_funcs, (node_ptr) trans);
+        }
+      } else {
+        bdd_free(self->dd, tFunc);
+      }
+    }
+  }
+
+  // Prepare compose vector
+  // for any BDD B(L'), B.vector_compose(X)
+  // gives the predecessors A(L,X_u,X_c) of B
+	int nvars = Cudd_ReadSize(self->dd);
+	DdNode **X = ALLOC(DdNode *,nvars);
+	for (int i = 0; i < nvars; i++) {
+		X[i] = NULL;
+	}
+	ListIter_ptr v = NodeList_get_first_iter(platch_bdds);
+	ListIter_ptr t = NodeList_get_first_iter(trans_funcs);
+	bdd_ptr v_elm, t_elm;
+	unsigned int vindex = 0;
+	for(; !ListIter_is_end(v) && !ListIter_is_end(t); 
+				v = ListIter_get_next(v),
+				t = ListIter_get_next(t)){
+		v_elm = (bdd_ptr)NodeList_get_elem_at(platch_bdds, v);
+		t_elm = (bdd_ptr)NodeList_get_elem_at(trans_funcs, t);
+		vindex = Cudd_NodeReadIndex(v_elm);
+		assert(vindex >= 0 && vindex < nvars);
+		assert(X[vindex] == NULL);
+		X[vindex] = t_elm;
+	}
+
+  // Start fixpoint cpre computation
+  bdd_ptr iterate = bdd_true(self->dd);
+  bdd_ptr prev = NULL;
+  while( prev != iterate ){
+    // TODO free prev if non NULL
+    prev = iterate;
+    iterate = BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
+    bdd_and_accumulate(self->dd, &iterate, prev);
+  }
+  bdd_ptr check = bdd_and(self->dd, init, iterate);
+  int ret = false;
+  if (bdd_isnot_false(self->dd, check)){
+    ret = true;
+  }
+  // TODO: cleanup
+  return ret;
+  /*
   BddEnc_print_bdd_begin(self->enc, all_vars, false);
-  ListIter_ptr iter = NodeList_get_first_iter(trans_rels);
+  printf("--- trans_rels size: %d\n", NodeList_get_length(trans_rels));
+
+  iter = NodeList_get_first_iter(trans_rels);
   bdd_ptr tmp;
   // Expr_ptr expr;
   bdd_ptr accum = bdd_true(self->dd);
   NODE_LIST_FOREACH(trans_rels,iter){
-      // expr = (Expr_ptr) NodeList_get_elem_at(trans_rels,iter);
-      // tmp = BddEnc_expr_to_bdd(self->enc, expr, Nil);
       tmp = (bdd_ptr) NodeList_get_elem_at(trans_rels,iter);
       bdd_and_accumulate(self->dd, &accum, tmp);
-      // printf("\nPrinting a transition relation:\n");
-      // BddEnc_print_bdd(self->enc, tmp, (VPFNNF)NULL, stdout);
-      // BddEnc_print_set_of_states(self->enc, tmp, false, false, (VPFNNF)NULL, stdout);
   }
   bdd_ptr perror = bdd_dup(BddEnc_state_var_to_next_state_var(self->enc, error));
   bdd_ptr platch_cube = BddEnc_state_var_to_next_state_var(self->enc, latch_cube);
   bdd_and_accumulate(self->dd, & perror, accum);
   bdd_ptr preimage_of_error = bdd_forsome(self->dd, perror, platch_cube);
 
-  BddEnc_print_set_of_states(self->enc, preimage_of_error, true, false, (VPFNNF)NULL, stdout);
+  // BddEnc_print_set_of_states(self->enc, preimage_of_error, true, false, (VPFNNF)NULL, stdout);
   //BddEnc_print_set_of_states(self->enc, accum, true, false, (VPFNNF)NULL, stdout);
   BddEnc_print_bdd_end(self->enc);
+  */
 	// int idx = BddEnc_get_var_index_from_name(self->enc, (node_ptr)"o0");
 	// fprintf(nusmv_stdout, "index: %d\n", idx);
 	// BddEnc_print_set_of_inputs(self->enc, input_vars_bdd, false, (VPFNNF) NULL, nusmv_stdout );
@@ -2324,7 +2415,6 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
 		fprintf(nusmv_stdout, "Var name: %s\n", (char*)var_name);
 	}
 	*/
-	return true;
 }
 
 /**Function********************************************************************

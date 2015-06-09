@@ -61,10 +61,10 @@ main.o: src/main.c /usr/include/stdc-predef.h nusmv-config.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h src/cinit/cinit.h \
  src/node/node.h src/dd/dd.h src/utils/array.h src/utils/avl.h \
- ../cudd-2.4.1.1/include/cudd.h ../cudd-2.4.1.1/include/mtr.h \
- src/parser/symbols.h src/parser/parser.h src/rbc/rbc.h \
- /usr/include/malloc.h src/dag/dag.h ../cudd-2.4.1.1/include/st.h \
- src/utils/Slist.h src/set/set.h src/utils/NodeList.h src/utils/utils.h \
+ src/utils/NodeList.h src/utils/utils.h ../cudd-2.4.1.1/include/cudd.h \
+ ../cudd-2.4.1.1/include/mtr.h src/parser/symbols.h src/parser/parser.h \
+ src/rbc/rbc.h /usr/include/malloc.h src/dag/dag.h \
+ ../cudd-2.4.1.1/include/st.h src/utils/Slist.h src/set/set.h \
  src/compile/compile.h src/compile/FlatHierarchy.h \
  src/compile/symb_table/SymbTable.h src/compile/symb_table/SymbLayer.h \
  src/compile/symb_table/SymbType.h src/compile/symb_table/NFunction.h \
@@ -287,6 +287,10 @@ src/utils/array.h:
 
 src/utils/avl.h:
 
+src/utils/NodeList.h:
+
+src/utils/utils.h:
+
 ../cudd-2.4.1.1/include/cudd.h:
 
 ../cudd-2.4.1.1/include/mtr.h:
@@ -306,10 +310,6 @@ src/dag/dag.h:
 src/utils/Slist.h:
 
 src/set/set.h:
-
-src/utils/NodeList.h:
-
-src/utils/utils.h:
 
 src/compile/compile.h:
 

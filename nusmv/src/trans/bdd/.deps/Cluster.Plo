@@ -39,7 +39,7 @@ bdd/Cluster.lo: bdd/Cluster.c /usr/include/stdc-predef.h bdd/Cluster.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h ../utils/list.h \
  ../opt/OptsHandler.h ../utils/object.h /usr/include/memory.h \
  ../utils/utils.h ../dd/dd.h ../utils/array.h ../utils/avl.h \
- ../node/node.h ../../../cudd-2.4.1.1/include/cudd.h \
+ ../utils/NodeList.h ../node/node.h ../../../cudd-2.4.1.1/include/cudd.h \
  ../../../cudd-2.4.1.1/include/mtr.h ../utils/object_private.h \
  ../utils/object.h
 
@@ -170,6 +170,8 @@ bdd/ClusterOptions.h:
 ../utils/array.h:
 
 ../utils/avl.h:
+
+../utils/NodeList.h:
 
 ../node/node.h:
 

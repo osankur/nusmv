@@ -57,7 +57,7 @@
 #define HAVE_LIBM 1
 
 /* Uses the private readline */
-#define HAVE_LIBREADLINE 0
+#define HAVE_LIBREADLINE 1
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -212,7 +212,7 @@
 #define LIBRARY_BUGREPORT "Please report bugs to <nusmv-users@fbk.eu>"
 
 /* Library build date */
-#define LIBRARY_BUILD_DATE "Sun Jun  7 13:41:34 UTC 2015"
+#define LIBRARY_BUILD_DATE "Mon Jun  8 08:08:14 UTC 2015"
 
 /* Library Email */
 #define LIBRARY_EMAIL "nusmv-users@list.fbk.eu"
@@ -244,7 +244,7 @@
 #define PACKAGE_BUGREPORT "nusmv-users@fbk.eu"
 
 /* Build date */
-#define PACKAGE_BUILD_DATE "Sun Jun  7 13:41:34 UTC 2015"
+#define PACKAGE_BUILD_DATE "Mon Jun  8 08:08:14 UTC 2015"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "NuSMV"

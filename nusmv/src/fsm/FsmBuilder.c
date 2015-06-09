@@ -456,7 +456,8 @@ BddFsm_ptr FsmBuilder_create_bdd_fsm_of_vars(const FsmBuilder_ptr self,
       Expr_ptr vtrans = SexpFsm_get_var_trans(sexp_fsm,
                            (node_ptr) Set_GetMember(sorted_vars, iter));
       trans_expr = Expr_and_nil(trans_expr, vtrans);
-      NodeList_append(trans_list, (node_ptr)bdd_dup(BddEnc_expr_to_bdd(enc, vtrans, Nil)));
+      // NodeList_append(trans_list, (node_ptr)bdd_dup(BddEnc_expr_to_bdd(enc, vtrans, Nil)));
+      NodeList_append(trans_list, (node_ptr)BddEnc_expr_to_bdd(enc, vtrans, Nil));
     }
 
     Set_ReleaseSet(sorted_vars); /* no longer needed */

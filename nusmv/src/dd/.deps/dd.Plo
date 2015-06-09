@@ -49,9 +49,9 @@ dd.lo: dd.c /usr/include/stdc-predef.h ddInt.h /usr/include/stdio.h \
  ../../../cudd-2.4.1.1/include/cuddInt.h \
  ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
  ../../../cudd-2.4.1.1/include/st.h ../../../cudd-2.4.1.1/include/st.h \
- ../dd/dd.h ../../../cudd-2.4.1.1/include/cudd.h ../opt/OptsHandler.h \
- ../dd/VarsHandler.h ../utils/error.h ../utils/NodeList.h \
- ../utils/utils.h ../prop/Prop.h ../fsm/FsmBuilder.h \
+ ../dd/dd.h ../utils/NodeList.h ../utils/utils.h \
+ ../../../cudd-2.4.1.1/include/cudd.h ../opt/OptsHandler.h \
+ ../dd/VarsHandler.h ../utils/error.h ../prop/Prop.h ../fsm/FsmBuilder.h \
  ../fsm/sexp/SexpFsm.h ../fsm/sexp/sexp.h ../fsm/sexp/Expr.h \
  ../compile/symb_table/SymbTable.h ../compile/symb_table/SymbLayer.h \
  ../compile/symb_table/SymbType.h ../compile/symb_table/NFunction.h \
@@ -235,6 +235,10 @@ ddInt.h:
 
 ../dd/dd.h:
 
+../utils/NodeList.h:
+
+../utils/utils.h:
+
 ../../../cudd-2.4.1.1/include/cudd.h:
 
 ../opt/OptsHandler.h:
@@ -242,10 +246,6 @@ ddInt.h:
 ../dd/VarsHandler.h:
 
 ../utils/error.h:
-
-../utils/NodeList.h:
-
-../utils/utils.h:
 
 ../prop/Prop.h:
 

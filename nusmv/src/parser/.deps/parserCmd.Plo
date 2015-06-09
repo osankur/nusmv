@@ -40,11 +40,11 @@ parserCmd.lo: parserCmd.c /usr/include/stdc-predef.h parserInt.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h \
  ../../src/utils/list.h ../../src/node/node.h ../../src/dd/dd.h \
- ../../src/utils/array.h ../../src/utils/avl.h \
- ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
- ../../src/opt/OptsHandler.h ../../src/set/set.h \
- ../../src/utils/NodeList.h ../../src/utils/utils.h ../../src/rbc/rbc.h \
- /usr/include/malloc.h ../../src/dag/dag.h /usr/include/unistd.h \
+ ../../src/utils/array.h ../../src/utils/avl.h ../../src/utils/NodeList.h \
+ ../../src/utils/utils.h ../../../cudd-2.4.1.1/include/cudd.h \
+ ../../../cudd-2.4.1.1/include/mtr.h ../../src/opt/OptsHandler.h \
+ ../../src/set/set.h ../../src/rbc/rbc.h /usr/include/malloc.h \
+ ../../src/dag/dag.h /usr/include/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
@@ -217,6 +217,10 @@ parser.h:
 
 ../../src/utils/avl.h:
 
+../../src/utils/NodeList.h:
+
+../../src/utils/utils.h:
+
 ../../../cudd-2.4.1.1/include/cudd.h:
 
 ../../../cudd-2.4.1.1/include/mtr.h:
@@ -224,10 +228,6 @@ parser.h:
 ../../src/opt/OptsHandler.h:
 
 ../../src/set/set.h:
-
-../../src/utils/NodeList.h:
-
-../../src/utils/utils.h:
 
 ../../src/rbc/rbc.h:
 

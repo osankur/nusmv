@@ -796,41 +796,41 @@ Cudd_addNonSimCompose(
   SeeAlso     [Cudd_bddPermute Cudd_bddCompose Cudd_addVectorCompose]
 
 ******************************************************************************/
-DdNode *
+	DdNode *
 Cudd_bddVectorCompose(
-  DdManager * dd,
-  DdNode * f,
-  DdNode ** vector)
+		DdManager * dd,
+		DdNode * f,
+		DdNode ** vector)
 {
-    DdHashTable		*table;
-    DdNode		*res;
-    int			deepest;
-    int                 i;
+	DdHashTable		*table;
+	DdNode		*res;
+	int			deepest;
+	int                 i;
 
-    do {
-	dd->reordered = 0;
-	/* Initialize local cache. */
-	table = cuddHashTableInit(dd,1,2);
-	if (table == NULL) return(NULL);
+	do {
+		dd->reordered = 0;
+		/* Initialize local cache. */
+		table = cuddHashTableInit(dd,1,2);
+		if (table == NULL) return(NULL);
 
-	/* Find deepest real substitution. */
-	for (deepest = dd->size - 1; deepest >= 0; deepest--) {
-	    i = dd->invperm[deepest];
-	    if (vector[i] != dd->vars[i]) {
-		break;
-	    }
-	}
+		/* Find deepest real substitution. */
+		for (deepest = dd->size - 1; deepest >= 0; deepest--) {
+			i = dd->invperm[deepest];
+			if (vector[i] != dd->vars[i]) {
+				break;
+			}
+		}
 
-	/* Recursively solve the problem. */
-	res = cuddBddVectorComposeRecur(dd,table,f,vector, deepest);
-	if (res != NULL) cuddRef(res);
+		/* Recursively solve the problem. */
+		res = cuddBddVectorComposeRecur(dd,table,f,vector, deepest);
+		if (res != NULL) cuddRef(res);
 
-	/* Dispose of local cache. */
-	cuddHashTableQuit(table);
-    } while (dd->reordered == 1);
+		/* Dispose of local cache. */
+		cuddHashTableQuit(table);
+	} while (dd->reordered == 1);
 
-    if (res != NULL) cuddDeref(res);
-    return(res);
+	if (res != NULL) cuddDeref(res);
+	return(res);
 
 } /* end of Cudd_bddVectorCompose */
 

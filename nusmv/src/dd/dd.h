@@ -49,6 +49,7 @@
 #include "utils/utils.h"
 #include "utils/array.h"
 #include "utils/avl.h"
+#include "utils/NodeList.h"
 #include "node/node.h"
 #include "cudd.h"
 #include "opt/OptsHandler.h"
@@ -259,6 +260,7 @@ EXTERN int      bdd_DumpBlifBody        ARGS((DdManager *dd, int n, bdd_ptr *f, 
 EXTERN int      bdd_leq                 ARGS((DdManager *dd, bdd_ptr f, bdd_ptr g));
 EXTERN bdd_ptr  bdd_swap_variables      ARGS((DdManager *dd, bdd_ptr f, bdd_ptr *x_varlist, bdd_ptr *y_varlist, int n));
 EXTERN bdd_ptr  bdd_compose             ARGS((DdManager *dd, bdd_ptr f, bdd_ptr g, int v));
+EXTERN bdd_ptr  bdd_vector_compose      ARGS((DdManager *dd, bdd_ptr f, bdd_ptr * X));
 EXTERN int      bdd_ref_count           ARGS((bdd_ptr n));
 EXTERN int      calculate_bdd_value     ARGS((DdManager* mgr, bdd_ptr f, int* values));
 

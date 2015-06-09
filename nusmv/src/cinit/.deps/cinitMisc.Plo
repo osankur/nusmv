@@ -62,11 +62,11 @@ cinitMisc.lo: cinitMisc.c /usr/include/stdc-predef.h cinitInt.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h ../utils/list.h \
  ../opt/OptsHandler.h ../node/node.h ../dd/dd.h ../utils/array.h \
- ../utils/avl.h ../../../cudd-2.4.1.1/include/cudd.h \
- ../../../cudd-2.4.1.1/include/mtr.h ../parser/symbols.h \
- ../parser/parser.h ../rbc/rbc.h /usr/include/malloc.h ../dag/dag.h \
- ../../../cudd-2.4.1.1/include/st.h ../utils/Slist.h ../set/set.h \
- ../utils/NodeList.h ../utils/utils.h ../compile/compile.h \
+ ../utils/avl.h ../utils/NodeList.h ../utils/utils.h \
+ ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
+ ../parser/symbols.h ../parser/parser.h ../rbc/rbc.h \
+ /usr/include/malloc.h ../dag/dag.h ../../../cudd-2.4.1.1/include/st.h \
+ ../utils/Slist.h ../set/set.h ../compile/compile.h \
  ../compile/FlatHierarchy.h ../compile/symb_table/SymbTable.h \
  ../compile/symb_table/SymbLayer.h ../compile/symb_table/SymbType.h \
  ../compile/symb_table/NFunction.h ../compile/symb_table/SymbType.h \
@@ -287,6 +287,10 @@ cinitInt.h:
 
 ../utils/avl.h:
 
+../utils/NodeList.h:
+
+../utils/utils.h:
+
 ../../../cudd-2.4.1.1/include/cudd.h:
 
 ../../../cudd-2.4.1.1/include/mtr.h:
@@ -306,10 +310,6 @@ cinitInt.h:
 ../utils/Slist.h:
 
 ../set/set.h:
-
-../utils/NodeList.h:
-
-../utils/utils.h:
 
 ../compile/compile.h:
 

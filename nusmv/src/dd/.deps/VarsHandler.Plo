@@ -37,9 +37,9 @@ VarsHandler.lo: VarsHandler.c /usr/include/stdc-predef.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h ../utils/list.h \
- ../utils/array.h ../utils/avl.h ../node/node.h \
- ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
- ../opt/OptsHandler.h ../set/set.h ../utils/NodeList.h ../utils/utils.h \
+ ../utils/array.h ../utils/avl.h ../utils/NodeList.h ../node/node.h \
+ ../utils/utils.h ../../../cudd-2.4.1.1/include/cudd.h \
+ ../../../cudd-2.4.1.1/include/mtr.h ../opt/OptsHandler.h ../set/set.h \
  ../dd/ddInt.h /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/huge_val.h \
  /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
@@ -205,7 +205,11 @@ VarsHandler.h:
 
 ../utils/avl.h:
 
+../utils/NodeList.h:
+
 ../node/node.h:
+
+../utils/utils.h:
 
 ../../../cudd-2.4.1.1/include/cudd.h:
 
@@ -214,10 +218,6 @@ VarsHandler.h:
 ../opt/OptsHandler.h:
 
 ../set/set.h:
-
-../utils/NodeList.h:
-
-../utils/utils.h:
 
 ../dd/ddInt.h:
 

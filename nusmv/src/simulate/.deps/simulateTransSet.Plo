@@ -38,14 +38,15 @@ simulateTransSet.lo: simulateTransSet.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h ../utils/list.h \
  ../fsm/bdd/BddFsm.h ../fsm/bdd/bdd.h ../dd/dd.h ../utils/array.h \
- ../utils/avl.h ../node/node.h ../../../cudd-2.4.1.1/include/cudd.h \
- ../../../cudd-2.4.1.1/include/mtr.h ../opt/OptsHandler.h \
- ../fsm/bdd/FairnessList.h ../utils/object.h /usr/include/memory.h \
- ../utils/utils.h ../trans/bdd/BddTrans.h ../trans/generic/GenericTrans.h \
- ../trans/trans.h ../trans/bdd/ClusterList.h ../trans/bdd/Cluster.h \
+ ../utils/avl.h ../utils/NodeList.h ../node/node.h ../utils/utils.h \
+ ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
+ ../opt/OptsHandler.h ../fsm/bdd/FairnessList.h ../utils/object.h \
+ /usr/include/memory.h ../trans/bdd/BddTrans.h \
+ ../trans/generic/GenericTrans.h ../trans/trans.h \
+ ../trans/bdd/ClusterList.h ../trans/bdd/Cluster.h \
  ../trans/bdd/ClusterOptions.h ../enc/bdd/BddEnc.h ../enc/bdd/bdd.h \
  ../enc/base/BoolEncClient.h ../enc/bool/BoolEnc.h \
- ../enc/bool/BitValues.h ../utils/NodeList.h ../enc/base/BaseEnc.h \
+ ../enc/bool/BitValues.h ../enc/base/BaseEnc.h \
  ../compile/symb_table/SymbTable.h ../compile/symb_table/SymbLayer.h \
  ../compile/symb_table/SymbType.h ../compile/symb_table/NFunction.h \
  ../compile/symb_table/SymbType.h ../set/set.h \
@@ -216,7 +217,11 @@ simulateTransSet.h:
 
 ../utils/avl.h:
 
+../utils/NodeList.h:
+
 ../node/node.h:
+
+../utils/utils.h:
 
 ../../../cudd-2.4.1.1/include/cudd.h:
 
@@ -229,8 +234,6 @@ simulateTransSet.h:
 ../utils/object.h:
 
 /usr/include/memory.h:
-
-../utils/utils.h:
 
 ../trans/bdd/BddTrans.h:
 
@@ -253,8 +256,6 @@ simulateTransSet.h:
 ../enc/bool/BoolEnc.h:
 
 ../enc/bool/BitValues.h:
-
-../utils/NodeList.h:
 
 ../enc/base/BaseEnc.h:
 

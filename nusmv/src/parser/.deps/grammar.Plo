@@ -48,12 +48,11 @@ grammar.lo: grammar.c /usr/include/stdc-predef.h ../../nusmv-config.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdbool.h \
  ../../src/utils/list.h ../../src/node/node.h ../../src/dd/dd.h \
- ../../src/utils/array.h ../../src/utils/avl.h \
- ../../../cudd-2.4.1.1/include/cudd.h ../../../cudd-2.4.1.1/include/mtr.h \
- ../../src/opt/OptsHandler.h ../../src/set/set.h \
- ../../src/utils/NodeList.h ../../src/utils/utils.h ../../src/rbc/rbc.h \
- ../../src/dag/dag.h /usr/include/unistd.h \
- /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ ../../src/utils/array.h ../../src/utils/avl.h ../../src/utils/NodeList.h \
+ ../../src/utils/utils.h ../../../cudd-2.4.1.1/include/cudd.h \
+ ../../../cudd-2.4.1.1/include/mtr.h ../../src/opt/OptsHandler.h \
+ ../../src/set/set.h ../../src/rbc/rbc.h ../../src/dag/dag.h \
+ /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h \
@@ -240,6 +239,10 @@ grammar.lo: grammar.c /usr/include/stdc-predef.h ../../nusmv-config.h \
 
 ../../src/utils/avl.h:
 
+../../src/utils/NodeList.h:
+
+../../src/utils/utils.h:
+
 ../../../cudd-2.4.1.1/include/cudd.h:
 
 ../../../cudd-2.4.1.1/include/mtr.h:
@@ -247,10 +250,6 @@ grammar.lo: grammar.c /usr/include/stdc-predef.h ../../nusmv-config.h \
 ../../src/opt/OptsHandler.h:
 
 ../../src/set/set.h:
-
-../../src/utils/NodeList.h:
-
-../../src/utils/utils.h:
 
 ../../src/rbc/rbc.h:
 
