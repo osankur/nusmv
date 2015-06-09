@@ -87,9 +87,11 @@ typedef struct BddFsm_TAG
 
   BddTrans_ptr trans;
 
+  NodeList_ptr trans_expr;
+
   JusticeList_ptr    justice;
   CompassionList_ptr compassion;
-
+  
   BddFsmCache_ptr cache;
 } BddFsm;
 
@@ -102,7 +104,9 @@ static void bdd_fsm_init ARGS((BddFsm_ptr self, BddEnc_ptr encoding,
                                BddInvarInputs invar_inputs,
                                BddTrans_ptr trans,
                                JusticeList_ptr justice,
-                               CompassionList_ptr compassion));
+                               CompassionList_ptr compassion,
+                               NodeList_ptr trans_expr
+                               ));
 
 static void bdd_fsm_copy ARGS((const BddFsm_ptr self, BddFsm_ptr copy));
 
@@ -164,13 +168,15 @@ BddFsm_ptr BddFsm_create(BddEnc_ptr encoding,
                          BddInvarInputs invar_inputs,
                          BddTrans_ptr trans,
                          JusticeList_ptr justice,
-                         CompassionList_ptr compassion)
+                         CompassionList_ptr compassion,
+                         NodeList_ptr trans_expr 
+                         )
 {
   BddFsm_ptr self = ALLOC( BddFsm, 1 );
   BDD_FSM_CHECK_INSTANCE(self);
 
   bdd_fsm_init(self, encoding, init, invar_states, invar_inputs,
-               trans, justice, compassion);
+               trans, justice, compassion, trans_expr);
 
   return self;
 }
@@ -2241,9 +2247,21 @@ boolean BddFsm_expand_cached_reachable_states(BddFsm_ptr self,
   return result;
 }
 
+static void get_trans_list_bdd(BddFsm_ptr self, Expr_ptr expr, NodeList_ptr list){
+  node_ptr node = (node_ptr) expr;
+  bdd_ptr tmp;
+  switch (node_get_type(node)) {
+  case AND:
+    get_trans_list_bdd(self, car(node), list);
+    get_trans_list_bdd(self, cdr(node), list);
+    break;
+  default:
+      tmp = BddEnc_expr_to_bdd(self->enc, expr, Nil);
+      NodeList_append(list, (node_ptr)tmp);
+  }
+}
+
 EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
-  node_ptr iter;
-  node_ptr valueList;
   int count;
   NodeList_ptr latches, uinputs, cinputs, outputs, all_vars;
 	latches = NodeList_create();
@@ -2254,7 +2272,6 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
 	BddVarSet_ptr latch_cube = bdd_true(self->dd);
 	BddVarSet_ptr uinput_cube = bdd_true(self->dd);
 	BddVarSet_ptr cinput_cube = bdd_true(self->dd);
-	BddVarSet_ptr platch_cube = bdd_true(self->dd);
 	bdd_ptr error = NULL;
   BddVarSet_ptr state_vars_bdd = BddEnc_get_state_vars_cube(self->enc);
 	BddEnc_synth_get_game(self->enc, state_vars_bdd, 
@@ -2263,15 +2280,33 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       &uinputs, &uinput_cube, 
       &cinputs, &cinput_cube, 
       &outputs, &error);
-  printf("\n-->\n");
+  
+  NodeList_ptr trans_rels = self->trans_expr;
+  printf("--- trans_rels size: %d\n", NodeList_get_length(trans_rels));
+  fflush(stdout);
+
   BddEnc_print_bdd_begin(self->enc, all_vars, false);
-  BddEnc_print_set_of_states(self->enc, error, false, false, (VPFNNF)NULL, stdout);
-  //BddEnc_print_bdd(self->enc, bdd_true(self->dd), (VPFNNF)NULL, stdout);
+  ListIter_ptr iter = NodeList_get_first_iter(trans_rels);
+  bdd_ptr tmp;
+  // Expr_ptr expr;
+  bdd_ptr accum = bdd_true(self->dd);
+  NODE_LIST_FOREACH(trans_rels,iter){
+      // expr = (Expr_ptr) NodeList_get_elem_at(trans_rels,iter);
+      // tmp = BddEnc_expr_to_bdd(self->enc, expr, Nil);
+      tmp = (bdd_ptr) NodeList_get_elem_at(trans_rels,iter);
+      bdd_and_accumulate(self->dd, &accum, tmp);
+      // printf("\nPrinting a transition relation:\n");
+      // BddEnc_print_bdd(self->enc, tmp, (VPFNNF)NULL, stdout);
+      // BddEnc_print_set_of_states(self->enc, tmp, false, false, (VPFNNF)NULL, stdout);
+  }
+  bdd_ptr perror = bdd_dup(BddEnc_state_var_to_next_state_var(self->enc, error));
+  bdd_ptr platch_cube = BddEnc_state_var_to_next_state_var(self->enc, latch_cube);
+  bdd_and_accumulate(self->dd, & perror, accum);
+  bdd_ptr preimage_of_error = bdd_forsome(self->dd, perror, platch_cube);
+
+  BddEnc_print_set_of_states(self->enc, preimage_of_error, true, false, (VPFNNF)NULL, stdout);
+  //BddEnc_print_set_of_states(self->enc, accum, true, false, (VPFNNF)NULL, stdout);
   BddEnc_print_bdd_end(self->enc);
-  printf("<--\n");
-  // BddEnc_print_bdd_begin(self->enc, latches, false);
-  // BddEnc_print_set_of_states(self->enc, latch_cube, false, true, (VPFNNF)NULL, stdout);
-  // BddEnc_print_bdd_end(self->enc);
 	// int idx = BddEnc_get_var_index_from_name(self->enc, (node_ptr)"o0");
 	// fprintf(nusmv_stdout, "index: %d\n", idx);
 	// BddEnc_print_set_of_inputs(self->enc, input_vars_bdd, false, (VPFNNF) NULL, nusmv_stdout );
@@ -2614,7 +2649,8 @@ static void bdd_fsm_init(BddFsm_ptr self,
                          BddInvarInputs invar_inputs,
                          BddTrans_ptr trans,
                          JusticeList_ptr justice,
-                         CompassionList_ptr compassion)
+                         CompassionList_ptr compassion,
+                         NodeList_ptr trans_expr)
 {
   self->enc = encoding;
   self->dd = BddEnc_get_dd_manager(encoding);
@@ -2636,7 +2672,7 @@ static void bdd_fsm_init(BddFsm_ptr self,
   self->compassion = compassion;
 
   self->cache = BddFsmCache_create(self->dd);
-
+  self->trans_expr = trans_expr;
   /* check inits and invars for emptiness */
   bdd_fsm_check_init_state_invar_emptiness(self);
 }

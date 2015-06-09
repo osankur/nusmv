@@ -85,7 +85,8 @@ EXTERN BddFsm_ptr
 BddFsm_create ARGS((BddEnc_ptr encoding, BddStates init, 
                     BddInvarStates invar_states, BddInvarInputs invar_inputs, 
                     BddTrans_ptr trans, 
-                    JusticeList_ptr justice, CompassionList_ptr compassion));
+                    JusticeList_ptr justice, CompassionList_ptr compassion,
+                    NodeList_ptr trans_expr));
 
 EXTERN void BddFsm_destroy ARGS((BddFsm_ptr self));
 

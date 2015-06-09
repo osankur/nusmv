@@ -439,12 +439,13 @@ BddFsm_ptr FsmBuilder_create_bdd_fsm_of_vars(const FsmBuilder_ptr self,
   /* ---------------------------------------------------------------------- */
   /* Trans construction                                                     */
   /* ---------------------------------------------------------------------- */
+  Expr_ptr trans_expr;
+  NodeList_ptr trans_list = NodeList_create();
   { /* here the trans is constructed out of the vars fsm, to make
        it ordered wrt the obtained ordered vars set */
     ClusterList_ptr clusters;
     ClusterOptions_ptr cluster_options;
     Set_t sorted_vars;
-    Expr_ptr trans_expr;
     Set_Iterator_t iter;
 
     sorted_vars = fsm_builder_order_vars_list(self, enc,
@@ -455,6 +456,7 @@ BddFsm_ptr FsmBuilder_create_bdd_fsm_of_vars(const FsmBuilder_ptr self,
       Expr_ptr vtrans = SexpFsm_get_var_trans(sexp_fsm,
                            (node_ptr) Set_GetMember(sorted_vars, iter));
       trans_expr = Expr_and_nil(trans_expr, vtrans);
+      NodeList_append(trans_list, (node_ptr)bdd_dup(BddEnc_expr_to_bdd(enc, vtrans, Nil)));
     }
 
     Set_ReleaseSet(sorted_vars); /* no longer needed */
@@ -497,7 +499,7 @@ BddFsm_ptr FsmBuilder_create_bdd_fsm_of_vars(const FsmBuilder_ptr self,
                          BDD_INVAR_STATES(invar_bdd),
                          BDD_INVAR_INPUTS(input_bdd),
                          trans,
-                         justice, compassion);
+                         justice, compassion, trans_list);
 
   bdd_free(self->dd, input_bdd);
   bdd_free(self->dd, invar_bdd);
@@ -508,7 +510,6 @@ BddFsm_ptr FsmBuilder_create_bdd_fsm_of_vars(const FsmBuilder_ptr self,
                              trans_type,
                              state_vars_cube, input_vars_cube,
                              next_state_vars_cube, bddfsm);
-
   return bddfsm;
 }
 
