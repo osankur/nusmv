@@ -2266,10 +2266,6 @@ bdd_ptr BddFsm_cpre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube,
 #endif
   bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
   bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, trans);
-	printf("\nPrinting pre1 (%d) \n-------------\n", pre1 == bdd_true(self->dd));
-	BddEnc_print_bdd(self->enc, pre1, NULL, stdout);
-	BddEnc_print_set_of_states(self->enc, pre1, false, false, NULL, stdout);
-	printf("\n\n");
   bdd_ptr pre2 = bdd_forsome(self->dd, pre1, cinput_cube);
   bdd_ptr pre3 = bdd_forall(self->dd, pre2, uinput_cube);
   bdd_free(self->dd, pstates);
@@ -2300,7 +2296,9 @@ static boolean backward_synth(BddFsm_ptr self, bdd_ptr latch_cube,
   boolean ret = true;
   *win = bdd_not(self->dd, error);
   bdd_ptr prev = NULL;
+  int count = 0;
   while( ret && prev != *win ){
+    printf("Bwd Iteration: %d\n", ++count);
     if (prev != NULL) bdd_free(self->dd, prev);
     prev = *win;
     *win = BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
