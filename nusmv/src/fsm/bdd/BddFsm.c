@@ -2264,8 +2264,16 @@ static void get_trans_list_bdd(BddFsm_ptr self, Expr_ptr expr, NodeList_ptr list
 
 bdd_ptr BddFsm_cpre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube, 
                     bdd_ptr cinput_cube, bdd_ptr * trans, bdd_ptr states){
+	printf("Printing states (%d) \n------------\n", states == bdd_true(self->dd));
+	BddEnc_print_bdd(self->enc, states, NULL, stdout);
+	BddEnc_print_set_of_states(self->enc, states, false, false, NULL, stdout);
+
   bdd_ptr pstates = BddEnc_next_state_var_to_state_var(self->enc, states);
   bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, trans);
+	printf("\nPrinting pre1 (%d) \n-------------\n", pre1 == bdd_true(self->dd));
+	BddEnc_print_bdd(self->enc, pre1, NULL, stdout);
+	BddEnc_print_set_of_states(self->enc, pre1, false, false, NULL, stdout);
+	printf("\n\n");
   bdd_ptr pre2 = bdd_forsome(self->dd, pre1, cinput_cube);
   bdd_ptr pre3 = bdd_forall(self->dd, pre2, uinput_cube);
   // TODO free pstates, pre1, pre2
@@ -2330,12 +2338,14 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       bdd_ptr t = (bdd_ptr)NodeList_get_elem_at(trans_rels, trans_iter);
       bdd_ptr tFunc = bdd_and_abstract(self->dd, pvar, t, pvar);
       if (tFunc != t){
+				//printf("Printing transition function for var %d (pvar: %d)\n", 
+				//			Cudd_NodeReadIndex(BddEnc_next_state_var_to_state_var(self->enc, pvar)), Cudd_NodeReadIndex(pvar));
+				// BddEnc_print_set_of_states(self->enc, tFunc, false, true, NULL ,stdout);
+				// printf("----\n");
         if (trans != NULL){
           fprintf(stderr, "[ERR] Two transition relations depend on the same next-state variable!\n");
           fprintf(stderr, "[ERR] Are the two funcs the same? %d\n", 
               NodeList_count_elem(trans_funcs, (node_ptr)trans));
-          //BddEnc_print_bdd(self->enc, 
-          //  BddEnc_next_state_var_to_state_var(self->enc, pvar), NULL, stdout);
           exit(-1);
         } else {
           trans = tFunc;
@@ -2366,8 +2376,40 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
 		t_elm = (bdd_ptr)NodeList_get_elem_at(trans_funcs, t);
 		vindex = Cudd_NodeReadIndex(v_elm);
 		assert(vindex >= 0 && vindex < nvars);
+		// Just to check if the trans_funcs are well defined
 		assert(X[vindex] == NULL);
 		X[vindex] = t_elm;
+	}
+
+	// Testing compose
+	DdNode **Y = ALLOC(DdNode*, nvars);
+	for (int i = 0; i < nvars; i++) {
+		Y[i] = NULL;
+	}
+  iter = NodeList_get_first_iter(latches);
+  NODE_LIST_FOREACH(latches,iter){
+    node_ptr var = NodeList_get_elem_at(latches,iter);
+    bdd_ptr varbdd = BddEnc_expr_to_bdd(self->enc, var, Nil);
+		Y[Cudd_NodeReadIndex(varbdd)] = bdd_not(self->dd, varbdd);
+	}
+	bdd_ptr noncube = bdd_vector_compose(self->dd, latch_cube, Y);
+	printf("-------------\n");
+	BddEnc_print_set_of_states(self->enc, noncube, true, false, NULL, stdout);
+	printf("-------------\n");
+	/*
+	for(int i = 0; i < nvars; i++){
+		printf("Printing variable %d: ", i);
+		if (X[i] == NULL){
+			printf(" ID\n");
+		} else{
+			BddEnc_print_set_of_states(self->enc, X[i], false, true, NULL ,stdout);
+			printf("\n----\n");
+		}
+	}
+	*/
+	//
+	for(int i = 0; i < nvars; i++){
+		if (X[i] == NULL) X[i] = Cudd_bddIthVar(self->dd, i);
 	}
 
   // Start fixpoint cpre computation
@@ -2378,6 +2420,7 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
     prev = iterate;
     iterate = BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
     bdd_and_accumulate(self->dd, &iterate, prev);
+		//printf("---- Printing CPRE iterate ----\n");
   }
   bdd_ptr check = bdd_and(self->dd, init, iterate);
   int ret = false;

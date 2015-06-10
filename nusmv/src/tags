@@ -466,48 +466,48 @@ AVL_BACKWARD	utils/avl.h	71;"	d
 AVL_FORWARD	utils/avl.h	70;"	d
 AVL_INCLUDED	utils/avl.h	39;"	d
 AVOID_DUPLICATE_BDDs	fsm/FsmBuilder.c	112;"	d	file:
-AWK	Makefile	/^AWK = gawk$/;"	m
-AWK	addons_core/Makefile	/^AWK = gawk$/;"	m
-AWK	addons_core/compass/Makefile	/^AWK = gawk$/;"	m
-AWK	addons_core/compass/parser/Makefile	/^AWK = gawk$/;"	m
-AWK	addons_core/compass/parser/ap/Makefile	/^AWK = gawk$/;"	m
-AWK	addons_core/compass/parser/prob/Makefile	/^AWK = gawk$/;"	m
-AWK	be/Makefile	/^AWK = gawk$/;"	m
-AWK	bmc/Makefile	/^AWK = gawk$/;"	m
-AWK	bmc/sbmc/Makefile	/^AWK = gawk$/;"	m
-AWK	cinit/Makefile	/^AWK = gawk$/;"	m
-AWK	cmd/Makefile	/^AWK = gawk$/;"	m
-AWK	compile/Makefile	/^AWK = gawk$/;"	m
-AWK	compile/symb_table/Makefile	/^AWK = gawk$/;"	m
-AWK	compile/type_checking/Makefile	/^AWK = gawk$/;"	m
-AWK	dag/Makefile	/^AWK = gawk$/;"	m
-AWK	dd/Makefile	/^AWK = gawk$/;"	m
-AWK	enc/Makefile	/^AWK = gawk$/;"	m
-AWK	fsm/Makefile	/^AWK = gawk$/;"	m
-AWK	hrc/Makefile	/^AWK = gawk$/;"	m
-AWK	ltl/Makefile	/^AWK = gawk$/;"	m
-AWK	ltl/ltl2smv/Makefile	/^AWK = gawk$/;"	m
-AWK	mc/Makefile	/^AWK = gawk$/;"	m
-AWK	node/Makefile	/^AWK = gawk$/;"	m
-AWK	node/normalizers/Makefile	/^AWK = gawk$/;"	m
-AWK	node/printers/Makefile	/^AWK = gawk$/;"	m
-AWK	opt/Makefile	/^AWK = gawk$/;"	m
-AWK	parser/Makefile	/^AWK = gawk$/;"	m
-AWK	parser/idlist/Makefile	/^AWK = gawk$/;"	m
-AWK	parser/ord/Makefile	/^AWK = gawk$/;"	m
-AWK	parser/psl/Makefile	/^AWK = gawk$/;"	m
-AWK	prop/Makefile	/^AWK = gawk$/;"	m
-AWK	rbc/Makefile	/^AWK = gawk$/;"	m
-AWK	sat/Makefile	/^AWK = gawk$/;"	m
-AWK	sat/solvers/Makefile	/^AWK = gawk$/;"	m
-AWK	set/Makefile	/^AWK = gawk$/;"	m
-AWK	sexp/Makefile	/^AWK = gawk$/;"	m
-AWK	simulate/Makefile	/^AWK = gawk$/;"	m
-AWK	trace/Makefile	/^AWK = gawk$/;"	m
-AWK	trans/Makefile	/^AWK = gawk$/;"	m
-AWK	utils/Makefile	/^AWK = gawk$/;"	m
-AWK	wff/Makefile	/^AWK = gawk$/;"	m
-AWK	wff/w2w/Makefile	/^AWK = gawk$/;"	m
+AWK	Makefile	/^AWK = mawk$/;"	m
+AWK	addons_core/Makefile	/^AWK = mawk$/;"	m
+AWK	addons_core/compass/Makefile	/^AWK = mawk$/;"	m
+AWK	addons_core/compass/parser/Makefile	/^AWK = mawk$/;"	m
+AWK	addons_core/compass/parser/ap/Makefile	/^AWK = mawk$/;"	m
+AWK	addons_core/compass/parser/prob/Makefile	/^AWK = mawk$/;"	m
+AWK	be/Makefile	/^AWK = mawk$/;"	m
+AWK	bmc/Makefile	/^AWK = mawk$/;"	m
+AWK	bmc/sbmc/Makefile	/^AWK = mawk$/;"	m
+AWK	cinit/Makefile	/^AWK = mawk$/;"	m
+AWK	cmd/Makefile	/^AWK = mawk$/;"	m
+AWK	compile/Makefile	/^AWK = mawk$/;"	m
+AWK	compile/symb_table/Makefile	/^AWK = mawk$/;"	m
+AWK	compile/type_checking/Makefile	/^AWK = mawk$/;"	m
+AWK	dag/Makefile	/^AWK = mawk$/;"	m
+AWK	dd/Makefile	/^AWK = mawk$/;"	m
+AWK	enc/Makefile	/^AWK = mawk$/;"	m
+AWK	fsm/Makefile	/^AWK = mawk$/;"	m
+AWK	hrc/Makefile	/^AWK = mawk$/;"	m
+AWK	ltl/Makefile	/^AWK = mawk$/;"	m
+AWK	ltl/ltl2smv/Makefile	/^AWK = mawk$/;"	m
+AWK	mc/Makefile	/^AWK = mawk$/;"	m
+AWK	node/Makefile	/^AWK = mawk$/;"	m
+AWK	node/normalizers/Makefile	/^AWK = mawk$/;"	m
+AWK	node/printers/Makefile	/^AWK = mawk$/;"	m
+AWK	opt/Makefile	/^AWK = mawk$/;"	m
+AWK	parser/Makefile	/^AWK = mawk$/;"	m
+AWK	parser/idlist/Makefile	/^AWK = mawk$/;"	m
+AWK	parser/ord/Makefile	/^AWK = mawk$/;"	m
+AWK	parser/psl/Makefile	/^AWK = mawk$/;"	m
+AWK	prop/Makefile	/^AWK = mawk$/;"	m
+AWK	rbc/Makefile	/^AWK = mawk$/;"	m
+AWK	sat/Makefile	/^AWK = mawk$/;"	m
+AWK	sat/solvers/Makefile	/^AWK = mawk$/;"	m
+AWK	set/Makefile	/^AWK = mawk$/;"	m
+AWK	sexp/Makefile	/^AWK = mawk$/;"	m
+AWK	simulate/Makefile	/^AWK = mawk$/;"	m
+AWK	trace/Makefile	/^AWK = mawk$/;"	m
+AWK	trans/Makefile	/^AWK = mawk$/;"	m
+AWK	utils/Makefile	/^AWK = mawk$/;"	m
+AWK	wff/Makefile	/^AWK = mawk$/;"	m
+AWK	wff/w2w/Makefile	/^AWK = mawk$/;"	m
 AX	parser/symbols.h	/^  AX,$/;"	e	enum:NUSMV_CORE_SYMBOLS
 A_SAT_SOLVER	opt/optInt.h	117;"	d
 AddArray2array	enc/utils/AddArray.c	99;"	d	file:
@@ -647,9 +647,9 @@ BDD_STATES	fsm/bdd/bdd.h	63;"	d
 BDD_STATES_INPUTS	fsm/bdd/bdd.h	71;"	d
 BDD_STATES_INPUTS_NEXTS	fsm/bdd/bdd.h	75;"	d
 BDD_STATIC_ORDER_HEURISTICS	opt/optInt.h	138;"	d
-BDD_STATIC_ORDER_HEURISTICS_BASIC	enc/enc.h	/^  BDD_STATIC_ORDER_HEURISTICS_BASIC,$/;"	e	enum:__anon14
-BDD_STATIC_ORDER_HEURISTICS_ERROR	enc/enc.h	/^  BDD_STATIC_ORDER_HEURISTICS_ERROR, \/* means an error has happened*\/$/;"	e	enum:__anon14
-BDD_STATIC_ORDER_HEURISTICS_NONE	enc/enc.h	/^  BDD_STATIC_ORDER_HEURISTICS_NONE,$/;"	e	enum:__anon14
+BDD_STATIC_ORDER_HEURISTICS_BASIC	enc/enc.h	/^  BDD_STATIC_ORDER_HEURISTICS_BASIC,$/;"	e	enum:__anon13
+BDD_STATIC_ORDER_HEURISTICS_ERROR	enc/enc.h	/^  BDD_STATIC_ORDER_HEURISTICS_ERROR, \/* means an error has happened*\/$/;"	e	enum:__anon13
+BDD_STATIC_ORDER_HEURISTICS_NONE	enc/enc.h	/^  BDD_STATIC_ORDER_HEURISTICS_NONE,$/;"	e	enum:__anon13
 BDD_STATIC_ORDER_HEURISTICS_STR_BASIC	enc/enc.c	67;"	d	file:
 BDD_STATIC_ORDER_HEURISTICS_STR_NONE	enc/enc.c	66;"	d	file:
 BDD_TRANS	trans/bdd/BddTrans.h	69;"	d
@@ -698,13 +698,13 @@ BMC_ALL_LOOPS_USERSIDE_SYMBOL	bmc/bmcUtils.c	60;"	d	file:
 BMC_BEXP_OUTPUT_LB	bmc/bmcInt.h	79;"	d
 BMC_BEXP_OUTPUT_SMV	bmc/bmcInt.h	78;"	d
 BMC_DIMACS_FILENAME	bmc/bmc.h	70;"	d
-BMC_DUMP_DA_VINCI	bmc/bmcDump.h	/^  BMC_DUMP_DA_VINCI, $/;"	e	enum:__anon1
-BMC_DUMP_DIMACS	bmc/bmcDump.h	/^  BMC_DUMP_DIMACS, $/;"	e	enum:__anon1
+BMC_DUMP_DA_VINCI	bmc/bmcDump.h	/^  BMC_DUMP_DA_VINCI, $/;"	e	enum:__anon3
+BMC_DUMP_DIMACS	bmc/bmcDump.h	/^  BMC_DUMP_DIMACS, $/;"	e	enum:__anon3
 BMC_DUMP_FILENAME_MAXLEN	bmc/bmcInt.h	74;"	d
-BMC_DUMP_GDL	bmc/bmcDump.h	/^  BMC_DUMP_GDL $/;"	e	enum:__anon1
-BMC_DUMP_NONE	bmc/bmcDump.h	/^  BMC_DUMP_NONE, $/;"	e	enum:__anon1
-BMC_ERROR	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon2
-BMC_FALSE	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon2
+BMC_DUMP_GDL	bmc/bmcDump.h	/^  BMC_DUMP_GDL $/;"	e	enum:__anon3
+BMC_DUMP_NONE	bmc/bmcDump.h	/^  BMC_DUMP_NONE, $/;"	e	enum:__anon3
+BMC_ERROR	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon1
+BMC_FALSE	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon1
 BMC_FORCE_PLTL_TABLEAU	bmc/bmc.h	81;"	d
 BMC_HASH_NOTFOUND	bmc/sbmc/sbmcHash.h	52;"	d
 BMC_INC_INVAR_ALG	bmc/bmc.h	77;"	d
@@ -718,10 +718,10 @@ BMC_INVAR_ALG_CLASSIC	bmc/bmc.h	97;"	d
 BMC_INVAR_ALG_EEN_SORENSSON	bmc/bmc.h	98;"	d
 BMC_INVAR_ALG_FALSIFICATION	bmc/bmc.h	99;"	d
 BMC_INVAR_BACKWARD	bmc/bmc.h	115;"	d
-BMC_INVAR_BACKWARD_CLOSURE	bmc/bmcBmc.h	/^  BMC_INVAR_BACKWARD_CLOSURE,$/;"	e	enum:__anon3
+BMC_INVAR_BACKWARD_CLOSURE	bmc/bmcBmc.h	/^  BMC_INVAR_BACKWARD_CLOSURE,$/;"	e	enum:__anon2
 BMC_INVAR_DIMACS_FILENAME	bmc/bmc.h	71;"	d
 BMC_INVAR_FORWARD	bmc/bmc.h	116;"	d
-BMC_INVAR_FORWARD_CLOSURE	bmc/bmcBmc.h	/^  BMC_INVAR_FORWARD_CLOSURE$/;"	e	enum:__anon3
+BMC_INVAR_FORWARD_CLOSURE	bmc/bmcBmc.h	/^  BMC_INVAR_FORWARD_CLOSURE$/;"	e	enum:__anon2
 BMC_MODE	bmc/bmc.h	69;"	d
 BMC_MODEL_DEBUG	bmc/bmcTrace.c	52;"	d	file:
 BMC_NO_LOOP	bmc/bmcUtils.c	55;"	d	file:
@@ -738,8 +738,8 @@ BMC_REWRITE_INVARSPEC_LAYER_NAME	bmc/bmcBmcNonInc.c	102;"	d	file:
 BMC_SBMC_CACHE_OPT	bmc/bmc.h	84;"	d
 BMC_SBMC_GF_FG_OPT	bmc/bmc.h	83;"	d
 BMC_SBMC_IL_OPT	bmc/bmc.h	82;"	d
-BMC_TRUE	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon2
-BMC_UNKNOWN	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon2
+BMC_TRUE	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon1
+BMC_UNKNOWN	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	e	enum:__anon1
 BOOLEAN	parser/symbols.h	/^  BOOLEAN, \/* 140 *\/$/;"	e	enum:NUSMV_CORE_SYMBOLS
 BOOL_C	enc/Makefile	/^BOOL_C = bool\/BitValues.c bool\/BoolEnc.c$/;"	m
 BOOL_ENC	enc/bool/BoolEnc.h	76;"	d
@@ -983,7 +983,7 @@ BddInvarInputs	fsm/bdd/bdd.h	/^typedef bdd_ptr BddInvarInputs;$/;"	t
 BddInvarStates	fsm/bdd/bdd.h	/^typedef bdd_ptr BddInvarStates;$/;"	t
 BddOregJusticeEmptinessBddAlgorithmType	fsm/bdd/bdd.h	/^  BddOregJusticeEmptinessBddAlgorithmType;$/;"	t	typeref:enum:BddOregJusticeEmptinessBddAlgorithmType_TAG
 BddOregJusticeEmptinessBddAlgorithmType_TAG	fsm/bdd/bdd.h	/^enum BddOregJusticeEmptinessBddAlgorithmType_TAG {$/;"	g
-BddSohEnum	enc/enc.h	/^} BddSohEnum;$/;"	t	typeref:enum:__anon14
+BddSohEnum	enc/enc.h	/^} BddSohEnum;$/;"	t	typeref:enum:__anon13
 BddStates	fsm/bdd/bdd.h	/^typedef bdd_ptr BddStates;$/;"	t
 BddStatesInputs	fsm/bdd/bdd.h	/^typedef bdd_ptr BddStatesInputs;$/;"	t
 BddStatesInputsNexts	fsm/bdd/bdd.h	/^typedef bdd_ptr BddStatesInputsNexts;$/;"	t
@@ -1187,7 +1187,7 @@ Bmc_Conv_cleanup_cached_entries_about	bmc/bmcConv.c	/^void Bmc_Conv_cleanup_cach
 Bmc_Conv_get_BeModel2SymbModel	bmc/bmcConv.c	/^void Bmc_Conv_get_BeModel2SymbModel(const BeEnc_ptr be_enc,$/;"	f
 Bmc_Conv_init_cache	bmc/bmcConv.c	/^void Bmc_Conv_init_cache()$/;"	f
 Bmc_Conv_quit_cache	bmc/bmcConv.c	/^void Bmc_Conv_quit_cache()$/;"	f
-Bmc_DumpType	bmc/bmcDump.h	/^} Bmc_DumpType;$/;"	t	typeref:enum:__anon1
+Bmc_DumpType	bmc/bmcDump.h	/^} Bmc_DumpType;$/;"	t	typeref:enum:__anon3
 Bmc_Dump_DimacsInvarProblem	bmc/bmcDump.c	/^void Bmc_Dump_DimacsInvarProblem(const BeEnc_ptr be_enc,$/;"	f
 Bmc_Dump_DimacsInvarProblemFilename	bmc/bmcDump.c	/^int Bmc_Dump_DimacsInvarProblemFilename(const BeEnc_ptr be_enc,$/;"	f
 Bmc_Dump_DimacsProblem	bmc/bmcDump.c	/^void Bmc_Dump_DimacsProblem(const BeEnc_ptr be_enc,$/;"	f
@@ -1294,7 +1294,7 @@ Bmc_fill_trace_from_cnf_model	bmc/bmcTrace.c	/^Bmc_fill_trace_from_cnf_model(con
 Bmc_induction_algorithm	bmc/bmcBmcNonInc.c	/^Bmc_result Bmc_induction_algorithm(BeFsm_ptr be_fsm,$/;"	f
 Bmc_init_opt	bmc/bmcOpt.c	/^void Bmc_init_opt()$/;"	f
 Bmc_pick_state_from_constr	bmc/bmcSimulate.c	/^int Bmc_pick_state_from_constr(BeFsm_ptr fsm, BddEnc_ptr bdd_enc,$/;"	f
-Bmc_result	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	t	typeref:enum:__anon2
+Bmc_result	bmc/bmcBmc.h	/^typedef enum {BMC_TRUE, BMC_FALSE, BMC_UNKNOWN, BMC_ERROR} Bmc_result;$/;"	t	typeref:enum:__anon1
 Bmc_rewrite_cleanup	bmc/bmcInt.c	/^void Bmc_rewrite_cleanup(Prop_ptr rewritten_prop,$/;"	f
 Bmc_rewrite_invar	bmc/bmcInt.c	/^Prop_ptr Bmc_rewrite_invar(const Prop_ptr prop,$/;"	f
 Bmc_simulate_check_feasible_constraints	bmc/bmcSimulate.c	/^Bmc_simulate_check_feasible_constraints(BeFsm_ptr be_fsm,$/;"	f
@@ -2948,9 +2948,9 @@ DUMPBIN	trans/Makefile	/^DUMPBIN = $/;"	m
 DUMPBIN	utils/Makefile	/^DUMPBIN = $/;"	m
 DUMPBIN	wff/Makefile	/^DUMPBIN = $/;"	m
 DUMPBIN	wff/w2w/Makefile	/^DUMPBIN = $/;"	m
-DUMP_BITS	enc/bdd/BddEnc.h	/^  DUMP_BITS,$/;"	e	enum:__anon12
-DUMP_DEFAULT	enc/bdd/BddEnc.h	/^  DUMP_DEFAULT,$/;"	e	enum:__anon12
-DUMP_SCALARS_ONLY	enc/bdd/BddEnc.h	/^  DUMP_SCALARS_ONLY$/;"	e	enum:__anon12
+DUMP_BITS	enc/bdd/BddEnc.h	/^  DUMP_BITS,$/;"	e	enum:__anon14
+DUMP_DEFAULT	enc/bdd/BddEnc.h	/^  DUMP_DEFAULT,$/;"	e	enum:__anon14
+DUMP_SCALARS_ONLY	enc/bdd/BddEnc.h	/^  DUMP_SCALARS_ONLY$/;"	e	enum:__anon14
 DYNAMIC_REORDER	opt/optInt.h	106;"	d
 DaVinciBack	rbc/rbcOutput.c	/^DaVinciBack($/;"	f	file:
 DaVinciDfsData	rbc/rbcOutput.c	/^struct DaVinciDfsData {$/;"	s	file:
@@ -2985,7 +2985,7 @@ Dag_VertexSet	dag/dag.h	246;"	d
 Dag_VertexUnmark	dag/dagVertex.c	/^void Dag_VertexUnmark($/;"	f
 Dag_Vertex_t	dag/dag.h	/^typedef struct Dag_Vertex       Dag_Vertex_t;        \/* The vertices. *\/$/;"	t	typeref:struct:Dag_Vertex
 DateReadFromDateString	cinit/cinitVers.c	/^DateReadFromDateString($/;"	f	file:
-Definition_Mode_Type	compile/compileFlatten.c	/^} Definition_Mode_Type;$/;"	t	typeref:enum:__anon6	file:
+Definition_Mode_Type	compile/compileFlatten.c	/^} Definition_Mode_Type;$/;"	t	typeref:enum:__anon11	file:
 DepDfsData	rbc/rbcUtils.c	/^} DepDfsData;$/;"	t	typeref:struct:DepDfsData_TAG	file:
 DepDfsData_TAG	rbc/rbcUtils.c	/^typedef struct DepDfsData_TAG {$/;"	s	file:
 Depth	dag/dagEnStat.c	108;"	d	file:
@@ -3443,7 +3443,7 @@ Enc_vars_ord_to_string	enc/enc.c	/^const char* Enc_vars_ord_to_string(VarsOrdTyp
 Enum_types	compile/symb_table/SymbType.h	/^enum Enum_types{ ENUM_TYPE_PURE_INT,$/;"	g
 EvalSet	bmc/bmcTableauPLTLformula.c	/^} EvalSet;$/;"	t	typeref:struct:EvalSetType	file:
 EvalSetType	bmc/bmcTableauPLTLformula.c	/^typedef struct EvalSetType {$/;"	s	file:
-Expand_Definition_Mode	compile/compileFlatten.c	/^  Expand_Definition_Mode$/;"	e	enum:__anon6	file:
+Expand_Definition_Mode	compile/compileFlatten.c	/^  Expand_Definition_Mode$/;"	e	enum:__anon11	file:
 Expr_and	fsm/sexp/Expr.c	/^Expr_ptr Expr_and(const Expr_ptr a, const Expr_ptr b)$/;"	f
 Expr_and_from_list	fsm/sexp/Expr.c	/^Expr_ptr Expr_and_from_list(node_ptr list, SymbTable_ptr symb_table)$/;"	f
 Expr_and_nil	fsm/sexp/Expr.c	/^Expr_ptr Expr_and_nil(const Expr_ptr a, const Expr_ptr b)$/;"	f
@@ -3572,7 +3572,7 @@ FGREP	wff/Makefile	/^FGREP = \/bin\/grep -F$/;"	m
 FGREP	wff/w2w/Makefile	/^FGREP = \/bin\/grep -F$/;"	m
 FIELD	utils/list.c	1000;"	d	file:
 FIELD	utils/lsort.h	157;"	d
-FILE_OUTPUT	compile/symb_table/SymbType.c	/^  enum {STRING_OUTPUT, FILE_OUTPUT} output_type;$/;"	e	enum:SymbTypePrinterInfo_TAG::__anon11	file:
+FILE_OUTPUT	compile/symb_table/SymbType.c	/^  enum {STRING_OUTPUT, FILE_OUTPUT} output_type;$/;"	e	enum:SymbTypePrinterInfo_TAG::__anon6	file:
 FLAT_HIERARCHY	compile/FlatHierarchy.h	75;"	d
 FLAT_HIERARCHY_CHECK_INSTANCE	compile/FlatHierarchy.h	77;"	d
 FLEXINT_H	addons_core/compass/parser/ap/ap_input.c	49;"	d	file:
@@ -3691,7 +3691,7 @@ Formula_GetConstants	compile/compileCone.c	/^Set_t Formula_GetConstants(const Sy
 Formula_GetDependencies	compile/compileCone.c	/^Set_t Formula_GetDependencies(const SymbTable_ptr symb_table,$/;"	f
 Formula_GetDependenciesByType	compile/compileCone.c	/^Formula_GetDependenciesByType(const SymbTable_ptr symb_table,$/;"	f
 Formulae_GetDependencies	compile/compileCone.c	/^Set_t Formulae_GetDependencies(const SymbTable_ptr symb_table,$/;"	f
-Frozen_Variables_Instantiation_Mode	compile/compile.h	/^  Frozen_Variables_Instantiation_Mode,$/;"	e	enum:__anon7
+Frozen_Variables_Instantiation_Mode	compile/compile.h	/^  Frozen_Variables_Instantiation_Mode,$/;"	e	enum:__anon8
 FsmBuilder	fsm/FsmBuilder.c	/^} FsmBuilder;$/;"	t	typeref:struct:FsmBuilder_TAG	file:
 FsmBuilder_TAG	fsm/FsmBuilder.c	/^typedef struct FsmBuilder_TAG$/;"	s	file:
 FsmBuilder_clusterize_expr	fsm/FsmBuilder.c	/^ClusterList_ptr FsmBuilder_clusterize_expr(FsmBuilder_ptr self,$/;"	f
@@ -3781,7 +3781,7 @@ GenericTrans_TAG	trans/generic/GenericTrans_private.h	/^typedef struct GenericTr
 GenericTrans_create	trans/generic/GenericTrans.c	/^GenericTrans_ptr GenericTrans_create(const TransType trans_type)$/;"	f
 GenericTrans_get_type	trans/generic/GenericTrans.c	/^TransType GenericTrans_get_type(const GenericTrans_ptr self)$/;"	f
 GenericTrans_ptr	trans/generic/GenericTrans.h	/^typedef struct GenericTrans_TAG* GenericTrans_ptr;$/;"	t	typeref:struct:GenericTrans_TAG
-Get_Definition_Mode	compile/compileFlatten.c	/^  Get_Definition_Mode,$/;"	e	enum:__anon6	file:
+Get_Definition_Mode	compile/compileFlatten.c	/^  Get_Definition_Mode,$/;"	e	enum:__anon11	file:
 GroupInfo	dd/VarsHandler.c	/^} GroupInfo;$/;"	t	typeref:struct:GroupInfo_TAG	file:
 GroupInfo_TAG	dd/VarsHandler.c	/^typedef struct GroupInfo_TAG {$/;"	s	file:
 GroupInfo_ptr	dd/VarsHandler.h	/^typedef struct GroupInfo_TAG* GroupInfo_ptr;$/;"	t	typeref:struct:GroupInfo_TAG
@@ -4692,10 +4692,10 @@ InlineResult_get_inlined_f	rbc/InlineResult.c	/^Rbc_t* InlineResult_get_inlined_
 InlineResult_get_inlined_f_and_c	rbc/InlineResult.c	/^Rbc_t* InlineResult_get_inlined_f_and_c(InlineResult_ptr self)$/;"	f
 InlineResult_get_original_f	rbc/InlineResult.c	/^Rbc_t* InlineResult_get_original_f(InlineResult_ptr self)$/;"	f
 InlineResult_ptr	rbc/InlineResult.h	/^typedef struct InlineResult_TAG*  InlineResult_ptr;$/;"	t	typeref:struct:InlineResult_TAG
-Input_Instantiation_Mode	compile/compileUtil.c	/^  Input_Instantiation_Mode$/;"	e	enum:__anon5	file:
-Input_Variables_Instantiation_Mode	compile/compile.h	/^  Input_Variables_Instantiation_Mode$/;"	e	enum:__anon7
-Instantiation_Variables_Mode_Type	compile/compile.h	/^} Instantiation_Variables_Mode_Type;$/;"	t	typeref:enum:__anon7
-Instantiation_Vars_Mode_Type	compile/compileUtil.c	/^} Instantiation_Vars_Mode_Type;$/;"	t	typeref:enum:__anon5	file:
+Input_Instantiation_Mode	compile/compileUtil.c	/^  Input_Instantiation_Mode$/;"	e	enum:__anon7	file:
+Input_Variables_Instantiation_Mode	compile/compile.h	/^  Input_Variables_Instantiation_Mode$/;"	e	enum:__anon8
+Instantiation_Variables_Mode_Type	compile/compile.h	/^} Instantiation_Variables_Mode_Type;$/;"	t	typeref:enum:__anon8
+Instantiation_Vars_Mode_Type	compile/compileUtil.c	/^} Instantiation_Vars_Mode_Type;$/;"	t	typeref:enum:__anon7	file:
 Interactive	simulate/simulate.h	/^typedef enum {Deterministic, Random, Interactive} Simulation_Mode;$/;"	e	enum:__anon27
 InvalidType	dd/dd.c	/^static void InvalidType(FILE *file, char *field, char *expected)$/;"	f	file:
 JMPBUF	utils/error.h	345;"	d
@@ -8091,12 +8091,12 @@ SSET_R_BALANCED	utils/Sset.c	/^  SSET_R_BALANCED = 1, \/* right child has height
 SSET_SET_BALANCE	utils/Sset.c	111;"	d	file:
 SSET_SET_PARENT	utils/Sset.c	176;"	d	file:
 SSET_SET_PARENT_BALANCE	utils/Sset.c	192;"	d	file:
-SS_False	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon9
-SS_Nostatus	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon9
-SS_Number	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon9
-SS_True	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon9
-SS_Unchecked	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon9
-SS_Wrong	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon9
+SS_False	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon10
+SS_Nostatus	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon10
+SS_Number	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon10
+SS_True	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon10
+SS_Unchecked	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon10
+SS_Wrong	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	e	enum:__anon10
 STACK	utils/Stack.h	68;"	d
 STACK_ARRAY_MIN_SIZE	utils/Stack.c	46;"	d	file:
 STACK_CHECK_INSTANCE	utils/Stack.h	71;"	d
@@ -8117,7 +8117,7 @@ STREAM_TYPE_STDOUT	node/printers/MasterPrinter.h	/^  STREAM_TYPE_STDOUT,$/;"	e	e
 STREAM_TYPE_STRING	node/printers/MasterPrinter.h	/^  STREAM_TYPE_STRING,$/;"	e	enum:StreamType_TAG
 STRING_HASH_SIZE	utils/ustring.c	49;"	d	file:
 STRING_MEM_CHUNK	utils/ustring.c	50;"	d	file:
-STRING_OUTPUT	compile/symb_table/SymbType.c	/^  enum {STRING_OUTPUT, FILE_OUTPUT} output_type;$/;"	e	enum:SymbTypePrinterInfo_TAG::__anon11	file:
+STRING_OUTPUT	compile/symb_table/SymbType.c	/^  enum {STRING_OUTPUT, FILE_OUTPUT} output_type;$/;"	e	enum:SymbTypePrinterInfo_TAG::__anon6	file:
 STRIP	Makefile	/^STRIP = strip$/;"	m
 STRIP	addons_core/Makefile	/^STRIP = strip$/;"	m
 STRIP	addons_core/compass/Makefile	/^STRIP = strip$/;"	m
@@ -8172,11 +8172,11 @@ STT_PARAMETER	compile/symb_table/SymbTable.h	/^  STT_PARAMETER      = STT_CONSTA
 STT_STATE_VAR	compile/symb_table/SymbTable.h	/^  STT_STATE_VAR      = STT_CONSTANT << 1, \/* 2 *\/$/;"	e	enum:SymbTableType_TAG
 STT_VAR	compile/symb_table/SymbTable.h	/^  STT_VAR            = STT_STATE_VAR | STT_INPUT_VAR | STT_FROZEN_VAR, \/* 14 *\/$/;"	e	enum:SymbTableType_TAG
 STT_VARIABLE_ARRAY	compile/symb_table/SymbTable.h	/^  STT_VARIABLE_ARRAY = STT_CONSTANT << 8, \/* 256 *\/$/;"	e	enum:SymbTableType_TAG
-ST_Compute	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon8
-ST_Ctl	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon8
-ST_Invar	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon8
-ST_Ltl	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon8
-ST_Notype	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon8
+ST_Compute	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon9
+ST_Ctl	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon9
+ST_Invar	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon9
+ST_Ltl	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon9
+ST_Notype	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	e	enum:__anon9
 ST_TRIGGER_SYMBOL_ADD	compile/symb_table/SymbTable.h	/^  ST_TRIGGER_SYMBOL_ADD,$/;"	e	enum:SymbTableTriggerAction_TAG
 ST_TRIGGER_SYMBOL_REDECLARE	compile/symb_table/SymbTable.h	/^  ST_TRIGGER_SYMBOL_REDECLARE$/;"	e	enum:SymbTableTriggerAction_TAG
 ST_TRIGGER_SYMBOL_REMOVE	compile/symb_table/SymbTable.h	/^  ST_TRIGGER_SYMBOL_REMOVE,$/;"	e	enum:SymbTableTriggerAction_TAG
@@ -8459,8 +8459,8 @@ Slist_top	utils/Slist.c	/^void* Slist_top(Slist_ptr self)$/;"	f
 Snode	utils/Slist.c	/^typedef struct Snode_TAG Snode;$/;"	t	typeref:struct:Snode_TAG	file:
 Snode_TAG	utils/Slist.c	/^struct Snode_TAG {$/;"	s	file:
 Snode_ptr	utils/Slist.h	/^typedef struct Snode_TAG* Snode_ptr;$/;"	t	typeref:struct:Snode_TAG
-Spec_Status	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	t	typeref:enum:__anon9
-Spec_Type	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	t	typeref:enum:__anon8
+Spec_Status	compile/compile.h	/^typedef enum {SS_Nostatus, SS_Unchecked, SS_True, SS_False, SS_Wrong, SS_Number} Spec_Status;$/;"	t	typeref:enum:__anon10
+Spec_Type	compile/compile.h	/^typedef enum {ST_Notype, ST_Ctl, ST_Ltl, ST_Invar, ST_Compute} Spec_Type;$/;"	t	typeref:enum:__anon9
 Sset	utils/Sset.c	/^typedef struct Sset_TAG Sset;$/;"	t	typeref:struct:Sset_TAG	file:
 Sset_TAG	utils/Sset.c	/^struct Sset_TAG {$/;"	s	file:
 Sset_copy	utils/Sset.c	/^Sset_ptr Sset_copy (const Sset_ptr self)$/;"	f
@@ -8505,8 +8505,8 @@ Stack_push	utils/Stack.c	/^void Stack_push(Stack_ptr self, void* element)$/;"	f
 Stack_top	utils/Stack.c	/^void* Stack_top(Stack_ptr self)$/;"	f
 StatData	dag/dagEnStat.c	/^struct StatData{$/;"	s	file:
 StatData_t	dag/dagEnStat.c	/^typedef struct StatData StatData_t;$/;"	t	typeref:struct:StatData	file:
-State_Instantiation_Mode	compile/compileUtil.c	/^  State_Instantiation_Mode,$/;"	e	enum:__anon5	file:
-State_Variables_Instantiation_Mode	compile/compile.h	/^  State_Variables_Instantiation_Mode,$/;"	e	enum:__anon7
+State_Instantiation_Mode	compile/compileUtil.c	/^  State_Instantiation_Mode,$/;"	e	enum:__anon7	file:
+State_Variables_Instantiation_Mode	compile/compile.h	/^  State_Variables_Instantiation_Mode,$/;"	e	enum:__anon8
 Statistics	dag/dagEnStat.c	/^struct Statistics {$/;"	s	file:
 Statistics_t	dag/dagEnStat.c	/^typedef struct Statistics Statistics_t;$/;"	t	typeref:struct:Statistics	file:
 Step_Direction	mc/mcInvar.c	/^typedef enum {FORWARD_STEP, BACKWARD_STEP} Step_Direction;$/;"	t	typeref:enum:__anon20	file:
@@ -8842,25 +8842,25 @@ SymbolInfo	compile/symb_table/SymbCache.c	/^} SymbolInfo;$/;"	t	typeref:struct:S
 SymbolInfo_TAG	compile/symb_table/SymbCache.c	/^typedef struct SymbolInfo_TAG {$/;"	s	file:
 SyntaxClass	parser/psl/pslExpr.h	/^} SyntaxClass ;$/;"	t	typeref:enum:SyntaxClass_TAG
 SyntaxClass_TAG	parser/psl/pslExpr.h	/^typedef enum SyntaxClass_TAG $/;"	g
-TC_VIOLATION_AMBIGUOUS_IDENTIFIER	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_AMBIGUOUS_IDENTIFIER, \/* identifier has two interpretations *\/$/;"	e	enum:__anon10
-TC_VIOLATION_ATTIME_NESTED	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_ATTIME_NESTED,  \/* nested attime operator *\/ $/;"	e	enum:__anon10
-TC_VIOLATION_ATTIME_NUM_REQ	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_ATTIME_NUM_REQ, \/* time must be a constant number *\/ $/;"	e	enum:__anon10
-TC_VIOLATION_DIFFERENT_TYPE_PARAMS_ERROR	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_DIFFERENT_TYPE_PARAMS_ERROR, \/* Invalid types for parameters..$/;"	e	enum:__anon10
-TC_VIOLATION_DUPLICATE_CONSTANTS	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_DUPLICATE_CONSTANTS, \/* duplicate constants in an enum type *\/$/;"	e	enum:__anon10
-TC_VIOLATION_FIRST	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_FIRST, \/* This MUST be the first! *\/$/;"	e	enum:__anon10
-TC_VIOLATION_INCORRECT_WORDARRAY_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_INCORRECT_WORDARRAY_WIDTH,\/* incorrectly formed WordArray type*\/$/;"	e	enum:__anon10
-TC_VIOLATION_INCORRECT_WORD_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_INCORRECT_WORD_WIDTH, \/* incorrectly formed Word type *\/$/;"	e	enum:__anon10
-TC_VIOLATION_INVALID_RANGE	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_INVALID_RANGE,$/;"	e	enum:__anon10
-TC_VIOLATION_LAST	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_LAST, \/* This MUST be the last! *\/$/;"	e	enum:__anon10
-TC_VIOLATION_OUT_OF_WORDARRAY_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_OUT_OF_WORDARRAY_WIDTH, \/* the address or$/;"	e	enum:__anon10
-TC_VIOLATION_OUT_OF_WORD_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_OUT_OF_WORD_WIDTH, \/* access to the bits outside $/;"	e	enum:__anon10
-TC_VIOLATION_PARAMS_NUM_ERROR	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_PARAMS_NUM_ERROR, \/* Invalid number of parameters in$/;"	e	enum:__anon10
-TC_VIOLATION_PARAMS_TYPE_ERROR	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_PARAMS_TYPE_ERROR, \/* Invalid number of parameters in$/;"	e	enum:__anon10
-TC_VIOLATION_TYPE_BACK_COMP	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_TYPE_BACK_COMP,   \/* type system is violated, but it$/;"	e	enum:__anon10
-TC_VIOLATION_TYPE_MANDATORY	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_TYPE_MANDATORY,   \/* the most general type system$/;"	e	enum:__anon10
-TC_VIOLATION_TYPE_WARNING	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_TYPE_WARNING,    \/* type system is violated, but is$/;"	e	enum:__anon10
-TC_VIOLATION_UNCONSTANT_EXPRESSION	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_UNCONSTANT_EXPRESSION,$/;"	e	enum:__anon10
-TC_VIOLATION_UNDEF_IDENTIFIER	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_UNDEF_IDENTIFIER, \/* undefined identifier is met *\/$/;"	e	enum:__anon10
+TC_VIOLATION_AMBIGUOUS_IDENTIFIER	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_AMBIGUOUS_IDENTIFIER, \/* identifier has two interpretations *\/$/;"	e	enum:__anon5
+TC_VIOLATION_ATTIME_NESTED	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_ATTIME_NESTED,  \/* nested attime operator *\/ $/;"	e	enum:__anon5
+TC_VIOLATION_ATTIME_NUM_REQ	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_ATTIME_NUM_REQ, \/* time must be a constant number *\/ $/;"	e	enum:__anon5
+TC_VIOLATION_DIFFERENT_TYPE_PARAMS_ERROR	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_DIFFERENT_TYPE_PARAMS_ERROR, \/* Invalid types for parameters..$/;"	e	enum:__anon5
+TC_VIOLATION_DUPLICATE_CONSTANTS	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_DUPLICATE_CONSTANTS, \/* duplicate constants in an enum type *\/$/;"	e	enum:__anon5
+TC_VIOLATION_FIRST	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_FIRST, \/* This MUST be the first! *\/$/;"	e	enum:__anon5
+TC_VIOLATION_INCORRECT_WORDARRAY_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_INCORRECT_WORDARRAY_WIDTH,\/* incorrectly formed WordArray type*\/$/;"	e	enum:__anon5
+TC_VIOLATION_INCORRECT_WORD_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_INCORRECT_WORD_WIDTH, \/* incorrectly formed Word type *\/$/;"	e	enum:__anon5
+TC_VIOLATION_INVALID_RANGE	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_INVALID_RANGE,$/;"	e	enum:__anon5
+TC_VIOLATION_LAST	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_LAST, \/* This MUST be the last! *\/$/;"	e	enum:__anon5
+TC_VIOLATION_OUT_OF_WORDARRAY_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_OUT_OF_WORDARRAY_WIDTH, \/* the address or$/;"	e	enum:__anon5
+TC_VIOLATION_OUT_OF_WORD_WIDTH	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_OUT_OF_WORD_WIDTH, \/* access to the bits outside $/;"	e	enum:__anon5
+TC_VIOLATION_PARAMS_NUM_ERROR	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_PARAMS_NUM_ERROR, \/* Invalid number of parameters in$/;"	e	enum:__anon5
+TC_VIOLATION_PARAMS_TYPE_ERROR	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_PARAMS_TYPE_ERROR, \/* Invalid number of parameters in$/;"	e	enum:__anon5
+TC_VIOLATION_TYPE_BACK_COMP	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_TYPE_BACK_COMP,   \/* type system is violated, but it$/;"	e	enum:__anon5
+TC_VIOLATION_TYPE_MANDATORY	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_TYPE_MANDATORY,   \/* the most general type system$/;"	e	enum:__anon5
+TC_VIOLATION_TYPE_WARNING	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_TYPE_WARNING,    \/* type system is violated, but is$/;"	e	enum:__anon5
+TC_VIOLATION_UNCONSTANT_EXPRESSION	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_UNCONSTANT_EXPRESSION,$/;"	e	enum:__anon5
+TC_VIOLATION_UNDEF_IDENTIFIER	compile/type_checking/checkers/checkersInt.h	/^    TC_VIOLATION_UNDEF_IDENTIFIER, \/* undefined identifier is met *\/$/;"	e	enum:__anon5
 TERM_CHR	node/printers/MasterPrinter.c	128;"	d	file:
 TEST_OPTS_HANDLER	opt/optCmd.c	54;"	d	file:
 TIMER_BENCH	utils/TimerBench.h	50;"	d
@@ -11143,7 +11143,7 @@ TypeChecker_is_specification_wellformed	compile/type_checking/TypeChecker.c	/^bo
 TypeChecker_is_type_wellformed	compile/type_checking/TypeChecker.c	/^boolean TypeChecker_is_type_wellformed(TypeChecker_ptr self,$/;"	f
 TypeChecker_ptr	compile/type_checking/TypeChecker.h	/^typedef struct TypeChecker_TAG*  TypeChecker_ptr;$/;"	t	typeref:struct:TypeChecker_TAG
 TypeCheckingViolationHandler_ptr	compile/type_checking/checkers/checkersInt.h	/^(*TypeCheckingViolationHandler_ptr) (CheckerBase_ptr checker, $/;"	t
-TypeSystemViolation	compile/type_checking/checkers/checkersInt.h	/^  } TypeSystemViolation;$/;"	t	typeref:enum:__anon10
+TypeSystemViolation	compile/type_checking/checkers/checkersInt.h	/^  } TypeSystemViolation;$/;"	t	typeref:enum:__anon5
 TypeSystemViolation_is_valid	compile/type_checking/checkers/checkersInt.c	/^boolean TypeSystemViolation_is_valid(TypeSystemViolation violation)$/;"	f
 UINT16_MAX	addons_core/compass/parser/ap/ap_input.c	100;"	d	file:
 UINT16_MAX	addons_core/compass/parser/prob/prob_input.c	100;"	d	file:
@@ -11516,10 +11516,10 @@ Utils_strcasecmp	utils/utils.c	/^int Utils_strcasecmp(const char* s1, const char
 VAR	parser/symbols.h	/^  VAR,$/;"	e	enum:NUSMV_CORE_SYMBOLS
 VARS_HANDLER	dd/VarsHandler.h	84;"	d
 VARS_HANDLER_CHECK_INSTANCE	dd/VarsHandler.h	87;"	d
-VARS_ORD_INPUTS_AFTER	enc/enc.h	/^  VARS_ORD_INPUTS_AFTER, $/;"	e	enum:__anon13
-VARS_ORD_INPUTS_AFTER_BI	enc/enc.h	/^  VARS_ORD_INPUTS_AFTER_BI, $/;"	e	enum:__anon13
-VARS_ORD_INPUTS_BEFORE	enc/enc.h	/^  VARS_ORD_INPUTS_BEFORE,$/;"	e	enum:__anon13
-VARS_ORD_INPUTS_BEFORE_BI	enc/enc.h	/^  VARS_ORD_INPUTS_BEFORE_BI, \/* default *\/$/;"	e	enum:__anon13
+VARS_ORD_INPUTS_AFTER	enc/enc.h	/^  VARS_ORD_INPUTS_AFTER, $/;"	e	enum:__anon12
+VARS_ORD_INPUTS_AFTER_BI	enc/enc.h	/^  VARS_ORD_INPUTS_AFTER_BI, $/;"	e	enum:__anon12
+VARS_ORD_INPUTS_BEFORE	enc/enc.h	/^  VARS_ORD_INPUTS_BEFORE,$/;"	e	enum:__anon12
+VARS_ORD_INPUTS_BEFORE_BI	enc/enc.h	/^  VARS_ORD_INPUTS_BEFORE_BI, \/* default *\/$/;"	e	enum:__anon12
 VARS_ORD_STR_INPUTS_AFTER	enc/enc.c	56;"	d	file:
 VARS_ORD_STR_INPUTS_AFTER_BI	enc/enc.c	59;"	d	file:
 VARS_ORD_STR_INPUTS_BEFORE	enc/enc.c	55;"	d	file:
@@ -11528,10 +11528,10 @@ VARS_ORD_STR_LEXICOGRAPHIC	enc/enc.c	61;"	d	file:
 VARS_ORD_STR_TOPOLOGICAL	enc/enc.c	57;"	d	file:
 VARS_ORD_STR_TOPOLOGICAL_BI	enc/enc.c	60;"	d	file:
 VARS_ORD_STR_UNKNOWN	enc/enc.c	62;"	d	file:
-VARS_ORD_TOPOLOGICAL	enc/enc.h	/^  VARS_ORD_TOPOLOGICAL, $/;"	e	enum:__anon13
-VARS_ORD_TOPOLOGICAL_BI	enc/enc.h	/^  VARS_ORD_TOPOLOGICAL_BI, $/;"	e	enum:__anon13
+VARS_ORD_TOPOLOGICAL	enc/enc.h	/^  VARS_ORD_TOPOLOGICAL, $/;"	e	enum:__anon12
+VARS_ORD_TOPOLOGICAL_BI	enc/enc.h	/^  VARS_ORD_TOPOLOGICAL_BI, $/;"	e	enum:__anon12
 VARS_ORD_TYPE	opt/optInt.h	137;"	d
-VARS_ORD_UNKNOWN	enc/enc.h	/^  VARS_ORD_UNKNOWN$/;"	e	enum:__anon13
+VARS_ORD_UNKNOWN	enc/enc.h	/^  VARS_ORD_UNKNOWN$/;"	e	enum:__anon12
 VAR_COLOR	compile/compileWriteUdg.c	95;"	d	file:
 VAR_FSM	fsm/sexp/SexpFsm.c	95;"	d	file:
 VERBOSE_LEVEL	opt/optInt.h	91;"	d
@@ -11597,7 +11597,7 @@ ValueRange	parser/psl/psl_grammar.y	/^ValueRange :$/;"	l
 ValueRange_List	parser/psl/psl_grammar.y	/^ValueRange_List :$/;"	l
 ValueSet	parser/psl/psl_grammar.y	/^ValueSet :$/;"	l
 VarFsm_ptr	fsm/sexp/SexpFsm.c	/^typedef node_ptr VarFsm_ptr;$/;"	t	file:
-VarOrderingType	enc/bdd/BddEnc.h	/^} VarOrderingType;$/;"	t	typeref:enum:__anon12
+VarOrderingType	enc/bdd/BddEnc.h	/^} VarOrderingType;$/;"	t	typeref:enum:__anon14
 VarsGroup	dd/VarsHandler.c	/^} VarsGroup;$/;"	t	typeref:struct:VarsGroup_TAG	file:
 VarsGroup_TAG	dd/VarsHandler.c	/^typedef struct VarsGroup_TAG {$/;"	s	file:
 VarsGroup_add_ginfo	dd/VarsHandler.c	/^static void VarsGroup_add_ginfo(VarsGroup* self, GroupInfo_ptr gi)$/;"	f	file:
@@ -11617,7 +11617,7 @@ VarsHandler_ptr	dd/VarsHandler.h	/^typedef struct VarsHandler_TAG*  VarsHandler_
 VarsHandler_release_group	dd/VarsHandler.c	/^boolean VarsHandler_release_group(VarsHandler_ptr self, GroupInfo_ptr gid)$/;"	f
 VarsHandler_reserve_group	dd/VarsHandler.c	/^GroupInfo_ptr VarsHandler_reserve_group(VarsHandler_ptr self,$/;"	f
 VarsHandler_update_levels	dd/VarsHandler.c	/^void VarsHandler_update_levels(VarsHandler_ptr self)$/;"	f
-VarsOrdType	enc/enc.h	/^} VarsOrdType;$/;"	t	typeref:enum:__anon13
+VarsOrdType	enc/enc.h	/^} VarsOrdType;$/;"	t	typeref:enum:__anon12
 WAREAD	parser/symbols.h	/^  WAREAD, \/* 230 *\/$/;"	e	enum:NUSMV_CORE_SYMBOLS
 WAWRITE	parser/symbols.h	/^  WAWRITE,$/;"	e	enum:NUSMV_CORE_SYMBOLS
 WORDARRAY	parser/symbols.h	/^  WORDARRAY,$/;"	e	enum:NUSMV_CORE_SYMBOLS
@@ -14899,7 +14899,7 @@ bmc_dump_openDimacsFile	bmc/bmcDump.c	/^static int bmc_dump_openDimacsFile(const
 bmc_expandFilename	bmc/sbmc/sbmcBmc.c	/^bmc_expandFilename(const int k, const int l,$/;"	f	file:
 bmc_init	compile/compileStruct.c	/^  int      bmc_init;$/;"	m	struct:cmp_struct	file:
 bmc_invar_algorithm	bmc/bmcInt.h	/^} bmc_invar_algorithm;$/;"	t	typeref:enum:__anon4
-bmc_invar_closure_strategy	bmc/bmcBmc.h	/^} bmc_invar_closure_strategy;$/;"	t	typeref:enum:__anon3
+bmc_invar_closure_strategy	bmc/bmcBmc.h	/^} bmc_invar_closure_strategy;$/;"	t	typeref:enum:__anon2
 bmc_is_propositional_formula_aux	bmc/bmcCheck.c	/^bmc_is_propositional_formula_aux(node_ptr wff, int index, void* pOpt)$/;"	f	file:
 bmc_model_getFairness_aux	bmc/bmcModel.c	/^static be_ptr bmc_model_getFairness_aux(const BeEnc_ptr be_enc,$/;"	f	file:
 bmc_model_getSingleFairness	bmc/bmcModel.c	/^bmc_model_getSingleFairness(const BeEnc_ptr be_enc,$/;"	f	file:
@@ -17715,9 +17715,12 @@ is_default_order_file	opt/optCmd.c	/^boolean is_default_order_file(OptsHandler_p
 is_list_empty	node/node.c	/^int is_list_empty(node_ptr list) { return list == Nil; }$/;"	f
 is_uninterpreted	compile/symb_table/NFunction.c	/^  boolean is_uninterpreted;$/;"	m	struct:NFunction_TAG	file:
 is_varname_cinput	enc/bdd/BddEnc.c	/^int is_varname_cinput(char * s){$/;"	f
+is_varname_cinput	str/str.c	/^int is_varname_cinput(char * s){$/;"	f
 is_varname_error	enc/bdd/BddEnc.c	/^int is_varname_error(char *s){$/;"	f
 is_varname_latch	enc/bdd/BddEnc.c	/^int is_varname_latch(char *s){$/;"	f
+is_varname_latch	str/str.c	/^int is_varname_latch(char *s){$/;"	f
 is_varname_uinput	enc/bdd/BddEnc.c	/^int is_varname_uinput(char * s){$/;"	f
+is_varname_uinput	str/str.c	/^int is_varname_uinput(char * s){$/;"	f
 is_volatile	trace/Trace_private.h	/^  boolean is_volatile;$/;"	m	struct:Trace_TAG
 isa	parser/grammar.y	/^isa           : TOK_ISA TOK_ATOM {$$ = new_node(ISA, $2, Nil);}$/;"	l
 isatty	addons_core/compass/parser/ap/ap_input.c	/^static inline int isatty(int d) { return 0; }$/;"	f	file:
@@ -19450,7 +19453,7 @@ out_func_t	node/node.h	/^typedef int (*out_func_t)(void*, char*);$/;"	t
 outbounds	compile/FlatHierarchy.c	/^  Set_t outbounds;$/;"	m	struct:dag_TAG	file:
 output_stream	trace/TraceOpt.c	/^  FILE* output_stream;$/;"	m	struct:TraceOpt_TAG	file:
 output_stream	trace/exec/BaseTraceExecutor_private.h	/^  FILE* output_stream;$/;"	m	struct:BaseTraceExecutor_TAG
-output_type	compile/symb_table/SymbType.c	/^  enum {STRING_OUTPUT, FILE_OUTPUT} output_type;$/;"	m	struct:SymbTypePrinterInfo_TAG	typeref:enum:SymbTypePrinterInfo_TAG::__anon11	file:
+output_type	compile/symb_table/SymbType.c	/^  enum {STRING_OUTPUT, FILE_OUTPUT} output_type;$/;"	m	struct:SymbTypePrinterInfo_TAG	typeref:enum:SymbTypePrinterInfo_TAG::__anon6	file:
 ovl_create	opt/OptsHandler.c	/^static ovl_ptr ovl_create(const char* values, int valuee)$/;"	f	file:
 ovl_create_empty	opt/OptsHandler.c	/^static ovl_ptr ovl_create_empty(void)$/;"	f	file:
 ovl_free	opt/OptsHandler.c	/^static void ovl_free(ovl_ptr *l)$/;"	f	file:
@@ -20452,48 +20455,48 @@ rcsid	set/setSet.c	/^static char UTIL_UNUSED rcsid[] = "$Id: setSet.c,v 1.9.14.3
 reachable	fsm/bdd/bddInt.h	/^  } reachable;$/;"	m	struct:BddFsmCache_TAG	typeref:struct:BddFsmCache_TAG::BddFsmReachable_TAG
 reachable_states	fsm/bdd/bddInt.h	/^    BddStates reachable_states; \/* Used to hold the bdd representing the$/;"	m	struct:BddFsmCache_TAG::BddFsmReachable_TAG
 read_model	compile/compileStruct.c	/^  int      read_model;$/;"	m	struct:cmp_struct	file:
-readline_libs	Makefile	/^readline_libs = $/;"	m
-readline_libs	addons_core/Makefile	/^readline_libs = $/;"	m
-readline_libs	addons_core/compass/Makefile	/^readline_libs = $/;"	m
-readline_libs	addons_core/compass/parser/Makefile	/^readline_libs = $/;"	m
-readline_libs	addons_core/compass/parser/ap/Makefile	/^readline_libs = $/;"	m
-readline_libs	addons_core/compass/parser/prob/Makefile	/^readline_libs = $/;"	m
-readline_libs	be/Makefile	/^readline_libs = $/;"	m
-readline_libs	bmc/Makefile	/^readline_libs = $/;"	m
-readline_libs	bmc/sbmc/Makefile	/^readline_libs = $/;"	m
-readline_libs	cinit/Makefile	/^readline_libs = $/;"	m
-readline_libs	cmd/Makefile	/^readline_libs = $/;"	m
-readline_libs	compile/Makefile	/^readline_libs = $/;"	m
-readline_libs	compile/symb_table/Makefile	/^readline_libs = $/;"	m
-readline_libs	compile/type_checking/Makefile	/^readline_libs = $/;"	m
-readline_libs	dag/Makefile	/^readline_libs = $/;"	m
-readline_libs	dd/Makefile	/^readline_libs = $/;"	m
-readline_libs	enc/Makefile	/^readline_libs = $/;"	m
-readline_libs	fsm/Makefile	/^readline_libs = $/;"	m
-readline_libs	hrc/Makefile	/^readline_libs = $/;"	m
-readline_libs	ltl/Makefile	/^readline_libs = $/;"	m
-readline_libs	ltl/ltl2smv/Makefile	/^readline_libs = $/;"	m
-readline_libs	mc/Makefile	/^readline_libs = $/;"	m
-readline_libs	node/Makefile	/^readline_libs = $/;"	m
-readline_libs	node/normalizers/Makefile	/^readline_libs = $/;"	m
-readline_libs	node/printers/Makefile	/^readline_libs = $/;"	m
-readline_libs	opt/Makefile	/^readline_libs = $/;"	m
-readline_libs	parser/Makefile	/^readline_libs = $/;"	m
-readline_libs	parser/idlist/Makefile	/^readline_libs = $/;"	m
-readline_libs	parser/ord/Makefile	/^readline_libs = $/;"	m
-readline_libs	parser/psl/Makefile	/^readline_libs = $/;"	m
-readline_libs	prop/Makefile	/^readline_libs = $/;"	m
-readline_libs	rbc/Makefile	/^readline_libs = $/;"	m
-readline_libs	sat/Makefile	/^readline_libs = $/;"	m
-readline_libs	sat/solvers/Makefile	/^readline_libs = $/;"	m
-readline_libs	set/Makefile	/^readline_libs = $/;"	m
-readline_libs	sexp/Makefile	/^readline_libs = $/;"	m
-readline_libs	simulate/Makefile	/^readline_libs = $/;"	m
-readline_libs	trace/Makefile	/^readline_libs = $/;"	m
-readline_libs	trans/Makefile	/^readline_libs = $/;"	m
-readline_libs	utils/Makefile	/^readline_libs = $/;"	m
-readline_libs	wff/Makefile	/^readline_libs = $/;"	m
-readline_libs	wff/w2w/Makefile	/^readline_libs = $/;"	m
+readline_libs	Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	addons_core/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	addons_core/compass/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	addons_core/compass/parser/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	addons_core/compass/parser/ap/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	addons_core/compass/parser/prob/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	be/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	bmc/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	bmc/sbmc/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	cinit/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	cmd/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	compile/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	compile/symb_table/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	compile/type_checking/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	dag/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	dd/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	enc/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	fsm/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	hrc/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	ltl/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	ltl/ltl2smv/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	mc/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	node/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	node/normalizers/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	node/printers/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	opt/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	parser/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	parser/idlist/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	parser/ord/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	parser/psl/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	prop/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	rbc/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	sat/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	sat/solvers/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	set/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	sexp/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	simulate/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	trace/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	trans/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	utils/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	wff/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
+readline_libs	wff/w2w/Makefile	/^readline_libs = -lreadline -lncurses$/;"	m
 realloc	utils/portability.h	57;"	d
 redef_triggers	compile/symb_table/SymbCache.c	/^  NodeList_ptr redef_triggers;$/;"	m	struct:SymbCache_TAG	file:
 reentrant	cmd/cmdInt.h	/^  boolean reentrant;$/;"	m	struct:CommandDescrStruct
