@@ -27,12 +27,29 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <string.h>
 
 static FILE *file;
 static aiger *mgr;
 static int count;
 
 static const char * prefix = "";
+
+char * correct_name(const char * name){
+  char * result = malloc(sizeof(char) * strlen(name));
+  strcpy(result, name);
+  char * iter = strchr(result, '<');
+  while(iter){
+    *iter = '_';
+    iter = strchr(result, '<');
+  }
+  iter = strchr(result, '>');
+  while(iter){
+    *iter = '_';
+    iter = strchr(result, '>');
+  }
+  return result;
+}
 
   static void
 ps (const char *str)
@@ -59,9 +76,10 @@ pl (unsigned lit)
       fputs (prefix, file);
     if ((name = aiger_get_symbol (mgr, lit)))
     {
-      /* TODO: check name to be valid SMV name
-      */
-      fputs (name, file);
+      // There could be ambiguities
+      char * corrected_name = correct_name(name);
+      fputs (corrected_name, file);
+      free(corrected_name);
     }
     else
     {
@@ -243,8 +261,8 @@ main (int argc, char **argv)
     ps ("--outputs\n");
     for (i = 0; i < mgr->num_outputs; i++)
     {
-        fprintf(file, "init(out_%u) := FALSE;\n", i);
-        fprintf(file, "next(out_%u) := ", i), pl (mgr->outputs[i].lit), ps (";\n");
+      fprintf(file, "init(out_%u) := FALSE;\n", i);
+      fprintf(file, "next(out_%u) := ", i), pl (mgr->outputs[i].lit), ps (";\n");
     }
 
     ps ("DEFINE\n");

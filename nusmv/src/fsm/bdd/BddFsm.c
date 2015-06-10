@@ -2246,34 +2246,143 @@ boolean BddFsm_expand_cached_reachable_states(BddFsm_ptr self,
   /* True if fixpoint, false otherwise */
   return result;
 }
-/*
-static void get_trans_list_bdd(BddFsm_ptr self, Expr_ptr expr, NodeList_ptr list){
-  node_ptr node = (node_ptr) expr;
-  bdd_ptr tmp;
-  switch (node_get_type(node)) {
-  case AND:
-    get_trans_list_bdd(self, car(node), list);
-    get_trans_list_bdd(self, cdr(node), list);
-    break;
-  default:
-      tmp = BddEnc_expr_to_bdd(self->enc, expr, Nil);
-      NodeList_append(list, (node_ptr)tmp);
-  }
-}
-*/
 
+// TODO We will eventually create a module BddSynth with itw own 
+// structure that contains everything needed for synthesis
+
+#define RESTRICT_IN_CPRE
 bdd_ptr BddFsm_cpre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube, 
                     bdd_ptr cinput_cube, bdd_ptr * trans, bdd_ptr states){
-  bdd_ptr pstates = BddEnc_next_state_var_to_state_var(self->enc, states);
+#ifdef RESTRICT_IN_CPRE
+  bdd_ptr notstates = bdd_not(self->dd, states);
+  int nvar = Cudd_ReadSize(self->dd);
+  bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
+  int i;
+  for (i = 0; i < nvar; i++){
+    Y[i] = bdd_restrict(self->dd, trans[i], notstates);
+  }
+  trans = Y;
+  bdd_free(self->dd, notstates);
+#endif
+  bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
   bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, trans);
   bdd_ptr pre2 = bdd_forsome(self->dd, pre1, cinput_cube);
   bdd_ptr pre3 = bdd_forall(self->dd, pre2, uinput_cube);
-  // TODO free pstates, pre1, pre2
+  bdd_free(self->dd, pstates);
+  bdd_free(self->dd, pre2);
+  bdd_free(self->dd, pre1);
+#ifdef RESTRICT_IN_CPRE
+  for (i = 0; i < nvar; i++){
+    bdd_free(self->dd, Y[i]);
+  }
+  free(trans);
+#endif
+  return pre3;
+}
+bdd_ptr BddFsm_upre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube, 
+                    bdd_ptr cinput_cube, bdd_ptr * trans, bdd_ptr states){
+  bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
+  bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, trans);
+  bdd_ptr pre2 = bdd_forall(self->dd, pre1, cinput_cube);
+  bdd_ptr pre3 = bdd_forsome(self->dd, pre2, uinput_cube);
+  bdd_free(self->dd,pre2);
+  bdd_free(self->dd,pre1);
+  bdd_free(self->dd,pstates);
   return pre3;
 }
 
+static boolean backward_synth(BddFsm_ptr self, bdd_ptr latch_cube, 
+    bdd_ptr uinput_cube, bdd_ptr cinput_cube, bdd_ptr init, bdd_ptr error, bdd_ptr * X, bdd_ptr * win){
+  boolean ret = true;
+  *win = bdd_not(self->dd, error);
+  bdd_ptr prev = NULL;
+  while( ret && prev != *win ){
+    if (prev != NULL) bdd_free(self->dd, prev);
+    prev = *win;
+    *win = BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
+    bdd_and_accumulate(self->dd, win, prev);
+    // Check init & *win != empty
+    bdd_ptr check = bdd_and(self->dd, init, *win);
+    if (bdd_is_false(self->dd, check)){
+      ret = false;
+    }
+    bdd_free(self->dd, check);
+  }
+  return ret;
+}
+static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube, 
+    bdd_ptr uinput_cube, bdd_ptr cinput_cube, bdd_ptr init, 
+    bdd_ptr error, bdd_ptr * X, bdd_ptr * win){
+  boolean realizable = true;
+  bdd_ptr noterror = bdd_not(self->dd, noterror);
+  bdd_ptr nextFront = bdd_dup(init);
+  bdd_ptr reached = bdd_dup(init);
+  NodeList_ptr onions = NodeList_create();
+  NodeList_append(onions, (node_ptr)nextFront);
+  bdd_ptr tmp = NULL;
+  int count = 0;
+  while(bdd_isnot_false(self->dd, nextFront)){
+     printf("Forward iteration %d\n", ++count);
+     // Get the image of the previous frontier
+     nextFront = BddFsm_get_forward_image(self, nextFront);
+     // Extract the front
+     bdd_ptr notreached = bdd_not(self->dd, reached);
+     bdd_and_accumulate(self->dd, &nextFront, notreached);
+     bdd_free(self->dd, notreached);
+     if (bdd_is_false(self->dd, nextFront)){
+        break;
+     }
+     bdd_ptr err_int = bdd_and(self->dd, nextFront, error);
+     if (bdd_isnot_false(self->dd, err_int)){
+        printf("\tHit error: refining backwards\n");
+        bdd_and_accumulate(self->dd, &nextFront, noterror);
+        bdd_ptr prev = nextFront;
+        ListIter_ptr iter = NodeList_get_first_iter(onions);
+        NODE_LIST_FOREACH(onions, iter){
+            bdd_ptr old_ring = (bdd_ptr) NodeList_get_elem_at(onions, iter);
+            bdd_ptr refined = 
+              BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
+            if ( old_ring == refined ){
+              bdd_free(self->dd, refined);
+              break;
+            }
+            prev = refined;
+            // Just replace *iter with refined
+            NodeList_insert_after(onions, iter, (node_ptr) refined);
+            ListIter_ptr rem_iter = iter; // we will remove iter
+            iter = ListIter_get_next(iter); // so we move to the next (refined)
+            old_ring = (bdd_ptr)NodeList_remove_elem_at(onions, rem_iter);
+            bdd_free(self->dd, old_ring);
+        }
+        bdd_ptr init_int = bdd_and(self->dd, init, prev);
+        if (bdd_is_false(self->dd, init_int) ){
+           bdd_free(self->dd, init_int);
+           realizable = false;
+           break;
+        } else {
+          bdd_free(self->dd, init_int);
+        }
+     }
+     bdd_free(self->dd, err_int);
+     NodeList_prepend(onions, (node_ptr) nextFront);
+     //
+     // Update reached states
+     bdd_free(self->dd, reached);
+     reached = bdd_false(self->dd);
+     ListIter_ptr iter = NodeList_get_first_iter(onions);
+     NODE_LIST_FOREACH(onions, iter){
+        bdd_ptr ring = (bdd_ptr)NodeList_get_elem_at(onions,iter);
+        tmp = bdd_or(self->dd, ring, reached);
+        bdd_free(self->dd, reached);
+        reached = tmp;
+     }
+  }
+  bdd_free(self->dd, noterror);
+  return realizable;
+}
 EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
   int count;
+  boolean use_backward = true;
   NodeList_ptr latches, uinputs, cinputs, outputs, all_vars;
   ListIter_ptr iter = NULL;
   ListIter_ptr trans_iter = NULL;
@@ -2305,6 +2414,7 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
     //BddEnc_print_bdd(self->enc, varbdd, NULL, stdout);
     //printf("\n");
     bdd_and_accumulate(self->dd, &init, bdd_not(self->dd, varbdd));
+    bdd_free(self->dd, varbdd);
   }
 
   // printf("Creating platches...\n");
@@ -2314,8 +2424,9 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
   NODE_LIST_FOREACH(latches,iter){
     node_ptr var = NodeList_get_elem_at(latches,iter);
     bdd_ptr varbdd = BddEnc_expr_to_bdd(self->enc, var, Nil);
-    varbdd = BddEnc_state_var_to_next_state_var(self->enc, varbdd);
-    NodeList_append(platch_bdds, (node_ptr) varbdd);
+    bdd_ptr pvarbdd = BddEnc_state_var_to_next_state_var(self->enc, varbdd);
+    NodeList_append(platch_bdds, (node_ptr) pvarbdd);
+    bdd_free(self->dd, varbdd);
   }
 
   // List of pairs of primed latch and trans. function
@@ -2346,6 +2457,8 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       }
     }
   }
+  // TODO We could free trans_rels at this point
+  // TODO free trans_funcs at the end
 
   // Prepare compose vector
   // for any BDD B(L'), B.vector_compose(X)
@@ -2369,62 +2482,24 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
 		assert(X[vindex] == NULL);
 		X[vindex] = t_elm;
 	}
-
-  // Start fixpoint cpre computation
-  bdd_ptr iterate = bdd_true(self->dd);
-  bdd_ptr prev = NULL;
-  while( prev != iterate ){
-    // TODO free prev if non NULL
-    prev = iterate;
-    iterate = BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
-    bdd_and_accumulate(self->dd, &iterate, prev);
-  }
-  bdd_ptr check = bdd_and(self->dd, init, iterate);
-  int ret = false;
-  if (bdd_isnot_false(self->dd, check)){
-    ret = true;
-  }
-  BddEnc_print_bdd_end(self->enc);
-  // TODO: cleanup
-  return ret;
-  /*
-  BddEnc_print_bdd_begin(self->enc, all_vars, false);
-  printf("--- trans_rels size: %d\n", NodeList_get_length(trans_rels));
-
-  iter = NodeList_get_first_iter(trans_rels);
-  bdd_ptr tmp;
-  // Expr_ptr expr;
-  bdd_ptr accum = bdd_true(self->dd);
-  NODE_LIST_FOREACH(trans_rels,iter){
-      tmp = (bdd_ptr) NodeList_get_elem_at(trans_rels,iter);
-      bdd_and_accumulate(self->dd, &accum, tmp);
-  }
-  bdd_ptr perror = bdd_dup(BddEnc_state_var_to_next_state_var(self->enc, error));
-  bdd_ptr platch_cube = BddEnc_state_var_to_next_state_var(self->enc, latch_cube);
-  bdd_and_accumulate(self->dd, & perror, accum);
-  bdd_ptr preimage_of_error = bdd_forsome(self->dd, perror, platch_cube);
-
-  // BddEnc_print_set_of_states(self->enc, preimage_of_error, true, false, (VPFNNF)NULL, stdout);
-  //BddEnc_print_set_of_states(self->enc, accum, true, false, (VPFNNF)NULL, stdout);
-  BddEnc_print_bdd_end(self->enc);
-  */
-	// int idx = BddEnc_get_var_index_from_name(self->enc, (node_ptr)"o0");
-	// fprintf(nusmv_stdout, "index: %d\n", idx);
-	// BddEnc_print_set_of_inputs(self->enc, input_vars_bdd, false, (VPFNNF) NULL, nusmv_stdout );
-	// BddEnc_print_bdd(self->enc, input_vars_bdd, (VPFNNF) NULL, nusmv_stdout);
-	/*
-	for (count = 0; count < 5; count++){
-		node_ptr root_node = BddEnc_get_var_name_from_index(self->enc,count);
-		assert(root_node);
-		boolean is_next = node_get_type(root_node) == NEXT;
-		node_ptr var_name = (is_next)
-			? car(root_node)
-			: root_node;
-		fprintf(nusmv_stdout, "Will now print\n");
-		fflush(nusmv_stdout);
-		fprintf(nusmv_stdout, "Var name: %s\n", (char*)var_name);
+	for (int i = 0; i < nvars; i++) {
+    if (X[i] == NULL){
+      X[i] = Cudd_bddIthVar(self->dd, i);
+    }
 	}
-	*/
+  
+  bdd_ptr win = NULL;
+  int ret;
+  if (use_backward){
+    ret = backward_synth(self, latch_cube, uinput_cube, 
+                                cinput_cube, init, error, X, &win);
+  } else {
+    ret = forward_synth(self, latch_cube, uinput_cube, 
+                                cinput_cube, init, error, X, &win);
+  }
+  bdd_free(self->dd, win);
+  BddEnc_print_bdd_end(self->enc);
+  return ret;
 }
 
 /**Function********************************************************************

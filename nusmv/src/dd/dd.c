@@ -3544,7 +3544,9 @@ bdd_ptr bdd_vector_compose(DdManager *dd, bdd_ptr f, bdd_ptr * X){
 	}
 	free(X);
 	*/
-	return Cudd_bddVectorCompose(dd, f, X);
+  bdd_ptr result = Cudd_bddVectorCompose(dd, f, X);
+  Cudd_Ref(result);
+  return result;
 }
 
 /**Function********************************************************************
@@ -3613,3 +3615,19 @@ static void InvalidType(FILE *file, char *field, char *expected)
     fprintf(file, "Illegal type detected. %s expected\n", expected);
 
 } /* end of InvalidType */
+
+/**Function********************************************************************
+
+  Synopsis [Returns the BDD f restricted by b.]
+
+  Description [The returned BDD is referenced.]
+  SideEffects        []
+
+  SeeAlso            [bdd_set_parameters]
+
+******************************************************************************/
+bdd_ptr bdd_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){
+  bdd_ptr fr = Cudd_bddRestrict(dd, f, b);
+  Cudd_Ref(fr);
+  return fr;
+}

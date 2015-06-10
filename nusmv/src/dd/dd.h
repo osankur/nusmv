@@ -263,5 +263,6 @@ EXTERN bdd_ptr  bdd_compose             ARGS((DdManager *dd, bdd_ptr f, bdd_ptr 
 EXTERN bdd_ptr  bdd_vector_compose      ARGS((DdManager *dd, bdd_ptr f, bdd_ptr * X));
 EXTERN int      bdd_ref_count           ARGS((bdd_ptr n));
 EXTERN int      calculate_bdd_value     ARGS((DdManager* mgr, bdd_ptr f, int* values));
+EXTERN bdd_ptr bdd_restrict ARGS((DdManager *dd, bdd_ptr f, bdd_ptr by));
 
 #endif /* _DD_H */

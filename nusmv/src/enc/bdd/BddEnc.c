@@ -7670,14 +7670,6 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 	VPFNNF p_fun = (VPFNNF) NULL;
 
   BDD_ENC_CHECK_INSTANCE(self);
-	/*
-  array_size = BddEnc_count_states_of_bdd(self, states);
-  array = ALLOC(bdd_ptr, array_size);
-  nusmv_assert(array != (bdd_ptr*) NULL);
-
-  res = BddEnc_pick_all_terms_states(self, states, array, array_size);
-  nusmv_assert(!res);
-	*/
   /* Retrieve the vars list from committed layers */
   {
     const array_t* layer_names;
@@ -7713,7 +7705,7 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
             if (!BoolEnc_is_var_bit(bool_enc, symbol)) {
               NodeList_append(*committed_vars, symbol);
 							char * varname = sprint_node(symbol);
-							printf("Read variable: %s\n", varname);
+							// printf("Read variable: %s\n", varname);
 							if (is_varname_cinput(varname)){
 								NodeList_append(*cinputs, symbol);
 								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
@@ -7779,30 +7771,7 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 		print_node(file, symbol);
 		printf(" ");
 	}
-
-	/*
-  BddEnc_print_bdd_begin(self, committed_vars, false);
-	bdd_ptr tmp_bdd = BddEnc_next_state_var_to_state_var(self, platch_cube);
-	BddEnc_print_set_of_states(self, tmp_bdd, false, false, (VPFNNF)NULL, stdout);
-  BddEnc_print_bdd_end(self);
-	*/
-	/*
-	NODE_LIST_FOREACH(committed_vars, iter){
-		node_ptr symbol = NodeList_get_elem_at(committed_vars,iter);
-		//print_node(file, symbol);
-		// indent_node(file, "", car(car(symbol)), " = ");
-		// print_node(file, cur_sym_value);
-		// printf("%p\n", symbol);
-	}
-	*/
-	/*
-  inc_indent_size();
-  for (j=0; j < array_size; ++j) {
-    aux(self, array[j], p_fun, file);
-    bdd_free(self->dd, array[j]);
-  }
-  dec_indent_size();
-	*/
+  printf("\n");
 }
 
 
