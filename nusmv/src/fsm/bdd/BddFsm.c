@@ -2266,6 +2266,10 @@ bdd_ptr BddFsm_cpre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube,
 #endif
   bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
   bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, trans);
+	printf("\nPrinting pre1 (%d) \n-------------\n", pre1 == bdd_true(self->dd));
+	BddEnc_print_bdd(self->enc, pre1, NULL, stdout);
+	BddEnc_print_set_of_states(self->enc, pre1, false, false, NULL, stdout);
+	printf("\n\n");
   bdd_ptr pre2 = bdd_forsome(self->dd, pre1, cinput_cube);
   bdd_ptr pre3 = bdd_forall(self->dd, pre2, uinput_cube);
   bdd_free(self->dd, pstates);
@@ -2441,12 +2445,14 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       bdd_ptr t = (bdd_ptr)NodeList_get_elem_at(trans_rels, trans_iter);
       bdd_ptr tFunc = bdd_and_abstract(self->dd, pvar, t, pvar);
       if (tFunc != t){
+				//printf("Printing transition function for var %d (pvar: %d)\n", 
+				//			Cudd_NodeReadIndex(BddEnc_next_state_var_to_state_var(self->enc, pvar)), Cudd_NodeReadIndex(pvar));
+				// BddEnc_print_set_of_states(self->enc, tFunc, false, true, NULL ,stdout);
+				// printf("----\n");
         if (trans != NULL){
           fprintf(stderr, "[ERR] Two transition relations depend on the same next-state variable!\n");
           fprintf(stderr, "[ERR] Are the two funcs the same? %d\n", 
               NodeList_count_elem(trans_funcs, (node_ptr)trans));
-          //BddEnc_print_bdd(self->enc, 
-          //  BddEnc_next_state_var_to_state_var(self->enc, pvar), NULL, stdout);
           exit(-1);
         } else {
           trans = tFunc;
@@ -2479,6 +2485,7 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
 		t_elm = (bdd_ptr)NodeList_get_elem_at(trans_funcs, t);
 		vindex = Cudd_NodeReadIndex(v_elm);
 		assert(vindex >= 0 && vindex < nvars);
+		// Just to check if the trans_funcs are well defined
 		assert(X[vindex] == NULL);
 		X[vindex] = t_elm;
 	}

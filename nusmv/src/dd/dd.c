@@ -3522,28 +3522,6 @@ bdd_ptr bdd_compose(DdManager *dd, bdd_ptr f, bdd_ptr g, int v) {
   return((bdd_ptr)result);
 }
 bdd_ptr bdd_vector_compose(DdManager *dd, bdd_ptr f, bdd_ptr * X){
-	/*
-	int n = Cudd_ReadSize(dd);
-	DdNode **X = ALLOC(DdNode *,n);
-	for (int i = 0; i < n; i++) {
-		X[i] = NULL;
-	}
-	ListIter_ptr v = NodeList_get_first_iter(vars);
-	ListIter_ptr t = NodeList_get_first_iter(subs);
-	bdd_ptr v_elm, t_elm;
-	unsigned int vindex = 0;
-	for(; !ListIter_is_end(v) && !ListIter_is_end(t); 
-				v = ListIter_get_next(v),
-				t = ListIter_get_next(t)){
-		v_elm = (bdd_ptr)NodeList_get_elem_at(vars, v);
-		t_elm = (bdd_ptr)NodeList_get_elem_at(subs, t);
-		vindex = Cudd_NodeReadIndex(v_elm);
-		assert(vindex >= 0 && vindex < n);
-		assert(X[vindex] == NULL);
-		X[vindex] = t_elm;
-	}
-	free(X);
-	*/
   bdd_ptr result = Cudd_bddVectorCompose(dd, f, X);
   Cudd_Ref(result);
   return result;

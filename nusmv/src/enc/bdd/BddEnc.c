@@ -68,7 +68,7 @@
 #include "cinit/cinit.h"
 #include <math.h>
 #include "string.h"
-
+#include "cudd.h"
 
 /*---------------------------------------------------------------------------*/
 /* Constant declarations                                                     */
@@ -7708,24 +7708,22 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 							// printf("Read variable: %s\n", varname);
 							if (is_varname_cinput(varname)){
 								NodeList_append(*cinputs, symbol);
-								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
 								bdd_and_accumulate(self->dd, cinput_cube, curr);
 								bdd_free(self->dd, curr);
 							} else if (is_varname_uinput(varname)){
 								NodeList_append(*uinputs, symbol);
-								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
 								bdd_and_accumulate(self->dd, uinput_cube, curr);
 								bdd_free(self->dd, curr);
 							} else if(is_varname_error(varname)){
 								NodeList_append(*latches, symbol);
 								NodeList_append(*outputs, symbol);
 								// Add variable BDD to the latch
-								*error = BddEnc_expr_to_bdd(self, symbol, Nil);
+								*error = curr; //BddEnc_expr_to_bdd(self, symbol, Nil);
 								bdd_and_accumulate(self->dd, latch_cube, *error);
               } else {
 								NodeList_append(*latches, symbol);
 								// Add variable BDD to the latch
-								bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
+								// bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil);
 								bdd_and_accumulate(self->dd, latch_cube, curr);
 								// Get the primed variable and add it to the platch_cube
 								// bdd_ptr pcurr = BddEnc_state_var_to_next_state_var(self, curr);
