@@ -254,7 +254,7 @@ EXTERN boolean BddFsm_get_cached_reachable_states ARGS((const BddFsm_ptr self,
                                                         BddStates** layers,
                                                         int* size));
 
-EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self));
+EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self, int mode));
 EXTERN void BddFsm_update_cached_reachable_states ARGS((const BddFsm_ptr self,
                                                         node_ptr layers,
                                                         int size,

@@ -2312,6 +2312,20 @@ static boolean backward_synth(BddFsm_ptr self, bdd_ptr latch_cube,
   }
   return ret;
 }
+
+void dump_tmp_and_wait(BddFsm_ptr self, bdd_ptr nextFront){
+    char * labels = "frontier";
+    FILE * outfile = fopen("/tmp/a.dot", "w");
+    if (!outfile){
+      return;
+    }
+    AddArray_ptr ar = AddArray_create(1);
+    AddArray_set_n(ar,0,bdd_to_add(self->dd, nextFront));
+    BddEnc_dump_addarray_dot(self->enc, ar, (const char **)&labels, outfile);
+    fclose(outfile);
+    while(getchar() != 'c');
+}
+
 static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube, 
     bdd_ptr uinput_cube, bdd_ptr cinput_cube, bdd_ptr init, 
     bdd_ptr error, bdd_ptr * X, bdd_ptr * win){
@@ -2325,96 +2339,117 @@ static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube,
   bdd_ptr tmp1 = NULL;
   int count = 0;
 
-  while(bdd_isnot_false(self->dd, nextFront)){
-     printf("Forward iteration %d\n", ++count);
-     // Get the image of the previous frontier
-     //   Note that NuSMV sees all variables as state variables so we also need
-     //   to project the result to latches only
-     tmp = BddFsm_get_forward_image(self, nextFront);
-     tmp1 = bdd_forsome(self->dd, tmp, cinput_cube);
-     nextFront = bdd_forsome(self->dd, tmp1, uinput_cube);
-     bdd_free(self->dd, tmp);
-     bdd_free(self->dd, tmp1);
-     // Extract the front
-     bdd_ptr notreached = bdd_not(self->dd, reached);
-     bdd_and_accumulate(self->dd, &nextFront, notreached);
-     bdd_free(self->dd, notreached);
-     if (bdd_is_false(self->dd, nextFront)){
-        break;
-     }
-     //Print the front
-     // printf("--- Printing the front\n");
-     // BddEnc_print_set_of_states(self->enc, bdd_not(self->dd,nextFront), true, true, NULL, stdout);
-     // printf("\n");
-     bdd_ptr err_int = bdd_and(self->dd, nextFront, error);
-     if (bdd_isnot_false(self->dd, err_int)){
-        printf("\tHit error: refining backwards\n");
-        bdd_and_accumulate(self->dd, &nextFront, noterror);
-        bdd_ptr prev = err_int;
+  while(realizable && bdd_isnot_false(self->dd, nextFront)){
+    printf("Forward iteration %d\n", ++count);
+    // Get the image of the previous frontier
+    //   Note that NuSMV sees all variables as state variables so we also need
+    //   to project the result to latches
+    tmp = BddFsm_get_forward_image(self, nextFront);
+    tmp1 = bdd_forsome(self->dd, tmp, cinput_cube);
+    nextFront = bdd_forsome(self->dd, tmp1, uinput_cube);
+    bdd_free(self->dd, tmp);
+    bdd_free(self->dd, tmp1);
+    // Extract the frontier
+    bdd_ptr notreached = bdd_not(self->dd, reached);
+    bdd_and_accumulate(self->dd, &nextFront, notreached);
+    bdd_free(self->dd, notreached);
+    // If no new reachable states we have ourselves a fixpoint
+    if (bdd_is_false(self->dd, nextFront)){
+      break;
+    }
 
-        printf("--- Front & not_error\n");
-        BddEnc_print_set_of_states(self->enc, prev, true, true, NULL, stdout);
-        printf("\n");
+    printf("--- Frontier \n");
+    dump_tmp_and_wait(self, nextFront);
+    //BddEnc_print_set_of_states(self->enc, nextFront, true, true, NULL, stdout);
+    //BddEnc_print_bdd(self->enc, nextFront, NULL, stdout);
+    //printf("\n");
 
-        ListIter_ptr iter = NodeList_get_first_iter(onions);
-        NODE_LIST_FOREACH(onions, iter){
-            bdd_ptr old_ring = (bdd_ptr) NodeList_get_elem_at(onions, iter);
-            bdd_ptr refined_losing = 
-              BddFsm_upre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
+    bdd_ptr err_int = bdd_and(self->dd, nextFront, error);
 
-           printf("\t--- Printing refined_losing \n");
-           BddEnc_print_set_of_states(self->enc, refined_losing, true, true, NULL, stdout);
-           printf("\n");
-            if ( bdd_is_false(self->dd, refined_losing) ){
-              bdd_free(self->dd, refined_losing);
-              break;
-            }
-            bdd_ptr not_rl = bdd_not(self->dd, refined_losing);
-            bdd_ptr refined = bdd_and(self->dd, old_ring, not_rl);
-            bdd_free(self->dd, not_rl);
-            bdd_free(self->dd, prev);
-            prev = refined;
+    if (bdd_isnot_false(self->dd, err_int)){
+      printf("\tHit error: refining backwards\n");
+      bdd_and_accumulate(self->dd, &nextFront, noterror);
+      bdd_ptr prev = err_int;
 
-            // Just replace *iter with refined
-            NodeList_insert_after(onions, iter, (node_ptr) refined);
-            ListIter_ptr rem_iter = iter; // we will remove iter
-            iter = ListIter_get_next(iter); // so we move to the next (refined)
-            old_ring = (bdd_ptr)NodeList_remove_elem_at(onions, rem_iter);
-            bdd_free(self->dd, old_ring);
+      // printf("--- Front & error\n");
+      // BddEnc_print_set_of_states(self->enc, prev, true, true, NULL, stdout);
+      // printf("\n");
+
+      ListIter_ptr iter = NodeList_get_first_iter(onions);
+      NODE_LIST_FOREACH(onions, iter){
+        bdd_ptr old_ring = (bdd_ptr) NodeList_get_elem_at(onions, iter);
+        bdd_ptr refined_losing = 
+          BddFsm_upre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
+        //bdd_or_accumulate(self->dd, &error, refined_losing);
+        //
+        //printf("\t--- UPRE \n");
+        //BddEnc_print_set_of_states(self->enc, refined_losing, true, true, NULL, stdout);
+        //printf("\n");
+        //
+        bdd_and_accumulate(self->dd, &refined_losing, old_ring);
+
+        bdd_ptr not_rl = bdd_not(self->dd, refined_losing);
+        bdd_ptr refined = bdd_and(self->dd, old_ring, not_rl);
+        bdd_free(self->dd, not_rl);
+        prev = refined;
+        //
+        // printf("\t--- Printing refined_losing \n");
+        // BddEnc_print_set_of_states(self->enc, refined_losing, true, true, NULL, stdout);
+        // printf("\n");
+        //
+        if ( old_ring == refined ){
+          bdd_free(self->dd, refined);
+          bdd_free(self->dd, refined_losing);
+          break;
+        } else if ( old_ring == refined_losing ){
+          bdd_free(self->dd, refined);
+          bdd_free(self->dd, refined_losing);
+          realizable = false;
+          break;
         }
-     }
-     bdd_free(self->dd, err_int);
-     NodeList_prepend(onions, (node_ptr) nextFront);
-     //
-     // Update reached states
-     bdd_free(self->dd, reached);
-     reached = bdd_false(self->dd);
-     ListIter_ptr iter = NodeList_get_first_iter(onions);
-     NODE_LIST_FOREACH(onions, iter){
-        bdd_ptr ring = (bdd_ptr)NodeList_get_elem_at(onions,iter);
-        tmp = bdd_or(self->dd, ring, reached);
-        bdd_free(self->dd, reached);
-        reached = tmp;
-     }
-     // Check if the init state is still inside
-     // TODO We could also check the first layer (last element)
-     bdd_ptr init_int = bdd_and(self->dd, init, reached);
-     if (bdd_is_false(self->dd, init_int) ){
-         bdd_free(self->dd, init_int);
-         realizable = false;
-         break;
-     } else {
-         bdd_free(self->dd, init_int);
-     }
+        // Just replace *iter with refined
+        NodeList_insert_after(onions, iter, (node_ptr) refined);
+        ListIter_ptr rem_iter = iter; // we will remove iter
+        iter = ListIter_get_next(iter); // so we move to the next (refined)
+        old_ring = (bdd_ptr)NodeList_remove_elem_at(onions, rem_iter);
+        bdd_free(self->dd, old_ring);
+      }
+    }
+    bdd_free(self->dd, err_int);
+    NodeList_prepend(onions, (node_ptr) nextFront);
+    //
+    // Update reached states
+    bdd_free(self->dd, reached);
+    reached = bdd_false(self->dd);
+    ListIter_ptr iter = NodeList_get_first_iter(onions);
+    NODE_LIST_FOREACH(onions, iter){
+      bdd_ptr ring = (bdd_ptr)NodeList_get_elem_at(onions,iter);
+      tmp = bdd_or(self->dd, ring, reached);
+      bdd_free(self->dd, reached);
+      reached = tmp;
+    }
+    /*
+    NodeList_ptr first_onion_after = NodeList_get_last(onions);
+    if (first_onion_before != first_onion_after){
+      bdd_ptr init_int = bdd_and(self->dd, init, first_onion_after);
+      if (bdd_is_false(self->dd, init_int) ){
+        bdd_free(self->dd, init_int);
+        realizable = false;
+        break;
+      } else {
+        bdd_free(self->dd, init_int);
+      }
+    }
+    */
   }
   bdd_free(self->dd, noterror);
   *win = reached;
   return realizable;
 }
 
-EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
+EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self, int mode)){
   int count;
-  boolean use_backward = false;
+  boolean use_backward = mode == 0;
   NodeList_ptr latches, uinputs, cinputs, outputs, all_vars;
   ListIter_ptr iter = NULL;
   ListIter_ptr trans_iter = NULL;
@@ -2434,7 +2469,7 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       &uinputs, &uinput_cube, 
       &cinputs, &cinput_cube, 
       &outputs, &error);
-  BddEnc_print_bdd_begin(self->enc, all_vars, false);
+  BddEnc_print_bdd_begin(self->enc, latches, false);
   
   // Prepare initial state
   bdd_ptr init = bdd_true(self->dd);
@@ -2473,19 +2508,18 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){
       bdd_ptr t = (bdd_ptr)NodeList_get_elem_at(trans_rels, trans_iter);
       bdd_ptr tFunc = bdd_and_abstract(self->dd, pvar, t, pvar);
       if (tFunc != t){
-				//printf("Printing transition function for var %d (pvar: %d)\n", 
-				//			Cudd_NodeReadIndex(BddEnc_next_state_var_to_state_var(self->enc, pvar)), Cudd_NodeReadIndex(pvar));
-				// BddEnc_print_set_of_states(self->enc, tFunc, false, true, NULL ,stdout);
-				// printf("----\n");
         if (trans != NULL){
           fprintf(stderr, "[ERR] Two transition relations depend on the same next-state variable!\n");
           fprintf(stderr, "[ERR] Are the two funcs the same? %d\n", 
               NodeList_count_elem(trans_funcs, (node_ptr)trans));
           exit(-1);
-        } else {
-          trans = tFunc;
-          NodeList_append(trans_funcs, (node_ptr) trans);
         }
+        // Make the error state a sink state
+        if (t == error){
+           bdd_or_accumulate(self->dd, &tFunc, error);
+        }
+        trans = tFunc;
+        NodeList_append(trans_funcs, (node_ptr) trans);
       } else {
         bdd_free(self->dd, tFunc);
       }

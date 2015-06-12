@@ -731,6 +731,19 @@ node_ptr NodeList_get_elem_at(const NodeList_ptr self, const ListIter_ptr iter)
   return iter->element;
 }
 
+/*
+node_ptr NodeList_get_last(const NodeList_ptr self){
+    ListIter_ptr it1, it2;
+    it1 = NULL;
+    it2 = NodeList_get_first_iter(self);
+    while(!NodeList_is_end(it2)){
+        it1 = it2;
+        it2 = NodeList_get_next(it2);
+    }
+    return it1;
+}
+*/
+
 /**Function********************************************************************
 
   Synopsis           [Returns the following iterator]

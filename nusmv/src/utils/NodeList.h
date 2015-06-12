@@ -160,6 +160,7 @@ EXTERN ListIter_ptr NodeList_get_first_iter ARGS((const NodeList_ptr self));
 EXTERN node_ptr NodeList_get_elem_at ARGS((const NodeList_ptr self,
                                            const ListIter_ptr iter));
 
+// EXTERN node_ptr NodeList_get_last ARGS((const NodeList_ptr self));
 EXTERN int
 NodeList_foreach ARGS((NodeList_ptr self, NODE_LIST_FOREACH_FUN_P foo,
                        void* user_data));
