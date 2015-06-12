@@ -2245,8 +2245,8 @@ void bdd_deref(bdd_ptr dd_node)
 ******************************************************************************/
 void bdd_free(DdManager * dd, bdd_ptr dd_node)
 {
+  assert(dd_node);
   common_error(dd_node, "bdd_free: dd_node = NULL");
-
   Cudd_RecursiveDeref(dd, (DdNode *)dd_node);
 }
 

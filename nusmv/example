@@ -1,4 +1,4 @@
-read_model -i "/home/sankur/work/ulb/syntcomp/bench-syntcomp14/amba3b5y.smv"
+read_model -i "/home/sankur/work/ulb/syntcomp/bench-syntcomp14/real.smv"
 flatten_hierarchy
 encode_variables
 dynamic_var_ordering -e sift
