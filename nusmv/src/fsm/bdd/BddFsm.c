@@ -49,6 +49,7 @@
 #include "enc/bdd/BddEnc.h"
 #include "bddInt.h"
 #include "BddFsm.h"
+#include "BddSynth.h"
 #include "FairnessList.h"
 #include "dd/dd.h"
 #include "enc/bdd/BddEnc.h"
@@ -2247,6 +2248,11 @@ boolean BddFsm_expand_cached_reachable_states(BddFsm_ptr self,
   return result;
 }
 
+NodeList_ptr BddFsm_get_trans_expr(BddFsm_ptr self){
+  return self->trans_expr;
+}
+
+
 // TODO We will eventually create a module BddSynth with itw own 
 // structure that contains everything needed for synthesis
 
@@ -2290,20 +2296,6 @@ bdd_ptr BddFsm_upre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube,
   bdd_free(self->dd,pstates);
   return pre3;
 }
-void dump_tmp_and_wait(BddFsm_ptr self, bdd_ptr nextFront){
-    char * labels = "Upre";
-    FILE * outfile = fopen("/tmp/a.dot", "w");
-    if (!outfile){
-      return;
-    }
-    AddArray_ptr ar = AddArray_create(1);
-    AddArray_set_n(ar,0,bdd_to_add(self->dd, nextFront));
-    BddEnc_dump_addarray_dot(self->enc, ar, (const char **)&labels, outfile);
-    fclose(outfile);
-    while(getchar() != 'c');
-}
-
-
 static boolean backward_synth(BddFsm_ptr self, bdd_ptr latch_cube, 
     bdd_ptr uinput_cube, bdd_ptr cinput_cube, bdd_ptr init, bdd_ptr error, bdd_ptr * X, bdd_ptr * win){
   boolean use_upre = false;
@@ -2395,7 +2387,6 @@ static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube,
         bdd_ptr refined_losing = 
           BddFsm_upre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
         //bdd_or_accumulate(self->dd, &error, refined_losing);
-        //
         //printf("\t--- UPRE \n");
         //BddEnc_print_set_of_states(self->enc, refined_losing, true, true, NULL, stdout);
         //printf("\n");
@@ -2462,6 +2453,7 @@ static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube,
 }
 
 EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self, int mode)){
+  /*
   int count;
   boolean use_backward = mode == 0;
   NodeList_ptr latches, uinputs, cinputs, outputs, all_vars;
@@ -2570,8 +2562,6 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self, int mode)){
       X[i] = Cudd_bddIthVar(self->dd, i);
     }
 	}
-  
-  bdd_ptr win = NULL;
   int ret;
   if (use_backward){
     ret = backward_synth(self, latch_cube, uinput_cube, 
@@ -2583,6 +2573,13 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self, int mode)){
   bdd_free(self->dd, win);
   BddEnc_print_bdd_end(self->enc);
   return ret;
+  */
+  bdd_ptr win = NULL;
+  BddSynth_ptr synth = BddSynth_create(self);
+  boolean ret = BddSynth_solve(synth, BDD_SYNTH_DIR_BWD, &win);
+  // FIXME Why is win NULL here?
+  //bdd_free(self->dd, win);
+  BddSynth_destroy(synth);
 }
 
 /**Function********************************************************************

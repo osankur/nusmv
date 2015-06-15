@@ -88,7 +88,7 @@ am__objects_2 = FsmBuilder.lo fsm.lo
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_3 = sexp/BoolSexpFsm.lo sexp/Expr.lo sexp/SexpFsm.lo
 am__objects_4 = bdd/bddCmd.lo bdd/BddFsm.lo bdd/BddFsmCache.lo \
-	bdd/bddMisc.lo bdd/FairnessList.lo
+	bdd/bddMisc.lo bdd/FairnessList.lo bdd/BddSynth.lo
 am__objects_5 = be/BeFsm.lo
 am__objects_6 = $(am__objects_1) $(am__objects_1) $(am__objects_1) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
@@ -306,9 +306,9 @@ SEXP_H = sexp/BoolSexpFsm.h sexp/Expr.h sexp/SexpFsm_private.h \
 					sexp/BoolSexpFsm_private.h sexp/SexpFsm.h sexp/sexp.h
 
 SEXP_C = sexp/BoolSexpFsm.c sexp/Expr.c sexp/SexpFsm.c
-BDD_H = bdd/BddFsm.h bdd/bdd.h bdd/FairnessList.h
+BDD_H = bdd/BddFsm.h bdd/bdd.h bdd/FairnessList.h bdd/BddSynth.h
 BDD_C = bdd/bddCmd.c bdd/BddFsm.c bdd/BddFsmCache.c bdd/bddMisc.c \
-				bdd/FairnessList.c
+				bdd/FairnessList.c bdd/BddSynth.c
 
 BE_H = be/BeFsm.h
 BE_C = be/BeFsm.c
@@ -383,6 +383,7 @@ bdd/$(DEPDIR)/$(am__dirstamp):
 	@: > bdd/$(DEPDIR)/$(am__dirstamp)
 bdd/bddCmd.lo: bdd/$(am__dirstamp) bdd/$(DEPDIR)/$(am__dirstamp)
 bdd/BddFsm.lo: bdd/$(am__dirstamp) bdd/$(DEPDIR)/$(am__dirstamp)
+bdd/BddSynth.lo: bdd/$(am__dirstamp) bdd/$(DEPDIR)/$(am__dirstamp)
 bdd/BddFsmCache.lo: bdd/$(am__dirstamp) bdd/$(DEPDIR)/$(am__dirstamp)
 bdd/bddMisc.lo: bdd/$(am__dirstamp) bdd/$(DEPDIR)/$(am__dirstamp)
 bdd/FairnessList.lo: bdd/$(am__dirstamp) bdd/$(DEPDIR)/$(am__dirstamp)
@@ -400,6 +401,8 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f bdd/BddFsm.$(OBJEXT)
 	-rm -f bdd/BddFsm.lo
+	-rm -f bdd/BddSynth.$(OBJEXT)
+	-rm -f bdd/BddSynth.lo
 	-rm -f bdd/BddFsmCache.$(OBJEXT)
 	-rm -f bdd/BddFsmCache.lo
 	-rm -f bdd/FairnessList.$(OBJEXT)

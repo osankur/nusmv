@@ -79,13 +79,13 @@ bdd/BddFsm.lo: bdd/BddFsm.c /usr/include/stdc-predef.h \
  ../trans/bdd/BddTrans.h ../trans/generic/GenericTrans.h \
  ../trans/bdd/ClusterList.h ../trans/bdd/Cluster.h \
  ../trans/bdd/ClusterOptions.h ../fsm/sexp/sexp.h bdd/BddFsm.h \
- bdd/FairnessList.h ../enc/bdd/BddEnc_private.h ../enc/bdd/BddEnc.h \
- ../enc/bdd/BddEncCache.h ../enc/base/BoolEncClient_private.h \
- ../enc/base/BoolEncClient.h ../enc/base/BaseEnc.h \
- ../enc/base/BaseEnc_private.h ../utils/object_private.h \
- ../utils/object.h ../compile/symb_table/SymbLayer_private.h \
- ../enc/bool/BoolEnc_private.h ../enc/bool/BoolEnc.h \
- ../enc/base/BaseEnc_private.h ../parser/symbols.h \
+ bdd/BddSynth.h bdd/bdd.h bdd/FairnessList.h ../enc/bdd/BddEnc_private.h \
+ ../enc/bdd/BddEnc.h ../enc/bdd/BddEncCache.h \
+ ../enc/base/BoolEncClient_private.h ../enc/base/BoolEncClient.h \
+ ../enc/base/BaseEnc.h ../enc/base/BaseEnc_private.h \
+ ../utils/object_private.h ../utils/object.h \
+ ../compile/symb_table/SymbLayer_private.h ../enc/bool/BoolEnc_private.h \
+ ../enc/bool/BoolEnc.h ../enc/base/BaseEnc_private.h ../parser/symbols.h \
  ../fsm/sexp/BoolSexpFsm.h ../fsm/sexp/SexpFsm.h \
  ../compile/FlatHierarchy.h ../compile/PredicateNormaliser.h \
  ../compile/compile.h ../compile/FlatHierarchy.h \
@@ -380,6 +380,10 @@ bdd/bddInt.h:
 ../fsm/sexp/sexp.h:
 
 bdd/BddFsm.h:
+
+bdd/BddSynth.h:
+
+bdd/bdd.h:
 
 bdd/FairnessList.h:
 

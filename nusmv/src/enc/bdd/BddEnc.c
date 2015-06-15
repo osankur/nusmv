@@ -7650,8 +7650,14 @@ int is_varname_latch(char *s){
 int is_varname_error(char *s){
 	return strstr(s, "out_") == s;
 }
-
-
+/**
+The given fsm is seen as a game in which
+              all state variables whose names start with i_ are 
+              uncontrollable inputs, those whose names start with
+              controllable_ are controllable inputs, and all the rest
+              are latches. The implicit error specification is encoded 
+              by the latch whose name is out_*. 
+*/
 void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
     NodeList_ptr * committed_vars,
     NodeList_ptr * latches,
@@ -7663,6 +7669,14 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
     NodeList_ptr * outputs,
 		bdd_ptr * error)
 {
+  assert(*committed_vars);
+  assert(*latches);
+  assert(*latch_cube);
+  assert(*uinputs);
+  assert(*uinput_cube);
+  assert(*cinputs);
+  assert(*cinput_cube);
+  assert(*outputs);
 	int j;
 	const boolean show_defines = false;
 	const boolean changes_only = false;

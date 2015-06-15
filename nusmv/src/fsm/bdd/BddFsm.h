@@ -269,6 +269,7 @@ EXTERN boolean
 BddFsm_expand_cached_reachable_states ARGS((BddFsm_ptr self, 
                                             int k, 
                                             int max_seconds));
+EXTERN NodeList_ptr BddFsm_get_trans_expr ARGS((BddFsm_ptr self));
 
 /* temporary per il momento */
 
