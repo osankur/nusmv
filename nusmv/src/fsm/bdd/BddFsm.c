@@ -2250,7 +2250,7 @@ boolean BddFsm_expand_cached_reachable_states(BddFsm_ptr self,
 // TODO We will eventually create a module BddSynth with itw own 
 // structure that contains everything needed for synthesis
 
-#define RESTRICT_IN_CPRE
+//#define RESTRICT_IN_CPRE
 bdd_ptr BddFsm_cpre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube, 
                     bdd_ptr cinput_cube, bdd_ptr * trans, bdd_ptr states){
 #ifdef RESTRICT_IN_CPRE
@@ -2290,31 +2290,8 @@ bdd_ptr BddFsm_upre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube,
   bdd_free(self->dd,pstates);
   return pre3;
 }
-
-static boolean backward_synth(BddFsm_ptr self, bdd_ptr latch_cube, 
-    bdd_ptr uinput_cube, bdd_ptr cinput_cube, bdd_ptr init, bdd_ptr error, bdd_ptr * X, bdd_ptr * win){
-  boolean ret = true;
-  *win = bdd_not(self->dd, error);
-  bdd_ptr prev = NULL;
-  int count = 0;
-  while( ret && prev != *win ){
-    printf("Bwd Iteration: %d\n", ++count);
-    if (prev != NULL) bdd_free(self->dd, prev);
-    prev = *win;
-    *win = BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
-    bdd_and_accumulate(self->dd, win, prev);
-    // Check init & *win != empty
-    bdd_ptr check = bdd_and(self->dd, init, *win);
-    if (bdd_is_false(self->dd, check)){
-      ret = false;
-    }
-    bdd_free(self->dd, check);
-  }
-  return ret;
-}
-
 void dump_tmp_and_wait(BddFsm_ptr self, bdd_ptr nextFront){
-    char * labels = "frontier";
+    char * labels = "Upre";
     FILE * outfile = fopen("/tmp/a.dot", "w");
     if (!outfile){
       return;
@@ -2324,6 +2301,43 @@ void dump_tmp_and_wait(BddFsm_ptr self, bdd_ptr nextFront){
     BddEnc_dump_addarray_dot(self->enc, ar, (const char **)&labels, outfile);
     fclose(outfile);
     while(getchar() != 'c');
+}
+
+
+static boolean backward_synth(BddFsm_ptr self, bdd_ptr latch_cube, 
+    bdd_ptr uinput_cube, bdd_ptr cinput_cube, bdd_ptr init, bdd_ptr error, bdd_ptr * X, bdd_ptr * win){
+  boolean use_upre = false;
+  boolean ret = true;
+  if (use_upre){
+    *win = bdd_dup(error);
+  } else {
+    *win = bdd_not(self->dd, error);
+  }
+  bdd_ptr prev = NULL;
+  int count = 0;
+  while( ret && prev != *win ){
+    printf("Bwd Iteration: %d\n", ++count);
+    if (prev != NULL) bdd_free(self->dd, prev);
+    prev = *win;
+    if (use_upre){
+      *win = BddFsm_upre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
+      bdd_or_accumulate(self->dd, win, prev);
+    } else {
+      *win = BddFsm_cpre(self, latch_cube, uinput_cube, cinput_cube, X, prev);
+      bdd_and_accumulate(self->dd, win, prev);
+    }
+    // printf("--- UPRE step\n");
+    // dump_tmp_and_wait(self, *win);
+    // Check init & *win != empty
+    bdd_ptr check = bdd_and(self->dd, init, *win);
+    if (use_upre && bdd_isnot_false(self->dd, check)){
+      ret = false;
+    } else if (bdd_is_false(self->dd, check)){
+      ret = false;
+    }
+    bdd_free(self->dd, check);
+  }
+  return ret;
 }
 
 static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube, 
@@ -2353,13 +2367,13 @@ static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube,
     bdd_ptr notreached = bdd_not(self->dd, reached);
     bdd_and_accumulate(self->dd, &nextFront, notreached);
     bdd_free(self->dd, notreached);
-    // If no new reachable states we have ourselves a fixpoint
+    // If no new reachable states we have to ourselves a fixpoint
     if (bdd_is_false(self->dd, nextFront)){
       break;
     }
 
-    printf("--- Frontier \n");
-    dump_tmp_and_wait(self, nextFront);
+    // printf("--- Frontier \n");
+    // dump_tmp_and_wait(self, nextFront);
     //BddEnc_print_set_of_states(self->enc, nextFront, true, true, NULL, stdout);
     //BddEnc_print_bdd(self->enc, nextFront, NULL, stdout);
     //printf("\n");

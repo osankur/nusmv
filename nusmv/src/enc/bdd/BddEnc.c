@@ -7737,25 +7737,25 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 		exit(-1);
 	}
 	ListIter_ptr iter;
-	printf("Printing latches\n\t");
+	printf("Printing latches (%d)\n\t", NodeList_get_length(*latches));
 	NODE_LIST_FOREACH(*latches, iter){
 		node_ptr symbol = NodeList_get_elem_at(*latches,iter);
 		print_node(file, symbol);
 		printf(" ");
 	}
-	printf("\nPrinting cinputs\n\t");
+	printf("\nPrinting cinputs (%d)\n\t", NodeList_get_length(*cinputs));
 	NODE_LIST_FOREACH(*cinputs, iter){
 		node_ptr symbol = NodeList_get_elem_at(*cinputs,iter);
 		print_node(file, symbol);
 		printf(" ");
 	}
-	printf("\nPrinting uinputs\n\t");
+	printf("\nPrinting uinputs (%d)\n\t", NodeList_get_length(*uinputs));
 	NODE_LIST_FOREACH(*uinputs, iter){
 		node_ptr symbol = NodeList_get_elem_at(*uinputs,iter);
 		print_node(file, symbol);
 		printf(" ");
 	}
-	printf("\nPrinting error output\n\t");
+	printf("\nPrinting error output (%d)\n\t", NodeList_get_length(*outputs));
 	NODE_LIST_FOREACH(*outputs, iter){
 		node_ptr symbol = NodeList_get_elem_at(*outputs,iter);
 		print_node(file, symbol);
