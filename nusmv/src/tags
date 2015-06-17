@@ -923,7 +923,7 @@ BddFsm_TAG	fsm/bdd/BddFsm.c	/^typedef struct BddFsm_TAG$/;"	s	file:
 BddFsm_apply_synchronous_product	fsm/bdd/BddFsm.c	/^void BddFsm_apply_synchronous_product(BddFsm_ptr self, const BddFsm_ptr other)$/;"	f
 BddFsm_apply_synchronous_product_custom_varsets	fsm/bdd/BddFsm.c	/^void BddFsm_apply_synchronous_product_custom_varsets(BddFsm_ptr self,$/;"	f
 BddFsm_check_machine	fsm/bdd/BddFsm.c	/^void BddFsm_check_machine(const BddFsm_ptr self)$/;"	f
-BddFsm_check_realizable	fsm/bdd/BddFsm.c	/^EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self)){$/;"	f
+BddFsm_check_realizable	fsm/bdd/BddFsm.c	/^EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self, int mode)){$/;"	f
 BddFsm_copy	fsm/bdd/BddFsm.c	/^BddFsm_ptr BddFsm_copy(const BddFsm_ptr self)$/;"	f
 BddFsm_copy_cache	fsm/bdd/BddFsm.c	/^void BddFsm_copy_cache(BddFsm_ptr self, const BddFsm_ptr other,$/;"	f
 BddFsm_copy_reachable_states	fsm/bdd/BddFsm.c	/^void BddFsm_copy_reachable_states(BddFsm_ptr self, BddFsm_ptr other,$/;"	f
@@ -962,6 +962,7 @@ BddFsm_get_state_constraints	fsm/bdd/BddFsm.c	/^BddInvarStates BddFsm_get_state_
 BddFsm_get_states_inputs_constraints	fsm/bdd/BddFsm.c	/^BddStatesInputs BddFsm_get_states_inputs_constraints(const BddFsm_ptr self,$/;"	f
 BddFsm_get_strong_backward_image	fsm/bdd/BddFsm.c	/^BddStatesInputs BddFsm_get_strong_backward_image(const BddFsm_ptr self,$/;"	f
 BddFsm_get_trans	fsm/bdd/BddFsm.c	/^BddTrans_ptr BddFsm_get_trans(const BddFsm_ptr self)$/;"	f
+BddFsm_get_trans_expr	fsm/bdd/BddFsm.c	/^NodeList_ptr BddFsm_get_trans_expr(BddFsm_ptr self){$/;"	f
 BddFsm_get_weak_backward_image	fsm/bdd/BddFsm.c	/^BddStatesInputs BddFsm_get_weak_backward_image(const BddFsm_ptr self,$/;"	f
 BddFsm_has_cached_reachable_states	fsm/bdd/BddFsm.c	/^boolean BddFsm_has_cached_reachable_states(const BddFsm_ptr self)$/;"	f
 BddFsm_is_deadlock_free	fsm/bdd/BddFsm.c	/^boolean BddFsm_is_deadlock_free(BddFsm_ptr self)$/;"	f
@@ -978,6 +979,7 @@ BddFsm_states_inputs_to_inputs	fsm/bdd/BddFsm.c	/^BddStates BddFsm_states_inputs
 BddFsm_states_inputs_to_states	fsm/bdd/BddFsm.c	/^BddStates BddFsm_states_inputs_to_states(const BddFsm_ptr self,$/;"	f
 BddFsm_states_to_states_get_inputs	fsm/bdd/BddFsm.c	/^BddInputs BddFsm_states_to_states_get_inputs(const BddFsm_ptr self,$/;"	f
 BddFsm_update_cached_reachable_states	fsm/bdd/BddFsm.c	/^void BddFsm_update_cached_reachable_states(const BddFsm_ptr self,$/;"	f
+BddFsm_upre	fsm/bdd/BddFsm.c	/^bdd_ptr BddFsm_upre(BddFsm_ptr self, bdd_ptr latch_cube, bdd_ptr uinput_cube, $/;"	f
 BddInputs	fsm/bdd/bdd.h	/^typedef bdd_ptr BddInputs;$/;"	t
 BddInvarInputs	fsm/bdd/bdd.h	/^typedef bdd_ptr BddInvarInputs;$/;"	t
 BddInvarStates	fsm/bdd/bdd.h	/^typedef bdd_ptr BddInvarStates;$/;"	t
@@ -14561,6 +14563,7 @@ avl_walk_forward	utils/avl.c	/^static void avl_walk_forward(avl_node* node, void
 backJumpFromTime	bmc/bmcTableauPLTLformula.c	/^  int backJumpFromTime;$/;"	m	struct:EvalSetType	file:
 backJumpToTime	bmc/bmcTableauPLTLformula.c	/^  int   backJumpToTime;$/;"	m	struct:EvalSetType	file:
 backward_heuristic	mc/mcInvar.c	/^static Step_Direction backward_heuristic (DdManager* dd,$/;"	f	file:
+backward_synth	fsm/bdd/BddFsm.c	/^static boolean backward_synth(BddFsm_ptr self, bdd_ptr latch_cube, $/;"	f	file:
 backward_trans	trans/bdd/BddTrans.c	/^  ClusterList_ptr backward_trans; $/;"	m	struct:ClusterBasedTrans_TAG	file:
 bad_event	cmd/cmdFile.c	/^bad_event($/;"	f	file:
 base_enc_commit_layer	enc/base/BaseEnc.c	/^void base_enc_commit_layer(BaseEnc_ptr self, const char* layer_name)$/;"	f
@@ -14723,6 +14726,7 @@ bdd_ptr	dd/dd.h	/^typedef struct DdNode * bdd_ptr;$/;"	t	typeref:struct:DdNode
 bdd_readperm	dd/dd.c	/^int bdd_readperm(DdManager * dd, bdd_ptr f)$/;"	f
 bdd_ref	dd/dd.c	/^void bdd_ref(bdd_ptr dd_node)$/;"	f
 bdd_ref_count	dd/dd.c	/^int bdd_ref_count(bdd_ptr n)$/;"	f
+bdd_restrict	dd/dd.c	/^bdd_ptr bdd_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){$/;"	f
 bdd_simplify_assuming	dd/dd.c	/^bdd_ptr bdd_simplify_assuming(DdManager *dd, bdd_ptr fn, bdd_ptr c)$/;"	f
 bdd_size	dd/dd.c	/^int bdd_size(DdManager * dd, bdd_ptr fn)$/;"	f
 bdd_support	dd/dd.c	/^bdd_ptr bdd_support(DdManager *dd, bdd_ptr fn)$/;"	f
@@ -16649,6 +16653,7 @@ formula_state_vars	bmc/sbmc/sbmcStructs.c	/^  lsList   formula_state_vars;$/;"	m
 forward_backward_heuristic	mc/mcInvar.c	/^static Step_Direction forward_backward_heuristic (DdManager* dd,$/;"	f	file:
 forward_heuristic	mc/mcInvar.c	/^static Step_Direction forward_heuristic (DdManager* dd,$/;"	f	file:
 forward_search	fsm/bdd/bddMisc.c	/^  boolean forward_search;$/;"	m	struct:BddELFwdSavedOptions_TAG	file:
+forward_synth	fsm/bdd/BddFsm.c	/^static boolean forward_synth(BddFsm_ptr self, bdd_ptr latch_cube, $/;"	f	file:
 forward_trans	trans/bdd/BddTrans.c	/^  ClusterList_ptr forward_trans;  $/;"	m	struct:ClusterBasedTrans_TAG	file:
 fout	hrc/dumpers/HrcDumper_private.h	/^  FILE* fout;$/;"	m	struct:HrcDumper_TAG
 freeListOfLists_aux	utils/utils.c	/^static void freeListOfLists_aux(lsList list)$/;"	f	file:

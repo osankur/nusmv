@@ -2576,10 +2576,10 @@ EXTERN boolean BddFsm_check_realizable ARGS((const BddFsm_ptr self, int mode)){
   */
   bdd_ptr win = NULL;
   BddSynth_ptr synth = BddSynth_create(self);
-  boolean ret = BddSynth_solve(synth, BDD_SYNTH_DIR_BWD, &win);
-  // FIXME Why is win NULL here?
-  //bdd_free(self->dd, win);
+  boolean ret = BddSynth_solve(synth, mode, &win);
+  bdd_free(self->dd, win);
   BddSynth_destroy(synth);
+	return ret;
 }
 
 /**Function********************************************************************

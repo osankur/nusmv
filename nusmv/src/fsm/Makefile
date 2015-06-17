@@ -87,8 +87,8 @@ am__objects_1 =
 am__objects_2 = FsmBuilder.lo fsm.lo
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_3 = sexp/BoolSexpFsm.lo sexp/Expr.lo sexp/SexpFsm.lo
-am__objects_4 = bdd/bddCmd.lo bdd/BddFsm.lo bdd/BddFsmCache.lo \
-	bdd/bddMisc.lo bdd/FairnessList.lo bdd/BddSynth.lo
+am__objects_4 = bdd/bddCmd.lo bdd/BddFsm.lo bdd/BddSynth.lo bdd/BddFsmCache.lo \
+	bdd/bddMisc.lo bdd/FairnessList.lo
 am__objects_5 = be/BeFsm.lo
 am__objects_6 = $(am__objects_1) $(am__objects_1) $(am__objects_1) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
@@ -143,7 +143,7 @@ AR = ar
 AUTOCONF = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoconf
 AUTOHEADER = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run autoheader
 AUTOMAKE = ${SHELL} /home/sankur/tools/nusmv/nusmv/helpers/missing --run automake-1.11
-AWK = gawk
+AWK = mawk
 CC = gcc -std=gnu99
 CCDEPMODE = depmode=gcc3
 CFLAGS = -fno-strict-aliasing -g -O2
@@ -278,7 +278,7 @@ pdfdir = ${docdir}
 prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
-readline_libs = 
+readline_libs = -lreadline -lncurses
 regex_libs = 
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com

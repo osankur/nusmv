@@ -1,6 +1,6 @@
-read_model -i "/home/sankur/work/ulb/syntcomp/bench-syntcomp14/real.smv"
+read_model -i "/home/sankur/work/ulb/syntcomp/bench-syntcomp14/unrealizable.smv"
 flatten_hierarchy
 encode_variables
 dynamic_var_ordering -e sift
 build_model
-check_realizable
+check_realizable -f

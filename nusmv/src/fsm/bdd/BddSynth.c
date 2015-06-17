@@ -232,22 +232,24 @@ void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
 }
 
 static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
-  boolean use_upre = false;
+  boolean use_upre = true;
   boolean ret = true;
   if (use_upre){
-    // FIXME modify win not *win
     *win = bdd_dup(self->error);
   } else {
     *win = bdd_not(self->dd, self->error);
   }
   bdd_ptr prev = NULL;
+	bdd_ptr tmp1, tmp2;
   int count = 0;
   while( ret && prev != *win ){
     printf("Bwd Iteration: %d\n", ++count);
     if (prev != NULL) bdd_free(self->dd, prev);
     prev = *win;
+		tmp1 = *win;
     if (use_upre){
       *win = bdd_synth_upre(self, prev);
+			tmp2 = *win;
       bdd_or_accumulate(self->dd, win, prev);
     } else {
       *win = bdd_synth_cpre(self, prev);
@@ -257,8 +259,9 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
     // Check init & *win != empty
     bdd_ptr check = bdd_and(self->dd, self->init, *win);
     if (use_upre && bdd_isnot_false(self->dd, check)){
-      ret = false;
-    } else if (bdd_is_false(self->dd, check)){
+				ret = false;
+    }
+		if (!use_upre && bdd_is_false(self->dd, check)){
       ret = false;
     }
     bdd_free(self->dd, check);
@@ -269,12 +272,14 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
 EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_ptr * win){
   boolean ret;
   switch(mode){
-BDD_SYNTH_DIR_BWD:
-    ret = bdd_synth_backward_synth(self, win);
-    break;
-BDD_SYNTH_DIR_FWD:
-    default:
-    ret = false;
-  }
-  return ret;
+		case BDD_SYNTH_DIR_BWD:
+			printf("Backward algorithm\n");
+			ret = bdd_synth_backward_synth(self, win);
+			break;
+		case BDD_SYNTH_DIR_FWD:
+			printf("Forward algorithm\n");
+		default:
+			ret = false;
+	}
+	return ret;
 }

@@ -286,7 +286,6 @@ int CommandCheckRealizable(int argc, char **argv)
   BddFsm_ptr fsm;
 	int result;
   int mode = 0;
-  fprintf(nusmv_stderr, "Running realizability check\n");
   if (argc > 1){
     if (strcmp(argv[1], "-b") == 0){
         mode = 0;
@@ -295,6 +294,7 @@ int CommandCheckRealizable(int argc, char **argv)
         mode = 1;
     }
   }
+  fprintf(nusmv_stderr, "Running realizability check in mode: %d\n", mode);
   if (Compile_check_if_model_was_built(nusmv_stderr, true)) return 1;
   fsm = PropDb_master_get_bdd_fsm(PropPkg_get_prop_database());
 	result = BddFsm_check_realizable(fsm, mode);
