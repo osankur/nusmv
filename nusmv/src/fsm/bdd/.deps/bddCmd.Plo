@@ -80,7 +80,8 @@ bdd/bddCmd.lo: bdd/bddCmd.c /usr/include/stdc-predef.h \
  ../compile/PredicateNormaliser.h ../compile/PredicateExtractor.h \
  ../compile/symb_table/SymbTable.h ../compile/symb_table/SymbLayer.h \
  ../hrc/HrcNode.h ../prop/propPkg.h ../prop/PropDb.h ../parser/parser.h \
- /usr/include/math.h /usr/include/x86_64-linux-gnu/bits/huge_val.h \
+ ../fsm/bdd/BddSynth.h ../fsm/bdd/BddFsm.h /usr/include/math.h \
+ /usr/include/x86_64-linux-gnu/bits/huge_val.h \
  /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
  /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
  /usr/include/x86_64-linux-gnu/bits/inf.h \
@@ -404,6 +405,10 @@ bdd/bddInt.h:
 ../prop/PropDb.h:
 
 ../parser/parser.h:
+
+../fsm/bdd/BddSynth.h:
+
+../fsm/bdd/BddFsm.h:
 
 /usr/include/math.h:
 

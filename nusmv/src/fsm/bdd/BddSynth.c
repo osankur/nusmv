@@ -49,7 +49,26 @@ typedef struct BddSynth_TAG
 
 static void bdd_synth_init ARGS((BddSynth_ptr self, BddFsm_ptr fsm));
 static bdd_ptr bdd_synth_upre ARGS((BddSynth_ptr self, bdd_ptr states));
+static bdd_ptr bdd_synth_upre_trans ARGS((BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans));
 static bdd_ptr bdd_synth_cpre ARGS((BddSynth_ptr self, bdd_ptr states));
+static bdd_ptr bdd_synth_cpre_trans ARGS((BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans));
+
+static bdd_ptr bdd_synth_upre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe));
+static bdd_ptr bdd_synth_cpre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe));
+static boolean bdd_synth_forward_backward_synth ARGS((BddSynth_ptr self, bdd_ptr * win));
+
+void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
+    char * labels = "Upre";
+    FILE * outfile = fopen("/tmp/a.dot", "w");
+    if (!outfile){
+      return;
+    }
+    AddArray_ptr ar = AddArray_create(1);
+    AddArray_set_n(ar,0,bdd_to_add(self->dd, nextFront));
+    BddEnc_dump_addarray_dot(self->enc, ar, (const char **)&labels, outfile);
+    fclose(outfile);
+    while(getchar() != 'c');
+}
 
 void bdd_synth_init(BddSynth_ptr self, BddFsm_ptr fsm){
   self->enc = BddFsm_get_bdd_encoding(fsm);
@@ -126,8 +145,6 @@ void bdd_synth_init(BddSynth_ptr self, BddFsm_ptr fsm){
       }
     }
   }
-  // TODO We could free trans_rels at this point
-  // TODO free trans_funcs at the end
 
   // Prepare compose vector
   // for any BDD B(L'), B.vector_compose(X)
@@ -180,15 +197,16 @@ void BddSynth_destroy(BddSynth_ptr self){
   bdd_free(self->dd, self->init);
   free(self);
 }
-static bdd_ptr bdd_synth_cpre(BddSynth_ptr self, bdd_ptr states){
-  bdd_ptr * local_trans = self->trans;
+
+static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans){
+  bdd_ptr * local_trans = trans;
 #ifdef RESTRICT_IN_CPRE
   bdd_ptr notstates = bdd_not(self->dd, states);
   int nvar = Cudd_ReadSize(self->dd);
   bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
   int i;
   for (i = 0; i < nvar; i++){
-    Y[i] = bdd_restrict(self->dd, self->trans[i], notstates);
+    Y[i] = bdd_restrict(self->dd, trans[i], notstates);
   }
   local_trans = Y;
   bdd_free(self->dd, notstates);
@@ -208,31 +226,162 @@ static bdd_ptr bdd_synth_cpre(BddSynth_ptr self, bdd_ptr states){
 #endif
   return pre3;
 }
-static bdd_ptr bdd_synth_upre(BddSynth_ptr self, bdd_ptr states){
+
+
+/** Upre computation with custom transition relation vector */
+static bdd_ptr bdd_synth_upre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans){
+	// Further restrict the transition relation to ~states(L)
+  bdd_ptr notstates = bdd_not(self->dd, states);
+  int nvar = Cudd_ReadSize(self->dd);
+  bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
+  for (int i = 0; i < nvar; i++){
+    Y[i] = bdd_restrict(self->dd, trans[i], notstates);
+  }
+  bdd_free(self->dd, notstates);
+	//
   bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
-  bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, self->trans);
+  bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, Y);
   bdd_ptr pre2 = bdd_forall(self->dd, pre1, self->cinput_cube);
   bdd_ptr pre3 = bdd_forsome(self->dd, pre2, self->uinput_cube);
+	// Clean up
   bdd_free(self->dd,pre2);
   bdd_free(self->dd,pre1);
   bdd_free(self->dd,pstates);
+  for (int i = 0; i < nvar; i++){
+    bdd_free(self->dd, Y[i]);
+  }
+  free(Y);
   return pre3;
 }
-void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
-    char * labels = "Upre";
-    FILE * outfile = fopen("/tmp/a.dot", "w");
-    if (!outfile){
-      return;
-    }
-    AddArray_ptr ar = AddArray_create(1);
-    AddArray_set_n(ar,0,bdd_to_add(self->dd, nextFront));
-    BddEnc_dump_addarray_dot(self->enc, ar, (const char **)&labels, outfile);
-    fclose(outfile);
-    while(getchar() != 'c');
+
+static bdd_ptr bdd_synth_upre(BddSynth_ptr self, bdd_ptr states){
+	return bdd_synth_upre_trans(self, states, self->trans);
 }
 
+static bdd_ptr bdd_synth_cpre(BddSynth_ptr self, bdd_ptr states){
+	return bdd_synth_cpre_trans(self, states, self->trans);
+}
+
+/**
+ * Compute the least fixpoint \mu X. ( universe /\ ( start \/  UPRE(X) ) )
+ */ 
+static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr universe){
+	int n = Cudd_ReadSize(self->dd);
+	int cnt = 1;
+	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
+	// Restrict the transition relation to (universe /\ ~start)(L)
+	bdd_ptr not_start = bdd_not(self->dd, start);
+	bdd_ptr universe_not_start = bdd_and(self->dd, not_start, universe);
+	bdd_free(self->dd, not_start);
+	for (int i = 0; i < n ; i++){
+		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], universe_not_start);
+	}
+	bdd_free(self->dd, universe_not_start);
+	//
+	bdd_ptr iterate = bdd_and(self->dd, universe, start);
+	bdd_ptr prev = NULL;
+	while( iterate != prev ){
+		printf("\tUpre iteration %d\n", cnt++);
+		if (prev) bdd_free(self->dd, prev);
+		prev = bdd_dup(iterate);
+		bdd_ptr next = bdd_synth_upre_trans(self, prev, restricted_trans);
+		bdd_or_accumulate(self->dd, &iterate, next);
+		bdd_and_accumulate(self->dd, &iterate, universe);
+		bdd_free(self->dd, next);
+	}
+	bdd_free(self->dd, prev);
+	for (int i = 0; i < n ; i++){
+		bdd_free(self->dd, restricted_trans[i]);
+	}
+	free(restricted_trans);
+	return iterate;
+}
+
+/**
+ * Compute the greatest fixpoint \nu X. ( universe /\  CPRE(X) )
+ */ 
+static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe){
+	int n = Cudd_ReadSize(self->dd);
+	int cnt = 1;
+	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
+	// Restrict the transition relation to universe(L)
+	for (int i = 0; i < n ; i++){
+		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], universe);
+	}
+	//
+	bdd_ptr notlosing = bdd_not(self->dd, losing);
+	bdd_ptr iterate = bdd_and(self->dd,universe, notlosing);
+	bdd_ptr prev = NULL;
+	while( iterate != prev ){
+		printf("\tCpre iteration %d\n", cnt++);
+		if (prev) bdd_free(self->dd, prev);
+		prev = bdd_dup(iterate);
+		bdd_free(self->dd, iterate);
+		iterate = bdd_synth_cpre_trans(self, prev, restricted_trans);
+		bdd_and_accumulate(self->dd, &iterate, prev);
+		bdd_and_accumulate(self->dd, &iterate, universe);
+	}
+	bdd_free(self->dd, prev);
+	bdd_free(self->dd, notlosing);
+	for (int i = 0; i < n ; i++){
+		bdd_free(self->dd, restricted_trans[i]);
+	}
+	free(restricted_trans);
+	return iterate;
+}
+
+static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win){
+	boolean realizable = true;
+	bdd_ptr losing = bdd_dup(self->error);
+	bdd_ptr front = bdd_dup(self->init);
+	bdd_ptr reached = bdd_false(self->dd);
+	int cnt = 1;
+	while ( bdd_isnot_false(self->dd, front) ){
+		printf("Forward image iteration %d\n", cnt++);
+		bdd_or_accumulate(self->dd, &reached, front);
+
+		// Is there a counter-strategy staying inside reached?
+		// Recompute UPRE
+		bdd_ptr U_star = bdd_synth_upre_star(self, losing, reached);
+		if ( bdd_included(self->dd, self->init, U_star) ){
+			bdd_free(self->dd, U_star);
+			realizable = false;
+			break;
+		}
+		bdd_or_accumulate(self->dd, &losing, U_star);
+		bdd_free(self->dd, U_star);
+
+		// Is there a winning strategy staying inside reached?
+		if (!bdd_included(self->dd, front, losing)){
+			*win = bdd_synth_cpre_star(self, losing, reached);
+			if ( bdd_included(self->dd, self->init, *win) ){
+				break;
+			}
+		}
+		// Get the image of front \ losing (projected to L)
+    bdd_ptr notlosing = bdd_not(self->dd, losing);
+		bdd_and_accumulate(self->dd, &front, notlosing);
+		bdd_free(self->dd, notlosing);
+		bdd_ptr tmp = BddFsm_get_forward_image(self->fsm, front);
+		bdd_free(self->dd, front);
+    bdd_ptr tmp1 = bdd_forsome(self->dd, tmp, self->cinput_cube);
+    front = bdd_forsome(self->dd, tmp1, self->uinput_cube);
+    bdd_free(self->dd, tmp);
+    bdd_free(self->dd, tmp1);
+    // Extract the new frontier
+    bdd_ptr notreached = bdd_not(self->dd, reached);
+    bdd_and_accumulate(self->dd, &front, notreached);
+    bdd_free(self->dd, notreached);
+	}
+	return realizable;
+}
+
+
+/**
+ * Just backwards computation preceded by a fwd reachable states computation
+ */
 static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
-  boolean use_upre = true;
+  boolean use_upre = false;
   boolean ret = true;
   if (use_upre){
     *win = bdd_dup(self->error);
@@ -269,15 +418,42 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
   return ret;
 }
 
+static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
+  boolean ret = true;
+	bdd_ptr reachables = bdd_false(self->dd);
+	bdd_ptr front = self->init;
+	int reach_cnt = 1;
+	while( bdd_isnot_false(self->dd, front) ){
+		reach_cnt++;
+		bdd_or_accumulate(self->dd, &reachables, front);
+		bdd_ptr newFront = BddFsm_get_forward_image(self->fsm, front);
+		bdd_free(self->dd, front);
+		bdd_and_accumulate(self->dd, &newFront, bdd_not(self->dd,reachables));
+		front = newFront;
+	}
+	printf("Reachable states diameter: %d\n", reach_cnt);
+	*win = bdd_synth_cpre_star(self, self->error, reachables);
+	bdd_and_accumulate(self->dd, win, self->init);
+	return bdd_isnot_false(self->dd, *win);
+}
+
 EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_ptr * win){
   boolean ret;
   switch(mode){
 		case BDD_SYNTH_DIR_BWD:
 			printf("Backward algorithm\n");
-			ret = bdd_synth_backward_synth(self, win);
+			*win = bdd_synth_cpre_star(self, self->error, bdd_true(self->dd));
+			bdd_and_accumulate(self->dd, win, self->init);
+			ret = bdd_isnot_false(self->dd, *win);
+			break;
+		case BDD_SYNTH_DIR_BWD_W_REACH:
+			printf("Backward algorithm with forward reach states reduction\n");
+			ret = bdd_synth_backward_synth_reach(self, win);
 			break;
 		case BDD_SYNTH_DIR_FWD:
 			printf("Forward algorithm\n");
+			ret = bdd_synth_forward_backward_synth(self, win);
+			break;
 		default:
 			ret = false;
 	}

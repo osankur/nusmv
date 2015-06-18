@@ -1724,6 +1724,34 @@ add_ptr add_implies(DdManager * dd, add_ptr a, add_ptr b)
   return((add_ptr)result);
 }
 
+bdd_ptr bdd_implies(DdManager * dd, bdd_ptr a, bdd_ptr b)
+{
+  DdNode * tmp;
+  DdNode * result;
+
+  tmp = Cudd_Not((DdNode *)a);
+  common_error(tmp, "bdd_implies: not(a) = NULL");
+  Cudd_Ref(tmp);
+  result = Cudd_bddOr(dd, tmp, (DdNode *)b);
+  common_error2(dd, result, tmp, "add_implies: result = NULL");
+  Cudd_Ref(result);
+  Cudd_RecursiveDeref(dd, tmp);
+  return((bdd_ptr)result);
+}
+
+boolean bdd_included(DdManager *dd, bdd_ptr a, bdd_ptr b){
+	bdd_ptr implies = bdd_implies(dd, a, b);
+	boolean ret = bdd_is_true(dd, implies);
+	bdd_free(dd, implies);
+	return ret;
+}
+
+boolean bdd_intersects(DdManager *dd, bdd_ptr a, bdd_ptr b){
+	bdd_ptr inter = bdd_and(dd, a, b);
+	boolean ret = bdd_isnot_false(dd, inter);
+	bdd_free(dd, inter);
+	return ret;
+}
 
 /**Function********************************************************************
 

@@ -51,6 +51,7 @@
 #include "compile/compile.h"
 #include "prop/propPkg.h"
 #include "parser/parser.h"
+#include "fsm/bdd/BddSynth.h"
 
 #include <math.h> /* for log10 */
 
@@ -288,10 +289,13 @@ int CommandCheckRealizable(int argc, char **argv)
   int mode = 0;
   if (argc > 1){
     if (strcmp(argv[1], "-b") == 0){
-        mode = 0;
+        mode = BDD_SYNTH_DIR_BWD;
     }
     if (strcmp(argv[1], "-f") == 0){
-        mode = 1;
+        mode = BDD_SYNTH_DIR_FWD;
+    }
+    if (strcmp(argv[1], "-bwr") == 0){
+        mode = BDD_SYNTH_DIR_BWD_W_REACH;
     }
   }
   fprintf(nusmv_stderr, "Running realizability check in mode: %d\n", mode);

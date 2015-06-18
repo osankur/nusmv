@@ -32,7 +32,7 @@ typedef struct BddSynth_TAG*  BddSynth_ptr;
 #define BDD_SYNTH_CHECK_INSTANCE(x) \
          (nusmv_assert( BDD_SYNTH(x) != BDD_SYNTH(NULL) ))
 
-enum Bdd_Synth_dir_TAG {BDD_SYNTH_DIR_BWD, BDD_SYNTH_DIR_FWD};
+enum Bdd_Synth_dir_TAG {BDD_SYNTH_DIR_BWD, BDD_SYNTH_DIR_FWD, BDD_SYNTH_DIR_BWD_W_REACH};
 typedef enum Bdd_Synth_dir_TAG BddSynth_dir;
 
 /* ---------------------------------------------------------------------- */
