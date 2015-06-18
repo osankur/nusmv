@@ -329,7 +329,7 @@ static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr un
 	free(restricted_trans);
 	return iterate;
 }
-
+/*
 static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win){
 	boolean realizable = true;
 	bdd_ptr losing = bdd_dup(self->error);
@@ -358,6 +358,7 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 				break;
 			}
 		}
+
 		// Get the image of front \ losing (projected to L)
     bdd_ptr notlosing = bdd_not(self->dd, losing);
 		bdd_and_accumulate(self->dd, &front, notlosing);
@@ -375,7 +376,76 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 	}
 	return realizable;
 }
+*/
 
+
+/**
+ * TODO
+ * 1) Check why UPRE is slow for amba5c5y.smv
+ *    Does the size of trans rel grow?
+ *    Is reached too large? So that each iterate is much larger when intersected
+ *    with reached?
+ * 2) Check constrain. Can't use good properties of this here?
+ */
+static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win){
+	boolean realizable = true;
+	bdd_ptr losing = bdd_dup(self->error);
+	bdd_ptr reached = bdd_false(self->dd);
+	int cnt = 1;
+	int expand_steps = 4;
+	boolean completed = false;
+	boolean prev_completed = false;
+	int diameter = 0;
+	int new_diameter;
+	BddStates* layers;
+	bdd_ptr front = bdd_dup(self->init);
+	bdd_ptr inputs = bdd_and(self->dd, self->cinput_cube, self->uinput_cube);
+	do {
+		printf("Forward image iteration %d\n", cnt++);
+		completed = prev_completed;
+
+		// Is there a counter-strategy staying inside reached?
+		// Recompute UPRE
+		bdd_ptr U_star = bdd_synth_upre_star(self, losing, reached);
+		if ( bdd_included(self->dd, self->init, U_star) ){
+			bdd_free(self->dd, U_star);
+			realizable = false;
+			break;
+		}
+		bdd_or_accumulate(self->dd, &losing, U_star);
+		bdd_free(self->dd, U_star);
+
+		// Is there a winning strategy staying inside reached?
+		if (!bdd_included(self->dd, front, losing)){
+			*win = bdd_synth_cpre_star(self, losing, reached);
+			if ( bdd_included(self->dd, self->init, *win) ){
+				break;
+			}
+		}
+
+		BddFsm_expand_cached_reachable_states(self->fsm, expand_steps, -1);
+		prev_completed = BddFsm_get_cached_reachable_states(self->fsm, &layers, &new_diameter);
+
+		// front is the newly added reachable states
+		bdd_free(self->dd, front);
+		front = bdd_false(self->dd);
+		for (int i = diameter; i < new_diameter; i++){
+			bdd_or_accumulate(self->dd, &front, layers[i]);
+		}
+		bdd_ptr tmp = bdd_forsome(self->dd, front, inputs);
+		bdd_free(self->dd, front);
+		front = tmp;
+
+		// Update diameter
+		diameter = new_diameter;
+
+		// Compute the union of reached states
+		bdd_or_accumulate(self->dd, &reached, front);
+	}while(!completed);
+
+	bdd_free(self->dd, inputs);
+	return realizable;
+}
 
 /**
  * Just backwards computation preceded by a fwd reachable states computation
@@ -421,8 +491,8 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
 static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
   boolean ret = true;
 	// Compute first reachable states
-	/*
 	 // This is the local version where we clean up the intermediary layers
+	/*
 	bdd_ptr reachables = bdd_false(self->dd);
 	bdd_ptr front = bdd_dup(self->init);
 	int reach_cnt = 1;
@@ -434,9 +504,9 @@ static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
 		bdd_and_accumulate(self->dd, &newFront, bdd_not(self->dd,reachables));
 		front = newFront;
 	}
+	printf("Reachable states computed. Diameter: %d\n", reach_cnt);
 	*/
 	// This is the NuSMV's version where it keeps the layers referenced
-	//
 	int diameter;
   BddStates* layers;
   BddFsm_expand_cached_reachable_states(self->fsm, -1, -1);
@@ -450,8 +520,8 @@ static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
 	bdd_free(self->dd, reachables);
 	bdd_free(self->dd, tmp);
 	reachables = tmp1;
-	//
 	printf("Reachable states computed. Diameter: %d\n", diameter);
+	//
 	*win = bdd_synth_cpre_star(self, self->error, reachables);
 	bdd_and_accumulate(self->dd, win, self->init);
 	return bdd_isnot_false(self->dd, *win);
