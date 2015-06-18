@@ -420,8 +420,11 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
 
 static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
   boolean ret = true;
+	// Compute first reachable states
+	/*
+	 // This is the local version where we clean up the intermediary layers
 	bdd_ptr reachables = bdd_false(self->dd);
-	bdd_ptr front = self->init;
+	bdd_ptr front = bdd_dup(self->init);
 	int reach_cnt = 1;
 	while( bdd_isnot_false(self->dd, front) ){
 		reach_cnt++;
@@ -431,7 +434,24 @@ static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
 		bdd_and_accumulate(self->dd, &newFront, bdd_not(self->dd,reachables));
 		front = newFront;
 	}
-	printf("Reachable states diameter: %d\n", reach_cnt);
+	*/
+	// This is the NuSMV's version where it keeps the layers referenced
+	//
+	int diameter;
+  BddStates* layers;
+  BddFsm_expand_cached_reachable_states(self->fsm, -1, -1);
+  boolean completed = BddFsm_get_cached_reachable_states(self->fsm, &layers, &diameter);
+	bdd_ptr reachables = bdd_false(self->dd);
+	for(int i = 0; i < diameter; i++){
+		bdd_or_accumulate(self->dd, &reachables, layers[i]);
+	}
+	bdd_ptr tmp = bdd_forsome(self->dd, reachables, self->cinput_cube);
+	bdd_ptr tmp1 = bdd_forsome(self->dd, tmp, self->uinput_cube);
+	bdd_free(self->dd, reachables);
+	bdd_free(self->dd, tmp);
+	reachables = tmp1;
+	//
+	printf("Reachable states computed. Diameter: %d\n", diameter);
 	*win = bdd_synth_cpre_star(self, self->error, reachables);
 	bdd_and_accumulate(self->dd, win, self->init);
 	return bdd_isnot_false(self->dd, *win);
