@@ -298,6 +298,13 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 }
 
 /**
+ * Check if (a /\ universe) != (b /\ universe)
+ */
+static boolean check_different_inside(BddSynth_ptr self, bdd_ptr a, bdd_ptr b, bdd_ptr universe){
+	
+}
+
+/**
  * Compute the greatest fixpoint \nu X. ( universe /\  CPRE(X) )
  */ 
 static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe){
@@ -310,16 +317,20 @@ static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr un
 	}
 	//
 	bdd_ptr notlosing = bdd_not(self->dd, losing);
-	bdd_ptr iterate = bdd_and(self->dd,universe, notlosing);
+	//bdd_ptr iterate = bdd_and(self->dd,universe, notlosing);
+	bdd_ptr iterate = bdd_restrict(self->dd, notlosing, universe);
 	bdd_ptr prev = NULL;
 	while( iterate != prev ){
-		printf("\tCpre iteration %d\n", cnt++);
+		printf("\tCpre iteration %d\n iterate size: %d\n", cnt++, Cudd_DagSize(iterate));
 		if (prev) bdd_free(self->dd, prev);
 		prev = bdd_dup(iterate);
 		bdd_free(self->dd, iterate);
 		iterate = bdd_synth_cpre_trans(self, prev, restricted_trans);
 		bdd_and_accumulate(self->dd, &iterate, prev);
-		bdd_and_accumulate(self->dd, &iterate, universe);
+		//bdd_and_accumulate(self->dd, &iterate, universe);
+		bdd_ptr tmp = bdd_restrict(self->dd, iterate, universe);
+		bdd_free(self->dd, iterate);
+		iterate = tmp;
 	}
 	bdd_free(self->dd, prev);
 	bdd_free(self->dd, notlosing);
@@ -385,14 +396,16 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
  *    Does the size of trans rel grow?
  *    Is reached too large? So that each iterate is much larger when intersected
  *    with reached?
- * 2) Check constrain. Can't use good properties of this here?
+ * 2) Check constrain. Can't we use good properties of this here?
  */
 static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win){
 	boolean realizable = true;
-	bdd_ptr losing = bdd_dup(self->error);
+	bdd_ptr losing = bdd_dup(self->error); // under-approximation
+	bdd_ptr winning = bdd_false(self->dd); // under-approximation
 	bdd_ptr reached = bdd_false(self->dd);
 	int cnt = 1;
-	int expand_steps = 4;
+	// how many reachability layers we explore at each step
+	int expand_steps = 4; 
 	boolean completed = false;
 	boolean prev_completed = false;
 	int diameter = 0;
