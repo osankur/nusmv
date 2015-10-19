@@ -3637,3 +3637,37 @@ bdd_ptr bdd_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){
   Cudd_Ref(fr);
   return fr;
 }
+
+/**Function********************************************************************
+
+  Synopsis [Returns an overapproximation of given BDD.]
+
+  Description [The returned BDD is referenced.]
+  SideEffects        []
+
+  SeeAlso            []
+
+******************************************************************************/
+
+bdd_ptr bdd_over_approx(DdManager* mgr, bdd_ptr f, int numVars, int threshold, int safe, double quality)
+{
+	bdd_ptr aprf = Cudd_OverApprox(mgr, f, numVars, threshold, safe, quality);
+	Cudd_Ref(aprf);
+	return aprf;
+}
+/**Function********************************************************************
+
+  Synopsis [Returns an underapproximation of given BDD.]
+
+  Description [The returned BDD is referenced.]
+  SideEffects        []
+
+  SeeAlso            []
+
+******************************************************************************/
+bdd_ptr bdd_under_approx(DdManager* mgr, bdd_ptr f, int numVars, int threshold, int safe, double quality)
+{
+	bdd_ptr aprf = Cudd_UnderApprox(mgr, f, numVars, threshold, safe, quality);
+	Cudd_Ref(aprf);
+	return aprf;
+}
