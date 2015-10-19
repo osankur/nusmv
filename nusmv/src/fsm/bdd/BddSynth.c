@@ -297,6 +297,25 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 	return iterate;
 }
 
+
+void print_trans_size_cstm(BddSynth_ptr self, bdd_ptr * trans){
+  int n = Cudd_ReadSize(self->dd);
+  int total = 0;
+  for(int i = 0; i < n; i++){
+    total += Cudd_DagSize(trans[i]);
+  }
+  printf("Trans rel total size: %d\n", total);
+}
+void print_trans_size(BddSynth_ptr self){
+  int n = Cudd_ReadSize(self->dd);
+  int total = 0;
+  for(int i = 0; i < n; i++){
+    total += Cudd_DagSize(self->trans[i]);
+  }
+  printf("Trans rel total size: %d\n", total);
+}
+
+
 /**
  * Check if (a /\ universe) != (b /\ universe)
  */
@@ -310,27 +329,42 @@ static boolean check_different_inside(BddSynth_ptr self, bdd_ptr a, bdd_ptr b, b
 static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe){
 	int n = Cudd_ReadSize(self->dd);
 	int cnt = 1;
-	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
+  bdd_ptr * restricted_trans = self->trans;
+  /*
 	// Restrict the transition relation to universe(L)
+	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
 	for (int i = 0; i < n ; i++){
 		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], universe);
-	}
-	//
+  }	 
+  print_trans_size_cstm(self, restricted_trans);
+	*/
 	bdd_ptr notlosing = bdd_not(self->dd, losing);
 	//bdd_ptr iterate = bdd_and(self->dd,universe, notlosing);
 	bdd_ptr iterate = bdd_restrict(self->dd, notlosing, universe);
 	bdd_ptr prev = NULL;
 	while( iterate != prev ){
 		printf("\tCpre iteration %d\n iterate size: %d\n", cnt++, Cudd_DagSize(iterate));
+		printf("\tCpre iteration %d (Current iterate has dag size %d)\n", cnt++, Cudd_DagSize(iterate));
 		if (prev) bdd_free(self->dd, prev);
 		prev = bdd_dup(iterate);
 		bdd_free(self->dd, iterate);
 		iterate = bdd_synth_cpre_trans(self, prev, restricted_trans);
 		bdd_and_accumulate(self->dd, &iterate, prev);
-		//bdd_and_accumulate(self->dd, &iterate, universe);
+
+		/* VERSION 1 */
 		bdd_ptr tmp = bdd_restrict(self->dd, iterate, universe);
 		bdd_free(self->dd, iterate);
 		iterate = tmp;
+		/*
+		/* VERSION 2*/
+    bdd_and_accumulate(self->dd, &iterate, universe);
+    //bdd_and_accumulate(self->dd, &iterate, universe);
+    /*
+    bdd_ptr tmp = Cudd_bddConstrain(self->dd, iterate, universe);
+    bdd_free(self->dd, iterate);
+    iterate = tmp;
+    */
+		*/
 	}
 	bdd_free(self->dd, prev);
 	bdd_free(self->dd, notlosing);
@@ -522,7 +556,12 @@ static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
 	// This is the NuSMV's version where it keeps the layers referenced
 	int diameter;
   BddStates* layers;
+
+  // Debug log
+  print_trans_size(self);
   BddFsm_expand_cached_reachable_states(self->fsm, -1, -1);
+  // Debug log
+  print_trans_size(self);
   boolean completed = BddFsm_get_cached_reachable_states(self->fsm, &layers, &diameter);
 	bdd_ptr reachables = bdd_false(self->dd);
 	for(int i = 0; i < diameter; i++){

@@ -265,6 +265,8 @@ EXTERN int      bdd_ref_count           ARGS((bdd_ptr n));
 EXTERN int      calculate_bdd_value     ARGS((DdManager* mgr, bdd_ptr f, int* values));
 EXTERN bdd_ptr bdd_restrict ARGS((DdManager *dd, bdd_ptr f, bdd_ptr by));
 EXTERN bdd_ptr bdd_implies(DdManager * dd, bdd_ptr a, bdd_ptr b);
+EXTERN bdd_ptr bdd_over_approx          ARGS((DdManager* mgr, bdd_ptr f, int numVars, int threshold, int safe, double quality));
+EXTERN bdd_ptr bdd_under_approx         ARGS((DdManager* mgr, bdd_ptr f, int numVars, int threshold, int safe, double quality));
 boolean bdd_included(DdManager *dd, bdd_ptr a, bdd_ptr b);
 boolean bdd_intersects(DdManager *dd, bdd_ptr a, bdd_ptr b);
 
