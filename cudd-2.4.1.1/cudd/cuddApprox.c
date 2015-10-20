@@ -280,8 +280,8 @@ Cudd_OverApprox(
 
     g = Cudd_Not(f);    
     do {
-	dd->reordered = 0;
-	subset = cuddUnderApprox(dd, g, numVars, threshold, safe, quality);
+			dd->reordered = 0;
+			subset = cuddUnderApprox(dd, g, numVars, threshold, safe, quality);
     } while (dd->reordered == 1);
     
     return(Cudd_NotCond(subset, (subset != NULL)));
@@ -910,7 +910,7 @@ gatherInfo(
     NodeData *infoTop;
 
     /* NuSMV: begin add */
-    abort(); /* NOT USED BY NUSMV */
+    //abort(); /* NOT USED BY NUSMV */
     /* NuSMV: begin end */
 
     /* If user did not give numVars value, set it to the maximum
@@ -2159,7 +2159,7 @@ BAapplyBias(
     int careT, careE;
 
     /* NuSMV: begin add */
-    abort(); /* NOT USED BY NUSMV */
+    //abort(); /* NOT USED BY NUSMV */
     /* NuSMV: begin end */
 
     one = DD_TRUE(dd);

@@ -53,9 +53,27 @@ static bdd_ptr bdd_synth_upre_trans ARGS((BddSynth_ptr self, bdd_ptr states, bdd
 static bdd_ptr bdd_synth_cpre ARGS((BddSynth_ptr self, bdd_ptr states));
 static bdd_ptr bdd_synth_cpre_trans ARGS((BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans));
 
-static bdd_ptr bdd_synth_upre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe));
+static bdd_ptr bdd_synth_upre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe, boolean early_exit));
 static bdd_ptr bdd_synth_cpre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe));
 static boolean bdd_synth_forward_backward_synth ARGS((BddSynth_ptr self, bdd_ptr * win));
+
+void print_trans_size_cstm(BddSynth_ptr self, bdd_ptr * trans){
+  int n = Cudd_ReadSize(self->dd);
+  int total = 0;
+  for(int i = 0; i < n; i++){
+    total += Cudd_DagSize(trans[i]);
+  }
+  printf("Trans rel total size: %d\n", total);
+}
+void print_trans_size(BddSynth_ptr self){
+  int n = Cudd_ReadSize(self->dd);
+  int total = 0;
+  for(int i = 0; i < n; i++){
+    total += Cudd_DagSize(self->trans[i]);
+  }
+  printf("Trans rel total size: %d\n", total);
+}
+
 
 void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
     char * labels = "Upre";
@@ -198,12 +216,14 @@ void BddSynth_destroy(BddSynth_ptr self){
   free(self);
 }
 
-static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans){
+static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans)
+{
   bdd_ptr * local_trans = trans;
 #ifdef RESTRICT_IN_CPRE
   bdd_ptr notstates = bdd_not(self->dd, states);
   int nvar = Cudd_ReadSize(self->dd);
   bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
+	bdd_ptr tmp = NULL;
   int i;
   for (i = 0; i < nvar; i++){
     Y[i] = bdd_restrict(self->dd, trans[i], notstates);
@@ -231,6 +251,8 @@ static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr *
 /** Upre computation with custom transition relation vector */
 static bdd_ptr bdd_synth_upre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans){
 	// Further restrict the transition relation to ~states(L)
+	bdd_ptr * Y = self->trans;
+	/*
   bdd_ptr notstates = bdd_not(self->dd, states);
   int nvar = Cudd_ReadSize(self->dd);
   bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
@@ -238,6 +260,7 @@ static bdd_ptr bdd_synth_upre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr *
     Y[i] = bdd_restrict(self->dd, trans[i], notstates);
   }
   bdd_free(self->dd, notstates);
+	*/
 	//
   bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
   bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, Y);
@@ -247,10 +270,12 @@ static bdd_ptr bdd_synth_upre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr *
   bdd_free(self->dd,pre2);
   bdd_free(self->dd,pre1);
   bdd_free(self->dd,pstates);
+	/*
   for (int i = 0; i < nvar; i++){
     bdd_free(self->dd, Y[i]);
   }
   free(Y);
+	*/
   return pre3;
 }
 
@@ -264,32 +289,46 @@ static bdd_ptr bdd_synth_cpre(BddSynth_ptr self, bdd_ptr states){
 
 /**
  * Compute the least fixpoint \mu X. ( universe /\ ( start \/  UPRE(X) ) )
+ * If early_exit is set to true, then stop the iteration early and return
+ * current iterate which is not the greatest fixpoint.
  */ 
-static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr universe){
+static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr universe, boolean early_exit){
 	int n = Cudd_ReadSize(self->dd);
 	int cnt = 1;
-	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
+	// bdd_ptr * restricted_trans = self->trans;
+	
 	// Restrict the transition relation to (universe /\ ~start)(L)
+	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
 	bdd_ptr not_start = bdd_not(self->dd, start);
 	bdd_ptr universe_not_start = bdd_and(self->dd, not_start, universe);
 	bdd_free(self->dd, not_start);
-	for (int i = 0; i < n ; i++){
-		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], universe_not_start);
-	}
+	int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
+	bdd_ptr appr_universe_not_start = bdd_over_approx(self->dd, universe_not_start, numVars, 1000, 1, 1);
 	bdd_free(self->dd, universe_not_start);
+	for (int i = 0; i < n ; i++){
+		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], appr_universe_not_start);
+	}
+	bdd_free(self->dd, appr_universe_not_start);
+  print_trans_size_cstm(self, restricted_trans);
 	//
+	printf("\tStarting UPRE fixpoint\n");
 	bdd_ptr iterate = bdd_and(self->dd, universe, start);
 	bdd_ptr prev = NULL;
 	while( iterate != prev ){
-		printf("\tUpre iteration %d\n", cnt++);
+		printf("\tUpre iteration %d (iterate size: %d)\n", cnt++, Cudd_DagSize(iterate));
 		if (prev) bdd_free(self->dd, prev);
 		prev = bdd_dup(iterate);
 		bdd_ptr next = bdd_synth_upre_trans(self, prev, restricted_trans);
 		bdd_or_accumulate(self->dd, &iterate, next);
 		bdd_and_accumulate(self->dd, &iterate, universe);
 		bdd_free(self->dd, next);
+		if (early_exit && bdd_included(self->dd, self->init, iterate) ){
+			break;
+		}
 	}
 	bdd_free(self->dd, prev);
+
+	// Free restricted trans rels
 	for (int i = 0; i < n ; i++){
 		bdd_free(self->dd, restricted_trans[i]);
 	}
@@ -298,30 +337,6 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 }
 
 
-void print_trans_size_cstm(BddSynth_ptr self, bdd_ptr * trans){
-  int n = Cudd_ReadSize(self->dd);
-  int total = 0;
-  for(int i = 0; i < n; i++){
-    total += Cudd_DagSize(trans[i]);
-  }
-  printf("Trans rel total size: %d\n", total);
-}
-void print_trans_size(BddSynth_ptr self){
-  int n = Cudd_ReadSize(self->dd);
-  int total = 0;
-  for(int i = 0; i < n; i++){
-    total += Cudd_DagSize(self->trans[i]);
-  }
-  printf("Trans rel total size: %d\n", total);
-}
-
-
-/**
- * Check if (a /\ universe) != (b /\ universe)
- */
-static boolean check_different_inside(BddSynth_ptr self, bdd_ptr a, bdd_ptr b, bdd_ptr universe){
-	
-}
 
 /**
  * Compute the greatest fixpoint \nu X. ( universe /\  CPRE(X) )
@@ -329,42 +344,32 @@ static boolean check_different_inside(BddSynth_ptr self, bdd_ptr a, bdd_ptr b, b
 static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe){
 	int n = Cudd_ReadSize(self->dd);
 	int cnt = 1;
-  bdd_ptr * restricted_trans = self->trans;
-  /*
-	// Restrict the transition relation to universe(L)
+	bdd_ptr notlosing = bdd_not(self->dd, losing);
+
+	// Restrict the transition relation to (an overapprox of) notlosing & universe(L)
+	bdd_and_accumulate(self->dd, &notlosing, universe);
+	int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
+	bdd_ptr appr_notlosing_and_universe = bdd_over_approx(self->dd, notlosing, numVars, 1000, 1, 1);
 	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
 	for (int i = 0; i < n ; i++){
-		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], universe);
+		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], appr_notlosing_and_universe);
   }	 
+	bdd_free(self->dd, appr_notlosing_and_universe);
   print_trans_size_cstm(self, restricted_trans);
-	*/
-	bdd_ptr notlosing = bdd_not(self->dd, losing);
+
 	//bdd_ptr iterate = bdd_and(self->dd,universe, notlosing);
 	bdd_ptr iterate = bdd_restrict(self->dd, notlosing, universe);
 	bdd_ptr prev = NULL;
+	printf("\tStarting CPRE fixpoint\n");
 	while( iterate != prev ){
-		printf("\tCpre iteration %d\n iterate size: %d\n", cnt++, Cudd_DagSize(iterate));
-		printf("\tCpre iteration %d (Current iterate has dag size %d)\n", cnt++, Cudd_DagSize(iterate));
+		printf("\tCpre iteration %d (iterate size: %d)\n", cnt++, Cudd_DagSize(iterate));
 		if (prev) bdd_free(self->dd, prev);
-		prev = bdd_dup(iterate);
-		bdd_free(self->dd, iterate);
+		// prev = bdd_dup(iterate);
+		// bdd_free(self->dd, iterate);
+		prev = iterate;
 		iterate = bdd_synth_cpre_trans(self, prev, restricted_trans);
 		bdd_and_accumulate(self->dd, &iterate, prev);
-
-		/* VERSION 1 */
-		bdd_ptr tmp = bdd_restrict(self->dd, iterate, universe);
-		bdd_free(self->dd, iterate);
-		iterate = tmp;
-		/*
-		/* VERSION 2*/
     bdd_and_accumulate(self->dd, &iterate, universe);
-    //bdd_and_accumulate(self->dd, &iterate, universe);
-    /*
-    bdd_ptr tmp = Cudd_bddConstrain(self->dd, iterate, universe);
-    bdd_free(self->dd, iterate);
-    iterate = tmp;
-    */
-		*/
 	}
 	bdd_free(self->dd, prev);
 	bdd_free(self->dd, notlosing);
@@ -374,54 +379,6 @@ static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr un
 	free(restricted_trans);
 	return iterate;
 }
-/*
-static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win){
-	boolean realizable = true;
-	bdd_ptr losing = bdd_dup(self->error);
-	bdd_ptr front = bdd_dup(self->init);
-	bdd_ptr reached = bdd_false(self->dd);
-	int cnt = 1;
-	while ( bdd_isnot_false(self->dd, front) ){
-		printf("Forward image iteration %d\n", cnt++);
-		bdd_or_accumulate(self->dd, &reached, front);
-
-		// Is there a counter-strategy staying inside reached?
-		// Recompute UPRE
-		bdd_ptr U_star = bdd_synth_upre_star(self, losing, reached);
-		if ( bdd_included(self->dd, self->init, U_star) ){
-			bdd_free(self->dd, U_star);
-			realizable = false;
-			break;
-		}
-		bdd_or_accumulate(self->dd, &losing, U_star);
-		bdd_free(self->dd, U_star);
-
-		// Is there a winning strategy staying inside reached?
-		if (!bdd_included(self->dd, front, losing)){
-			*win = bdd_synth_cpre_star(self, losing, reached);
-			if ( bdd_included(self->dd, self->init, *win) ){
-				break;
-			}
-		}
-
-		// Get the image of front \ losing (projected to L)
-    bdd_ptr notlosing = bdd_not(self->dd, losing);
-		bdd_and_accumulate(self->dd, &front, notlosing);
-		bdd_free(self->dd, notlosing);
-		bdd_ptr tmp = BddFsm_get_forward_image(self->fsm, front);
-		bdd_free(self->dd, front);
-    bdd_ptr tmp1 = bdd_forsome(self->dd, tmp, self->cinput_cube);
-    front = bdd_forsome(self->dd, tmp1, self->uinput_cube);
-    bdd_free(self->dd, tmp);
-    bdd_free(self->dd, tmp1);
-    // Extract the new frontier
-    bdd_ptr notreached = bdd_not(self->dd, reached);
-    bdd_and_accumulate(self->dd, &front, notreached);
-    bdd_free(self->dd, notreached);
-	}
-	return realizable;
-}
-*/
 
 
 /**
@@ -431,12 +388,17 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
  *    Is reached too large? So that each iterate is much larger when intersected
  *    with reached?
  * 2) Check constrain. Can't we use good properties of this here?
+
+runf does 1m16s on this
+/home/sankur/work/ulb/syntcomp/bench-syntcomp14/smv/genbuf11f10unrealn.smv
+
+against >5m for run
  */
 static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win){
 	boolean realizable = true;
 	bdd_ptr losing = bdd_dup(self->error); // under-approximation
-	bdd_ptr winning = bdd_false(self->dd); // under-approximation
 	bdd_ptr reached = bdd_false(self->dd);
+	bdd_ptr universe = reached; // an over-approx. of reached
 	int cnt = 1;
 	// how many reachability layers we explore at each step
 	int expand_steps = 4; 
@@ -445,15 +407,14 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 	int diameter = 0;
 	int new_diameter;
 	BddStates* layers;
-	bdd_ptr front = bdd_dup(self->init);
+	// bdd_ptr front = bdd_dup(self->init);
 	bdd_ptr inputs = bdd_and(self->dd, self->cinput_cube, self->uinput_cube);
 	do {
-		printf("Forward image iteration %d\n", cnt++);
+		printf("Forward image iteration %d (Diameter: %d, Reached size: %d) (Universe size: %d)\n", cnt++, diameter, Cudd_DagSize(reached), Cudd_DagSize(universe));
 		completed = prev_completed;
 
 		// Is there a counter-strategy staying inside reached?
-		// Recompute UPRE
-		bdd_ptr U_star = bdd_synth_upre_star(self, losing, reached);
+		bdd_ptr U_star = bdd_synth_upre_star(self, losing, universe, true);
 		if ( bdd_included(self->dd, self->init, U_star) ){
 			bdd_free(self->dd, U_star);
 			realizable = false;
@@ -461,18 +422,32 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 		}
 		bdd_or_accumulate(self->dd, &losing, U_star);
 		bdd_free(self->dd, U_star);
+		//
 
 		// Is there a winning strategy staying inside reached?
-		if (!bdd_included(self->dd, front, losing)){
-			*win = bdd_synth_cpre_star(self, losing, reached);
-			if ( bdd_included(self->dd, self->init, *win) ){
-				break;
-			}
+		*win = bdd_synth_cpre_star(self, losing, universe);
+		if ( bdd_included(self->dd, self->init, *win) ){
+			break;
 		}
+		//}
+
 
 		BddFsm_expand_cached_reachable_states(self->fsm, expand_steps, -1);
 		prev_completed = BddFsm_get_cached_reachable_states(self->fsm, &layers, &new_diameter);
 
+		// Update reached with new layers
+		for (int i = diameter; i < new_diameter; i++){
+			bdd_or_accumulate(self->dd, &reached, layers[i]);
+		}
+
+		// Update diameter
+		diameter = new_diameter;
+		
+		int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
+		universe = bdd_over_approx(self->dd, reached, numVars, 1000, 1, 1);
+
+
+		/*
 		// front is the newly added reachable states
 		bdd_free(self->dd, front);
 		front = bdd_false(self->dd);
@@ -488,6 +463,7 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 
 		// Compute the union of reached states
 		bdd_or_accumulate(self->dd, &reached, front);
+		*/
 	}while(!completed);
 
 	bdd_free(self->dd, inputs);
@@ -532,6 +508,10 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
     }
     bdd_free(self->dd, check);
   }
+	int numVars = (Cudd_ReadSize(self->dd) < 1023)? Cudd_ReadSize(self->dd) : 1022;
+	bdd_ptr universe = bdd_over_approx(self->dd, *win, numVars, 1000, 1, 1);
+
+
   return ret;
 }
 
