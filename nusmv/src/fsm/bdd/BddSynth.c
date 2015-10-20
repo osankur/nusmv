@@ -1,3 +1,11 @@
+/*
+	THINGS TO DO
+	1) Simplify the simpler backwards algorithm into one call to upre_star
+	2) Parameterize all basic cpre and upre calls to use_restrict, where we restrict
+	to an over-approximation of (not start)
+	3) Clean up unnecessary functions
+ */
+
 #include <math.h>
 
 #include "enc/encInt.h"
@@ -446,24 +454,6 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 		int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
 		universe = bdd_over_approx(self->dd, reached, numVars, 1000, 1, 1);
 
-
-		/*
-		// front is the newly added reachable states
-		bdd_free(self->dd, front);
-		front = bdd_false(self->dd);
-		for (int i = diameter; i < new_diameter; i++){
-			bdd_or_accumulate(self->dd, &front, layers[i]);
-		}
-		bdd_ptr tmp = bdd_forsome(self->dd, front, inputs);
-		bdd_free(self->dd, front);
-		front = tmp;
-
-		// Update diameter
-		diameter = new_diameter;
-
-		// Compute the union of reached states
-		bdd_or_accumulate(self->dd, &reached, front);
-		*/
 	}while(!completed);
 
 	bdd_free(self->dd, inputs);
@@ -471,10 +461,10 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 }
 
 /**
- * Just backwards computation preceded by a fwd reachable states computation
+ * Just backwards fp computation
  */
 static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
-  boolean use_upre = false;
+  boolean use_upre = true;
   boolean ret = true;
   if (use_upre){
     *win = bdd_dup(self->error);
@@ -508,10 +498,6 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
     }
     bdd_free(self->dd, check);
   }
-	int numVars = (Cudd_ReadSize(self->dd) < 1023)? Cudd_ReadSize(self->dd) : 1022;
-	bdd_ptr universe = bdd_over_approx(self->dd, *win, numVars, 1000, 1, 1);
-
-
   return ret;
 }
 
@@ -553,9 +539,12 @@ static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
 	bdd_free(self->dd, tmp);
 	reachables = tmp1;
 	printf("Reachable states computed. Diameter: %d\n", diameter);
+	int numVars = (Cudd_ReadSize(self->dd) < 1023)? Cudd_ReadSize(self->dd) : 1022;
+	bdd_ptr universe = bdd_over_approx(self->dd, reachables, numVars, 1000, 1, 1);
 	//
-	*win = bdd_synth_cpre_star(self, self->error, reachables);
+	*win = bdd_synth_cpre_star(self, self->error, universe);
 	bdd_and_accumulate(self->dd, win, self->init);
+	bdd_free(self->dd, universe);
 	return bdd_isnot_false(self->dd, *win);
 }
 

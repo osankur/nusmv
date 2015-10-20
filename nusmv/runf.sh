@@ -6,12 +6,12 @@ then
 else
   FILE=$DEFAULTDIR$1
 fi
-COMMAND="read_model -i $FILE\n
+printf "read_model -i $FILE\n
 flatten_hierarchy\n
 encode_variables\n
 dynamic_var_ordering -e sift\n
 build_model\n
 check_realizable -f\n
-quit"
-echo -e $COMMAND | ./NuSMV -int 
-echo ""
+quit" > /tmp/sauce
+./NuSMV -source /tmp/sauce
+exit $?
