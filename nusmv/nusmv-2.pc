@@ -10,7 +10,7 @@ sat_available=no
 minisat_libdir=./../MiniSat_v070721
 minisat_libname=MiniSat
 
-cudddir=/home/sankur/tools/nusmv/cudd-2.4.1.1
+cudddir=/home/sankur/tools/tmp/nusmv/cudd-2.4.1.1
 cuddname=cudd-2.4.1.1
 cuddmkfile=Makefile_64bit
 

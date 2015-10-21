@@ -1,5 +1,5 @@
  #!/bin/bash          
-DEFAULTDIR="/home/sankur/work/ulb/syntcomp/bench-syntcomp14/"
+DEFAULTDIR="/home/sankur/work/ulb/syntcomp/bench-syntcomp14/smv/"
 if [ -f $1 ]
 then
   FILE=$1
