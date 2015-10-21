@@ -1,3 +1,11 @@
+/*
+	THINGS TO DO
+	1) Simplify the simpler backwards algorithm into one call to upre_star
+	2) Parameterize all basic cpre and upre calls to use_restrict, where we restrict
+	to an over-approximation of (not start)
+	3) Clean up unnecessary functions
+ */
+
 #include <math.h>
 
 #include "enc/encInt.h"
@@ -51,13 +59,19 @@ static void bdd_synth_init ARGS((BddSynth_ptr self, BddFsm_ptr fsm));
 static bdd_ptr bdd_synth_upre ARGS((BddSynth_ptr self, bdd_ptr states));
 static bdd_ptr bdd_synth_upre_trans ARGS((BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans));
 static bdd_ptr bdd_synth_cpre ARGS((BddSynth_ptr self, bdd_ptr states));
-static bdd_ptr bdd_synth_cpre_trans ARGS((BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans));
+static bdd_ptr bdd_synth_cpre_trans ARGS((BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans, boolean use_restrict));
 
 static bdd_ptr bdd_synth_upre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe, boolean early_exit));
-static bdd_ptr bdd_synth_cpre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe));
+static bdd_ptr bdd_synth_cpre_star ARGS((BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe, boolean early_exit));
 static boolean bdd_synth_forward_backward_synth ARGS((BddSynth_ptr self, bdd_ptr * win));
+static bdd_ptr bdd_synth_over_approximate ARGS((BddSynth_ptr self, bdd_ptr f, int threshold));
 
-void print_trans_size_cstm(BddSynth_ptr self, bdd_ptr * trans){
+static bdd_ptr bdd_synth_over_approximate(BddSynth_ptr self, bdd_ptr f, int threshold){
+	int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
+	bdd_ptr appr_universe_not_start = bdd_over_approx(self->dd, f, numVars, threshold, 1, 1);
+}
+
+static void print_trans_size_cstm(BddSynth_ptr self, bdd_ptr * trans){
   int n = Cudd_ReadSize(self->dd);
   int total = 0;
   for(int i = 0; i < n; i++){
@@ -65,7 +79,7 @@ void print_trans_size_cstm(BddSynth_ptr self, bdd_ptr * trans){
   }
   printf("Trans rel total size: %d\n", total);
 }
-void print_trans_size(BddSynth_ptr self){
+static void print_trans_size(BddSynth_ptr self){
   int n = Cudd_ReadSize(self->dd);
   int total = 0;
   for(int i = 0; i < n; i++){
@@ -75,7 +89,7 @@ void print_trans_size(BddSynth_ptr self){
 }
 
 
-void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
+static void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
     char * labels = "Upre";
     FILE * outfile = fopen("/tmp/a.dot", "w");
     if (!outfile){
@@ -216,21 +230,21 @@ void BddSynth_destroy(BddSynth_ptr self){
   free(self);
 }
 
-static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans)
+static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans, boolean use_restrict)
 {
+	int nvar = Cudd_ReadSize(self->dd);
   bdd_ptr * local_trans = trans;
-#ifdef RESTRICT_IN_CPRE
-  bdd_ptr notstates = bdd_not(self->dd, states);
-  int nvar = Cudd_ReadSize(self->dd);
-  bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
-	bdd_ptr tmp = NULL;
-  int i;
-  for (i = 0; i < nvar; i++){
-    Y[i] = bdd_restrict(self->dd, trans[i], notstates);
-  }
-  local_trans = Y;
-  bdd_free(self->dd, notstates);
-#endif
+	if (use_restrict){
+		bdd_ptr notstates = bdd_not(self->dd, states);
+		bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
+		bdd_ptr tmp = NULL;
+		int i;
+		for (i = 0; i < nvar; i++){
+			Y[i] = bdd_restrict(self->dd, trans[i], notstates);
+		}
+		local_trans = Y;
+		bdd_free(self->dd, notstates);
+	}
   bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
   bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, local_trans);
   bdd_ptr pre2 = bdd_forsome(self->dd, pre1, self->cinput_cube);
@@ -238,12 +252,12 @@ static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr *
   bdd_free(self->dd, pstates);
   bdd_free(self->dd, pre2);
   bdd_free(self->dd, pre1);
-#ifdef RESTRICT_IN_CPRE
-  for (i = 0; i < nvar; i++){
-    bdd_free(self->dd, Y[i]);
-  }
-  free(Y);
-#endif
+	if (use_restrict){
+		for (i = 0; i < nvar; i++){
+			bdd_free(self->dd, Y[i]);
+		}
+		free(Y);
+	}
   return pre3;
 }
 
@@ -302,8 +316,7 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 	bdd_ptr not_start = bdd_not(self->dd, start);
 	bdd_ptr universe_not_start = bdd_and(self->dd, not_start, universe);
 	bdd_free(self->dd, not_start);
-	int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
-	bdd_ptr appr_universe_not_start = bdd_over_approx(self->dd, universe_not_start, numVars, 1000, 1, 1);
+	bdd_ptr appr_universe_not_start = bdd_synth_over_approximate(self->dd, universe_not_start, 1000);
 	bdd_free(self->dd, universe_not_start);
 	for (int i = 0; i < n ; i++){
 		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], appr_universe_not_start);
@@ -341,15 +354,14 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 /**
  * Compute the greatest fixpoint \nu X. ( universe /\  CPRE(X) )
  */ 
-static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe){
+static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr universe, boolean early_exit){
 	int n = Cudd_ReadSize(self->dd);
 	int cnt = 1;
 	bdd_ptr notlosing = bdd_not(self->dd, losing);
 
 	// Restrict the transition relation to (an overapprox of) notlosing & universe(L)
 	bdd_and_accumulate(self->dd, &notlosing, universe);
-	int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
-	bdd_ptr appr_notlosing_and_universe = bdd_over_approx(self->dd, notlosing, numVars, 1000, 1, 1);
+	bdd_ptr appr_notlosing_and_universe = bdd_synth_over_approximate(self->dd, notlosing, 1000);
 	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
 	for (int i = 0; i < n ; i++){
 		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], appr_notlosing_and_universe);
@@ -364,10 +376,11 @@ static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr un
 	while( iterate != prev ){
 		printf("\tCpre iteration %d (iterate size: %d)\n", cnt++, Cudd_DagSize(iterate));
 		if (prev) bdd_free(self->dd, prev);
-		// prev = bdd_dup(iterate);
-		// bdd_free(self->dd, iterate);
 		prev = iterate;
 		iterate = bdd_synth_cpre_trans(self, prev, restricted_trans);
+		if ( !bdd_included(self->dd, self->init, iterate) ){
+			break;
+		}
 		bdd_and_accumulate(self->dd, &iterate, prev);
     bdd_and_accumulate(self->dd, &iterate, universe);
 	}
@@ -425,7 +438,8 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 		//
 
 		// Is there a winning strategy staying inside reached?
-		*win = bdd_synth_cpre_star(self, losing, universe);
+		// Beware, in case of early exit, *win is not yet the fixpoint
+		*win = bdd_synth_cpre_star(self, losing, universe, true);
 		if ( bdd_included(self->dd, self->init, *win) ){
 			break;
 		}
@@ -443,27 +457,7 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 		// Update diameter
 		diameter = new_diameter;
 		
-		int numVars = (Cudd_ReadSize(self->dd) <= 1022)? Cudd_ReadSize(self->dd) : 1022;
-		universe = bdd_over_approx(self->dd, reached, numVars, 1000, 1, 1);
-
-
-		/*
-		// front is the newly added reachable states
-		bdd_free(self->dd, front);
-		front = bdd_false(self->dd);
-		for (int i = diameter; i < new_diameter; i++){
-			bdd_or_accumulate(self->dd, &front, layers[i]);
-		}
-		bdd_ptr tmp = bdd_forsome(self->dd, front, inputs);
-		bdd_free(self->dd, front);
-		front = tmp;
-
-		// Update diameter
-		diameter = new_diameter;
-
-		// Compute the union of reached states
-		bdd_or_accumulate(self->dd, &reached, front);
-		*/
+		universe = bdd_synth_over_approximate(self, reached, 1000);
 	}while(!completed);
 
 	bdd_free(self->dd, inputs);
@@ -471,10 +465,12 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 }
 
 /**
- * Just backwards computation preceded by a fwd reachable states computation
+ * Just backwards fp computation
  */
+	/*
 static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
-  boolean use_upre = false;
+		// The following version was for debug purposes
+  boolean use_upre = true;
   boolean ret = true;
   if (use_upre){
     *win = bdd_dup(self->error);
@@ -508,12 +504,9 @@ static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
     }
     bdd_free(self->dd, check);
   }
-	int numVars = (Cudd_ReadSize(self->dd) < 1023)? Cudd_ReadSize(self->dd) : 1022;
-	bdd_ptr universe = bdd_over_approx(self->dd, *win, numVars, 1000, 1, 1);
-
-
   return ret;
 }
+	*/
 
 static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
   boolean ret = true;
@@ -553,9 +546,11 @@ static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
 	bdd_free(self->dd, tmp);
 	reachables = tmp1;
 	printf("Reachable states computed. Diameter: %d\n", diameter);
+	bdd_ptr universe = bdd_synth_over_approximate(self, reachables, 1000);
 	//
-	*win = bdd_synth_cpre_star(self, self->error, reachables);
+	*win = bdd_synth_cpre_star(self, self->error, universe, true);
 	bdd_and_accumulate(self->dd, win, self->init);
+	bdd_free(self->dd, universe);
 	return bdd_isnot_false(self->dd, *win);
 }
 
@@ -564,9 +559,8 @@ EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_pt
   switch(mode){
 		case BDD_SYNTH_DIR_BWD:
 			printf("Backward algorithm\n");
-			*win = bdd_synth_cpre_star(self, self->error, bdd_true(self->dd));
-			bdd_and_accumulate(self->dd, win, self->init);
-			ret = bdd_isnot_false(self->dd, *win);
+			*win = bdd_synth_cpre_star(self, self->error, bdd_true(self->dd), true);
+			ret = bdd_included(self->dd, self->init, *win);
 			break;
 		case BDD_SYNTH_DIR_BWD_W_REACH:
 			printf("Backward algorithm with forward reach states reduction\n");
