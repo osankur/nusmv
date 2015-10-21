@@ -13,5 +13,5 @@ dynamic_var_ordering -e sift\n
 build_model\n
 check_realizable -f\n
 quit"
-echo -e $COMMAND | ./NuSMV -int 
+echo -e $COMMAND | time /home/sankur/tools/nusmv/nusmv/NuSMV -int 
 echo ""

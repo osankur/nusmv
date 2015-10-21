@@ -1,4 +1,4 @@
- #!/bin/bash          
+#!/bin/bash          
 DEFAULTDIR="/home/sankur/work/ulb/syntcomp/bench-syntcomp14/"
 if [ -f $1 ]
 then

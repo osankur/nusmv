@@ -304,8 +304,10 @@ int CommandCheckRealizable(int argc, char **argv)
 	result = BddFsm_check_realizable(fsm, mode);
 	if (result){
 		fprintf(nusmv_stdout, "Model realizable\n");
+		exit(10);
 	} else {
 		fprintf(nusmv_stdout, "Model not realizable\n");
+		exit(20);
 	}
 	return 0;
 }
