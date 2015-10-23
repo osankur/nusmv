@@ -3640,6 +3640,26 @@ bdd_ptr bdd_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){
 
 /**Function********************************************************************
 
+  Synopsis [Returns the BDD f restricted by b.]
+
+  Description [The returned BDD is referenced.]
+  SideEffects        []
+
+  SeeAlso            [bdd_set_parameters]
+
+******************************************************************************/
+bdd_ptr bdd_safe_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){
+  bdd_ptr fr = Cudd_bddRestrict(dd, f, b);
+	if (Cudd_DagSize(fr) < Cudd_DagSize(b) ){
+		Cudd_Ref(fr);
+		return fr;
+	}
+	return b;
+}
+
+
+/**Function********************************************************************
+
   Synopsis [Returns an overapproximation of given BDD.]
 
   Description [The returned BDD is referenced.]

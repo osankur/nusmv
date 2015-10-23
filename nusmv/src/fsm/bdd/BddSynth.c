@@ -242,7 +242,7 @@ static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr *
 		bdd_ptr tmp = NULL;
 		int i;
 		for (i = 0; i < nvar; i++){
-			Y[i] = bdd_restrict(self->dd, trans[i], notstates);
+			Y[i] = bdd_safe_restrict(self->dd, trans[i], notstates);
 		}
 		local_trans = Y;
 		bdd_free(self->dd, notstates);
@@ -276,7 +276,7 @@ static bdd_ptr bdd_synth_upre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr *
   int nvar = Cudd_ReadSize(self->dd);
   bdd_ptr * Y = ALLOC(bdd_ptr, nvar);
   for (int i = 0; i < nvar; i++){
-    Y[i] = bdd_restrict(self->dd, trans[i], notstates);
+    Y[i] = bdd_safe_restrict(self->dd, trans[i], notstates);
   }
   bdd_free(self->dd, notstates);
 	*/
@@ -323,7 +323,7 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 	bdd_ptr appr_universe_not_start = bdd_synth_over_approximate(self, universe_not_start, 1000);
 	bdd_free(self->dd, universe_not_start);
 	for (int i = 0; i < n ; i++){
-		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], appr_universe_not_start);
+		restricted_trans[i] = bdd_safe_restrict(self->dd, self->trans[i], appr_universe_not_start);
 	}
 	bdd_free(self->dd, appr_universe_not_start);
   print_trans_size_cstm(self, restricted_trans);
@@ -368,7 +368,7 @@ static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr un
 	bdd_and_accumulate(self->dd, &notlosing, universe);
 	bdd_ptr appr_notlosing_and_universe = bdd_synth_over_approximate(self, notlosing, 1000);
 	for (int i = 0; i < n ; i++){
-		restricted_trans[i] = bdd_restrict(self->dd, self->trans[i], appr_notlosing_and_universe);
+		restricted_trans[i] = bdd_safe_restrict(self->dd, self->trans[i], appr_notlosing_and_universe);
   }	 
 	bdd_free(self->dd, appr_notlosing_and_universe);
   print_trans_size_cstm(self, restricted_trans);
