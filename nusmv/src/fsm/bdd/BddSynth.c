@@ -1,4 +1,7 @@
 /*
+ * TODO FIXME Reference count error on runf.sh cycle_sched_3_4_1.smv
+ * 						Check other algorithms on all benchmarks
+ *
 	THINGS TO DO
 	1) Simplify the simpler backwards algorithm into one call to upre_star
 	2) Parameterize all basic cpre and upre calls to use_restrict, where we restrict
@@ -580,3 +583,64 @@ EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_pt
 	}
 	return ret;
 }
+
+/* TODO Just compute the reachable states using the following function:
+ * 
+BddStates
+BddFsm_get_constrained_forward_image(const BddFsm_ptr self,
+                                     BddStates states,
+                                     BddStatesInputsNexts constraints)
+ *
+ *
+ *
+ */
+/* The following is an attempt at obtaining a new transition relation by
+ * reclustering the transition functions for latches.
+ * Is this more efficient than using the constrained_forward_image function ? 
+ * */
+/*
+BddTrans_ptr make_constrained_trans(const BddSynth_ptr self, bdd_ptr constraint){
+	// Make a cluster out of constrained transition relations
+	BddTrans_ptr newtrans = BDD_TRANS(NULL);
+	ClusterOptions_ptr cluster_options;
+	ClusterList_ptr clusters = ClusterList_create(self->dd);
+	cluster_options = ClusterOptions_create(OptsHandler_get_instance());
+
+	bdd_ptr v_elm;
+	bdd_ptr v_elm_primed;
+	bdd_ptr constrained_t;
+	bdd_ptr T_v;
+	unsigned int vindex = 0;
+	ListIter_ptr v = NodeList_get_first_iter(self->latches);
+	for(; !ListIter_is_end(v); v = ListIter_get_next(v)){
+		v_elm = (bdd_ptr)NodeList_get_elem_at(self->latches, v);
+		vindex = Cudd_NodeReadIndex(v_elm);
+		assert(vindex >= 0 && vindex < Cudd_ReadSize(self->dd));
+		assert(self->trans[vindex] != NULL);
+		v_elm_primed = BddEnc_state_var_to_next_state_var(self->enc, v_elm);
+		constrained_t = bdd_and(self->dd, self->trans[vindex], constraint);
+		T_v = bdd_iff(self->dd, v_elm_primed, constrained_t);
+		// T_v := v' <-> trans[v] /\ constraint
+		bdd_free(self->dd, v_elm_primed);
+		bdd_free(self->dd, constrained_t);
+
+		Cluster_ptr cluster = Cluster_create(self->dd);
+		Cluster_set_trans(cluster, self->dd, T_v);
+		ClusterList_append_cluster(clusters, cluster);
+	}
+	// We also add the inputs to the cluster since they are seen as variables
+
+	bdd_ptr input_cube = bdd_and(self->dd, self->cinput_cube, self->uinput_cube);
+	bdd_ptr platch_cube = BddEnc_next_state_var_to_state_var(self->enc, self->latch_cube);
+	newtrans = BddTrans_create(self->dd,
+													clusters,
+													self->latch_cube,
+													input_cube,
+													platch_cube,
+													TRANS_TYPE_IWLS95,
+													cluster_options);
+	ClusterList_destroy(clusters);
+	ClusterOptions_destroy(cluster_options); // this is no longer needed
+	return newtrans;
+}
+*/
