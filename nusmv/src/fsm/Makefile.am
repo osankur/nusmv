@@ -39,7 +39,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 CUDD_NAME = $(cuddname)
 CUDD_DIR = ../$(CUDD_NAME)
 
-INCLUDES = -I. -I.. -I$(top_srcdir)/src -I$(top_srcdir)/$(CUDD_DIR)/include
+# INCLUDES = -I. -I.. -I$(top_srcdir)/src -I$(top_srcdir)/$(CUDD_DIR)/include
+AM_CPPFLAGS = -I. -I.. -I$(top_srcdir)/src -I$(top_srcdir)/$(CUDD_DIR)/include
 
 PKG_H = FsmBuilder.h fsm.h 
 PKG_C = FsmBuilder.c fsm.c
@@ -48,9 +49,9 @@ SEXP_H = 	sexp/BoolSexpFsm.h sexp/Expr.h sexp/SexpFsm_private.h \
 					sexp/BoolSexpFsm_private.h sexp/SexpFsm.h sexp/sexp.h
 SEXP_C = sexp/BoolSexpFsm.c sexp/Expr.c sexp/SexpFsm.c
 
-BDD_H = bdd/BddFsm.h bdd/bdd.h bdd/FairnessList.h
+BDD_H = bdd/BddFsm.h bdd/bdd.h bdd/FairnessList.h bdd/BddSynth.h
 BDD_C = bdd/bddCmd.c bdd/BddFsm.c bdd/BddFsmCache.c bdd/bddMisc.c \
-				bdd/FairnessList.c
+				bdd/FairnessList.c bdd/BddSynth.c
 
 BE_H = be/BeFsm.h
 BE_C = be/BeFsm.c

@@ -562,6 +562,208 @@ static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
 	return bdd_isnot_false(self->dd, *win);
 }
 
+
+bdd_ptr bdd_synth_constrained_reachable_states(BddSynth_ptr self, bdd_ptr constraint){
+	bdd_ptr prev_fp = bdd_false(self->dd);
+	bdd_ptr fp = bdd_dup(self->init);
+	while (prev_fp != fp){
+		bdd_free(self->dd, prev_fp);
+		prev_fp = fp;
+		bdd_ptr newlayer = BddFsm_get_constrained_forward_image(self->fsm, fp, constraint);
+		fp = bdd_or(self->dd, fp, newlayer);
+		bdd_free(self->dd, newlayer);
+	}
+	return fp;
+}
+
+
+
+/**Function********************************************************************
+
+   Synopsis    [Given relation(L,X_u,X_c), learn a function of given variable]
+
+   Description []
+
+   SideEffects []
+
+   SeeAlso     []
+
+******************************************************************************/
+static bdd_ptr bdd_synth_extract_function_singlevar(BddSynth_ptr self, bdd_ptr relation, bdd_ptr variable){
+	bdd_ptr ret_funct = NULL;
+	// trueset := exists var. (relation & var) -- can be true
+	bdd_ptr trueset = bdd_and_abstract(self->dd, relation, variable, variable);
+
+	// Get exists var. (relation & ~var) -- can be false
+	bdd_ptr not_v = bdd_not(self->dd, variable);
+	bdd_ptr falseset = bdd_and_abstract(self->dd, relation, not_v, variable);
+
+	bdd_ptr mustbetrue = bdd_not(self->dd, falseset);
+	bdd_ptr mustbefalse= bdd_not(self->dd, trueset);
+	bdd_ptr careset = bdd_or(self->dd, mustbetrue, mustbefalse);
+	bdd_ptr appr_careset = bdd_synth_over_approximate(self, careset, 1000);
+
+	bdd_ptr mbt_r = bdd_restrict(self->dd, mustbetrue, appr_careset);
+	bdd_ptr mbf_r = bdd_restrict(self->dd, mustbefalse, appr_careset);
+
+	// In ~mbt_r & ~v | mbt_r & v, variable must be set to true.
+	bdd_ptr tmp = bdd_not(self->dd, mbt_r);
+	bdd_and_accumulate(self->dd, &tmp, not_v);
+	bdd_and_accumulate(self->dd, &mbt_r, variable);
+	bdd_or_accumulate(self->dd, &mbt_r, tmp);
+	bdd_ptr f1 = mbt_r; // just an alias
+	bdd_free(self->dd, tmp);
+
+	// In ~mbf_r & v | mbf_r & ~v, variable must be set to true.
+	bdd_ptr ump = bdd_not(self->dd, mbf_r);
+	bdd_and_accumulate(self->dd, &ump, variable);
+	bdd_and_accumulate(self->dd, &mbf_r, not_v);
+	bdd_or_accumulate(self->dd, &mbf_r, ump);
+	bdd_ptr f2 = mbf_r; // just an alias
+	bdd_free(self->dd, ump);
+
+	// Choose the smallest and remove the other
+	if ( Cudd_DagSize(f1) < Cudd_DagSize(f2) ){
+		ret_funct = f1;
+		bdd_free(self->dd, f2);
+	} else {
+		ret_funct = f2;
+		bdd_free(self->dd, f1);
+	}
+
+	bdd_free(self->dd, mbt_r);
+	bdd_free(self->dd, mbf_r);
+	bdd_free(self->dd, appr_careset);
+	bdd_free(self->dd, careset);
+	bdd_free(self->dd, mustbetrue);
+	bdd_free(self->dd, mustbefalse);
+	bdd_free(self->dd, not_v);
+	bdd_free(self->dd, trueset);
+	bdd_free(self->dd, falseset);
+	return ret_funct;
+}
+
+/**Function********************************************************************
+
+   Synopsis    [Given relation(L,X_u,X_c), learn a function of inputs
+	 						  that is included in relation.
+								]
+
+   Description [This is an implementation of Section 3.2.1 of Jiang et al.]
+
+   SideEffects []
+
+   SeeAlso     []
+
+******************************************************************************/
+static bdd_ptr bdd_synth_extract_function(BddSynth_ptr self, bdd_ptr relation, NodeList_ptr inputs){
+	assert(NodeList_get_length(inputs)>0);
+	// Create a table for projections
+	int ninputs = NodeList_get_length(inputs);
+	int i = 0;
+	bdd_ptr * R = ALLOC(bdd_ptr, ninputs+1);
+	bdd_ptr * F = ALLOC(bdd_ptr, ninputs+1);
+	bdd_ptr * input_var = ALLOC(bdd_ptr, ninputs);
+	for(i =0 ; i < ninputs; i++){
+		R[i] = NULL;
+		F[i] = NULL;
+		input_var[i] = NULL;
+	}
+	// Transfer the list inputs to this array
+  ListIter_ptr iter = NULL;
+  for(iter = NodeList_get_first_iter(inputs);
+			!ListIter_is_end(iter);
+			iter = ListIter_get_next(iter))
+	{
+    node_ptr var = NodeList_get_elem_at(inputs,iter);
+		input_var[i++] = BddEnc_expr_to_bdd(self->enc, var, Nil);
+	}
+	
+	// Let R[i] := exists input_var[i..ninputs-1]. relation
+	// We don't need R[0]
+	R[ninputs] = relation;
+	for(i = ninputs-1; i >= 1; i--){
+		R[i] = bdd_forsome(self->dd, R[i+1], input_var[i]);
+	}
+
+	// compose table
+	int nvars = Cudd_ReadSize(self->dd);
+	bdd_ptr * comp_table = ALLOC(bdd_ptr, nvars);
+	for(i = 0; i < nvars; i++){
+		comp_table[i] = Cudd_bddIthVar(self->dd, i);
+	}
+
+	// After iteration i, F[i-1] will be a function of input_var[0..i-1]
+	for(i = 1; i <= ninputs; i++){
+		bdd_ptr R_composed = bdd_vector_compose(self->dd, R[i], comp_table);
+		F[i-1] = bdd_synth_extract_function_singlevar(self, R_composed, input_var[i-1]);
+		unsigned int var_index = Cudd_NodeReadIndex(input_var[i-1]);
+		comp_table[var_index] = F[i-1];
+	}
+	bdd_ptr f = bdd_dup(F[ninputs]);
+	// Clean up
+	free(comp_table);
+	for(i = 0; i <= ninputs; i++){
+		if (!R[i]){
+			bdd_free(self->dd, R[i]);
+		}
+		if (!F[i]){
+			bdd_free(self->dd, F[i]);
+		}
+		if (i < ninputs){
+			bdd_free(self->dd, input_var[i]);
+		}
+	}
+	free(R);
+	free(F);
+	free(input_var);
+	if (!bdd_implies(self->dd, f, relation) ){
+		assert("function f not a subset of relation" == 0);
+	}
+	return f;
+}
+
+static boolean bdd_synth_learnAlgo1(BddSynth_ptr self, bdd_ptr * win){
+	bdd_ptr W = bdd_not(self->dd, self->error);
+	bdd_ptr P;
+	bdd_ptr R;
+	boolean realizable = false;
+	while(1){
+		bdd_ptr f = bdd_synth_extract_function(self, W, self->cinputs);
+		R = bdd_synth_constrained_reachable_states(self, f);
+		if ( bdd_implies(self->dd, R, W) ){
+			bdd_free(self->dd, f);
+			bdd_free(self->dd, R);
+			realizable = true;
+			break;
+		}
+		bdd_ptr R_notW = bdd_not(self->dd, W);
+		bdd_and_accumulate(self->dd, &R_notW, R);
+		P = BddFsm_get_backward_image(self->fsm, R_notW);
+		bdd_and_accumulate(self->dd, &P, f);
+		bdd_ptr notP = bdd_not(self->dd, P);
+		bdd_and_accumulate(self->dd, &W, notP);
+
+		bdd_free(self->dd, f);
+		bdd_free(self->dd, R);
+		bdd_free(self->dd, R_notW);
+		bdd_free(self->dd, P);
+		bdd_free(self->dd, notP);
+		
+		// Check if init <= W. If not, return unreal
+		bdd_ptr tmp = bdd_and(self->dd, W, self->init);
+		if (bdd_is_false(self->dd, tmp)){
+			realizable = false;
+			bdd_free(self->dd, tmp);
+			break;
+		}		
+		bdd_free(self->dd, tmp);
+	}
+	*win = W;
+	return realizable;
+}
+
+
 EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_ptr * win){
   boolean ret;
   switch(mode){
@@ -578,11 +780,15 @@ EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_pt
 			printf("Forward algorithm\n");
 			ret = bdd_synth_forward_backward_synth(self, win);
 			break;
+		case BDD_SYNTH_DIR_LEARNING1:
+			printf("Iterative learning algorithm 1\n");
+			ret = bdd_synth_learnAlgo1(self, win);
 		default:
 			ret = false;
 	}
 	return ret;
 }
+
 
 /* TODO Just compute the reachable states using the following function:
  * 

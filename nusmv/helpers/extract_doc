@@ -52,7 +52,7 @@ GLOBALINDEXFILE=${HTMLDOCDIR}/index.html
 CREDITSFILE=${HTMLDOCDIR}/credit.html
 
 PERL=/usr/bin/perl
-HTMLDUMP=lynx_or_links_is_missing
+HTMLDUMP=lynx
 
 # adds all required addons
 addons="compass "

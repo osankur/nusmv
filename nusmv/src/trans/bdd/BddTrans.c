@@ -46,7 +46,7 @@
 #include "ClusterList.h"
 #include "Cluster.h"
 #include "utils/error.h"
-
+#include <stdio.h>
 static char rcsid[] UTIL_UNUSED = "$Id: BddTrans.c,v 1.1.2.5.4.1.6.1 2007-04-30 16:41:18 nusmv Exp $";
 
 

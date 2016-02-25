@@ -291,11 +291,14 @@ int CommandCheckRealizable(int argc, char **argv)
     if (strcmp(argv[1], "-b") == 0){
         mode = BDD_SYNTH_DIR_BWD;
     }
-    if (strcmp(argv[1], "-f") == 0){
+    else if (strcmp(argv[1], "-f") == 0){
         mode = BDD_SYNTH_DIR_FWD;
     }
-    if (strcmp(argv[1], "-bwr") == 0){
+    else if (strcmp(argv[1], "-bwr") == 0){
         mode = BDD_SYNTH_DIR_BWD_W_REACH;
+    }
+    else if (strcmp(argv[1], "-l1") == 0){
+        mode = BDD_SYNTH_DIR_LEARNING1;
     }
   }
   fprintf(nusmv_stderr, "Running realizability check in mode: %d\n", mode);
