@@ -1,7 +1,4 @@
 /*
- * TODO FIXME Reference count error on runf.sh cycle_sched_3_4_1.smv
- * 						Check other algorithms on all benchmarks
- *
 	THINGS TO DO
 	1) Simplify the simpler backwards algorithm into one call to upre_star
 	2) Parameterize all basic cpre and upre calls to use_restrict, where we restrict
@@ -92,8 +89,8 @@ static void print_trans_size(BddSynth_ptr self){
 }
 
 
-static void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
-    char * labels = "Upre";
+static void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront, char * name){
+    char * labels = name;
     FILE * outfile = fopen("/tmp/a.dot", "w");
     if (!outfile){
       return;
@@ -102,7 +99,7 @@ static void dump_tmp_and_wait(BddSynth_ptr self, bdd_ptr nextFront){
     AddArray_set_n(ar,0,bdd_to_add(self->dd, nextFront));
     BddEnc_dump_addarray_dot(self->enc, ar, (const char **)&labels, outfile);
     fclose(outfile);
-    while(getchar() != 'c');
+    // while(getchar() != 'c');
 }
 
 void bdd_synth_init(BddSynth_ptr self, BddFsm_ptr fsm){
@@ -233,39 +230,27 @@ void BddSynth_destroy(BddSynth_ptr self){
   free(self);
 }
 
+static boolean bdd_synth_contains_init(BddSynth_ptr self, bdd_ptr s){
+	bdd_ptr tmp = bdd_dup(s);
+	bdd_and_accumulate(self->dd, &tmp, self->init);
+	boolean ret = !bdd_is_false(self->dd, tmp);
+	bdd_free(self->dd, tmp);
+	return ret;
+}
+
 static bdd_ptr bdd_synth_cpre_trans(BddSynth_ptr self, bdd_ptr states, bdd_ptr * trans, boolean use_restrict)
 {
 	int nvar = Cudd_ReadSize(self->dd);
   bdd_ptr * local_trans = trans;
-	/*
-	bdd_ptr * Y = NULL;
-	if (use_restrict){
-		bdd_ptr notstates = bdd_not(self->dd, states);
-		Y = ALLOC(bdd_ptr, nvar);
-		bdd_ptr tmp = NULL;
-		int i;
-		for (i = 0; i < nvar; i++){
-			Y[i] = bdd_safe_restrict(self->dd, trans[i], notstates);
-		}
-		local_trans = Y;
-		bdd_free(self->dd, notstates);
-	}
-	*/
   bdd_ptr pstates = BddEnc_state_var_to_next_state_var(self->enc, states);
+	// vector_compose seems quite faster in general (?)
+	// bdd_ptr pre1 = BddFsm_get_backward_image(self->fsm, pstates);
   bdd_ptr pre1 = bdd_vector_compose(self->dd, pstates, local_trans);
   bdd_ptr pre2 = bdd_forsome(self->dd, pre1, self->cinput_cube);
   bdd_ptr pre3 = bdd_forall(self->dd, pre2, self->uinput_cube);
   bdd_free(self->dd, pstates);
   bdd_free(self->dd, pre2);
   bdd_free(self->dd, pre1);
-	/*
-	if (use_restrict){
-		for (int i = 0; i < nvar; i++){
-			bdd_free(self->dd, Y[i]);
-		}
-		free(Y);
-	}
-	*/
   return pre3;
 }
 
@@ -317,12 +302,11 @@ static bdd_ptr bdd_synth_cpre(BddSynth_ptr self, bdd_ptr states, boolean use_res
 static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr universe, boolean early_exit){
 	int n = Cudd_ReadSize(self->dd);
 	int cnt = 1;
-	
+	bdd_ptr * restricted_trans = NULL;
 	// Restrict the transition relation to (universe /\ ~start)(L)
-	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
-	bdd_ptr not_start = bdd_not(self->dd, start);
-	bdd_ptr universe_not_start = bdd_and(self->dd, not_start, universe);
-	bdd_free(self->dd, not_start);
+	restricted_trans = ALLOC(bdd_ptr, n);
+	bdd_ptr universe_not_start = bdd_not(self->dd, start);
+	bdd_and_accumulate(self->dd, &universe_not_start, universe);
 	bdd_ptr appr_universe_not_start = bdd_synth_over_approximate(self, universe_not_start, 1000);
 	bdd_free(self->dd, universe_not_start);
 	for (int i = 0; i < n ; i++){
@@ -330,6 +314,7 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 	}
 	bdd_free(self->dd, appr_universe_not_start);
   print_trans_size_cstm(self, restricted_trans);
+	// restricted_trans = self->trans;
 	//
 	printf("\tStarting UPRE fixpoint\n");
 	bdd_ptr iterate = bdd_and(self->dd, universe, start);
@@ -347,7 +332,6 @@ static bdd_ptr bdd_synth_upre_star(BddSynth_ptr self, bdd_ptr start, bdd_ptr uni
 		}
 	}
 	bdd_free(self->dd, prev);
-
 	// Free restricted trans rels
 	for (int i = 0; i < n ; i++){
 		bdd_free(self->dd, restricted_trans[i]);
@@ -366,44 +350,73 @@ static bdd_ptr bdd_synth_cpre_star(BddSynth_ptr self, bdd_ptr losing, bdd_ptr un
 	int cnt = 1;
 	bdd_ptr notlosing = bdd_not(self->dd, losing);
 
+	bdd_ptr * restricted_trans = self->trans;
+	// TODO The below restriction is incorrect. Find out why
 	// Restrict the transition relation to (an overapprox of) notlosing & universe(L)
+	/*
 	bdd_ptr * restricted_trans = ALLOC(bdd_ptr, n);
 	bdd_and_accumulate(self->dd, &notlosing, universe);
 	bdd_ptr appr_notlosing_and_universe = bdd_synth_over_approximate(self, notlosing, 1000);
 	for (int i = 0; i < n ; i++){
 		restricted_trans[i] = bdd_safe_restrict(self->dd, self->trans[i], appr_notlosing_and_universe);
-  }	 
+  }
 	bdd_free(self->dd, appr_notlosing_and_universe);
   print_trans_size_cstm(self, restricted_trans);
-
+	*/
 	bdd_ptr iterate = bdd_and(self->dd,universe, notlosing);
 	bdd_ptr prev = NULL;
 	printf("\tStarting CPRE fixpoint\n");
+	printf("Iterate contains init: %d\n", bdd_included(self->dd, self->init, iterate));
 	while( iterate != prev ){
 		printf("\tCpre iteration %d (iterate size: %d)\n", cnt++, Cudd_DagSize(iterate));
 		if (prev) bdd_free(self->dd, prev);
 		prev = iterate;
 		iterate = bdd_synth_cpre_trans(self, prev, restricted_trans, true);
-		if ( !bdd_included(self->dd, self->init, iterate) ){
+		if ( !bdd_synth_contains_init(self, iterate) ){
 			break;
 		}
 		bdd_and_accumulate(self->dd, &iterate, prev);
     bdd_and_accumulate(self->dd, &iterate, universe);
+		assert(bdd_included(self->dd, iterate, prev));
 	}
 	bdd_free(self->dd, prev);
 	bdd_free(self->dd, notlosing);
 
+	/*
 	for (int i = 0; i < n ; i++){
 		bdd_free(self->dd, restricted_trans[i]);
 	}
 	free(restricted_trans);
-
+	*/
 	return iterate;
 }
 
-
+/*
+static bdd_ptr bdd_synth_compute_reachable_states(BddSynth_ptr self, bdd_ptr S, int * actual_steps, int steps, boolean approximate){
+	int count = 0;
+	bdd_ptr prev = bdd_dup(S);
+	bdd_ptr frontier = NULL, tmp = NULL;
+	bdd_ptr inputs = bdd_and(self->dd, self->cinput_cube, self->uinput_cube);
+	*actual_steps = 0;
+	printf("Computing reachable states upto steps %d\n", steps);
+	for(count = 0; count < steps | steps < 0; count++, (*actual_steps)++){
+		printf("Step: %d, bdd size: %d\n", count, Cudd_DagSize(prev));
+		tmp = BddFsm_get_forward_image(self->fsm, prev);
+		frontier = bdd_forsome(self->dd, tmp, inputs);
+		bdd_free(self->dd, tmp);
+		bdd_or_accumulate(self->dd, &frontier, prev);
+		if (prev == frontier){
+			bdd_free(self->dd,prev);
+			break;
+		}
+		bdd_free(self->dd,prev);
+		prev = frontier;
+	}
+	bdd_free(self->dd, inputs);
+	return frontier;
+}
+*/
 /**
- * TODO
  * 1) Check why UPRE is slow for amba5c5y.smv
  *    Does the size of trans rel grow?
  *    Is reached too large? So that each iterate is much larger when intersected
@@ -414,6 +427,7 @@ runf does 1m16s on this
 /home/sankur/work/ulb/syntcomp/bench-syntcomp14/smv/genbuf11f10unrealn.smv
 
 against >5m for run
+
  */
 static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win){
 	boolean realizable = true;
@@ -428,8 +442,9 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 	int diameter = 0;
 	int new_diameter;
 	BddStates* layers;
-	// bdd_ptr front = bdd_dup(self->init);
 	bdd_ptr inputs = bdd_and(self->dd, self->cinput_cube, self->uinput_cube);
+
+	printf("\tExpand steps = %d\n", expand_steps);
 	do {
 		printf("Forward image iteration %d (Diameter: %d, Reached size: %d) (Universe size: %d)\n", cnt++, diameter, Cudd_DagSize(reached), Cudd_DagSize(universe));
 		completed = prev_completed;
@@ -453,7 +468,6 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 		}
 		//}
 
-
 		BddFsm_expand_cached_reachable_states(self->fsm, expand_steps, -1);
 		prev_completed = BddFsm_get_cached_reachable_states(self->fsm, &layers, &new_diameter);
 
@@ -472,94 +486,46 @@ static boolean bdd_synth_forward_backward_synth(BddSynth_ptr self, bdd_ptr * win
 	return realizable;
 }
 
-/**
- * Just backwards fp computation
- */
-	/*
-static boolean bdd_synth_backward_synth(BddSynth_ptr self, bdd_ptr * win){
-		// The following version was for debug purposes
-  boolean use_upre = true;
-  boolean ret = true;
-  if (use_upre){
-    *win = bdd_dup(self->error);
-  } else {
-    *win = bdd_not(self->dd, self->error);
-  }
-  bdd_ptr prev = NULL;
-	bdd_ptr tmp1, tmp2;
-  int count = 0;
-  while( ret && prev != *win ){
-    printf("Bwd Iteration: %d\n", ++count);
-    if (prev != NULL) bdd_free(self->dd, prev);
-    prev = *win;
-		tmp1 = *win;
-    if (use_upre){
-      *win = bdd_synth_upre(self, prev);
-			tmp2 = *win;
-      bdd_or_accumulate(self->dd, win, prev);
-    } else {
-      *win = bdd_synth_cpre(self, prev);
-      bdd_and_accumulate(self->dd, win, prev);
-    }
-    // dump_tmp_and_wait(self, *win);
-    // Check init & *win != empty
-    bdd_ptr check = bdd_and(self->dd, self->init, *win);
-    if (use_upre && bdd_isnot_false(self->dd, check)){
-				ret = false;
-    }
-		if (!use_upre && bdd_is_false(self->dd, check)){
-      ret = false;
-    }
-    bdd_free(self->dd, check);
-  }
-  return ret;
-}
-	*/
+/**Function********************************************************************
 
+   Synopsis    [Compute an over-approximation of the reachable states, and 
+	 							constrain the CPRE* to this universe.]
+
+   Description []
+
+   SideEffects []
+
+   SeeAlso     []
+
+******************************************************************************/
 static boolean bdd_synth_backward_synth_reach(BddSynth_ptr self, bdd_ptr * win){
-  boolean ret = true;
-	// Compute first reachable states
-	 // This is the local version where we clean up the intermediary layers
-	/*
-	bdd_ptr reachables = bdd_false(self->dd);
-	bdd_ptr front = bdd_dup(self->init);
-	int reach_cnt = 1;
-	while( bdd_isnot_false(self->dd, front) ){
-		reach_cnt++;
-		bdd_or_accumulate(self->dd, &reachables, front);
-		bdd_ptr newFront = BddFsm_get_forward_image(self->fsm, front);
-		bdd_free(self->dd, front);
-		bdd_and_accumulate(self->dd, &newFront, bdd_not(self->dd,reachables));
-		front = newFront;
-	}
-	printf("Reachable states computed. Diameter: %d\n", reach_cnt);
-	*/
-	// This is the NuSMV's version where it keeps the layers referenced
-	int diameter;
   BddStates* layers;
+	int diameter;
 
   // Debug log
   print_trans_size(self);
+
   BddFsm_expand_cached_reachable_states(self->fsm, -1, -1);
-  // Debug log
-  print_trans_size(self);
+
+	// TODO Manually compute over-approximated layers
   boolean completed = BddFsm_get_cached_reachable_states(self->fsm, &layers, &diameter);
 	bdd_ptr reachables = bdd_false(self->dd);
 	for(int i = 0; i < diameter; i++){
 		bdd_or_accumulate(self->dd, &reachables, layers[i]);
+		bdd_free(self->dd, layers[i]);
 	}
-	bdd_ptr tmp = bdd_forsome(self->dd, reachables, self->cinput_cube);
-	bdd_ptr tmp1 = bdd_forsome(self->dd, tmp, self->uinput_cube);
+	// Project away inputs (this is because inputs are encoded as state variables)
+	bdd_ptr inputs_cube = bdd_and(self->dd, self->cinput_cube, self->uinput_cube);
+	bdd_ptr tmp = bdd_forsome(self->dd, reachables, inputs_cube);
 	bdd_free(self->dd, reachables);
-	bdd_free(self->dd, tmp);
-	reachables = tmp1;
-	printf("Reachable states computed. Diameter: %d\n", diameter);
+	reachables = tmp;
+	printf("Reachable states computed. DagSize: %d Diameter: %d\n", Cudd_DagSize(reachables), diameter);
 	bdd_ptr universe = bdd_synth_over_approximate(self, reachables, 1000);
-	//
+	bdd_free(self->dd, reachables);
+	printf("\tAppr universe has dag size: %d\n", Cudd_DagSize(universe));
 	*win = bdd_synth_cpre_star(self, self->error, universe, true);
-	bdd_and_accumulate(self->dd, win, self->init);
 	bdd_free(self->dd, universe);
-	return bdd_isnot_false(self->dd, *win);
+	return bdd_included(self->dd, self->init, *win);
 }
 
 
@@ -655,22 +621,27 @@ static bdd_ptr bdd_synth_extract_function_singlevar(BddSynth_ptr self, bdd_ptr r
 
    SeeAlso     []
 
+	 TODO 			 [ How to speed up this. Implement the other variant from Jiang et al.]
+
 ******************************************************************************/
 static bdd_ptr bdd_synth_extract_function(BddSynth_ptr self, bdd_ptr relation, NodeList_ptr inputs){
 	assert(NodeList_get_length(inputs)>0);
 	// Create a table for projections
 	int ninputs = NodeList_get_length(inputs);
-	int i = 0;
+	int i;
 	bdd_ptr * R = ALLOC(bdd_ptr, ninputs+1);
-	bdd_ptr * F = ALLOC(bdd_ptr, ninputs+1);
+	bdd_ptr * F = ALLOC(bdd_ptr, ninputs);
 	bdd_ptr * input_var = ALLOC(bdd_ptr, ninputs);
-	for(i =0 ; i < ninputs; i++){
+	for(i =0 ; i <= ninputs; i++){
 		R[i] = NULL;
-		F[i] = NULL;
-		input_var[i] = NULL;
+		if (i < ninputs){
+			F[i] = NULL;
+			input_var[i] = NULL;
+		}
 	}
 	// Transfer the list inputs to this array
   ListIter_ptr iter = NULL;
+	i = 0;
   for(iter = NodeList_get_first_iter(inputs);
 			!ListIter_is_end(iter);
 			iter = ListIter_get_next(iter))
@@ -700,38 +671,103 @@ static bdd_ptr bdd_synth_extract_function(BddSynth_ptr self, bdd_ptr relation, N
 		unsigned int var_index = Cudd_NodeReadIndex(input_var[i-1]);
 		comp_table[var_index] = F[i-1];
 	}
-	bdd_ptr f = bdd_dup(F[ninputs]);
+	bdd_ptr f = bdd_dup(F[ninputs-1]);
 	// Clean up
 	free(comp_table);
 	for(i = 0; i <= ninputs; i++){
-		if (!R[i]){
+		if (R[i]){
 			bdd_free(self->dd, R[i]);
-		}
-		if (!F[i]){
-			bdd_free(self->dd, F[i]);
 		}
 		if (i < ninputs){
 			bdd_free(self->dd, input_var[i]);
+			if (F[i]){
+				bdd_free(self->dd, F[i]);
+			}
 		}
 	}
 	free(R);
 	free(F);
 	free(input_var);
-	if (!bdd_implies(self->dd, f, relation) ){
-		assert("function f not a subset of relation" == 0);
+	bdd_ptr tmp = bdd_not(self->dd, relation);
+	bdd_and_accumulate(self->dd, &tmp, f);
+	if ( bdd_isnot_false(self->dd, tmp) ){
+		fprintf(nusmv_stderr, "Function not included in relation!\n");
 	}
 	return f;
 }
 
+/*
+ * FIXME Cudd reference count error!
+ */
 static boolean bdd_synth_learnAlgo1(BddSynth_ptr self, bdd_ptr * win){
+	int iteration_count = 0;
 	bdd_ptr W = bdd_not(self->dd, self->error);
 	bdd_ptr P;
 	bdd_ptr R;
 	boolean realizable = false;
 	while(1){
+		iteration_count++;
+		printf("Extracting function...\n"); fflush(stdout);
 		bdd_ptr f = bdd_synth_extract_function(self, W, self->cinputs);
+
+		printf("Computing reachable states...\n"); fflush(stdout);
 		R = bdd_synth_constrained_reachable_states(self, f);
-		if ( bdd_implies(self->dd, R, W) ){
+
+		if ( bdd_included(self->dd, R, W) ){
+			bdd_free(self->dd, f);
+			bdd_free(self->dd, R);
+			realizable = true;
+			break;
+		}
+		bdd_ptr R_notW = bdd_not(self->dd, W);
+		bdd_and_accumulate(self->dd, &R_notW, R);
+		P = BddFsm_get_backward_image(self->fsm, R_notW);
+		bdd_and_accumulate(self->dd, &P, f);
+		bdd_ptr notP = bdd_not(self->dd, P);
+		bdd_and_accumulate(self->dd, &W, notP);
+
+		bdd_free(self->dd, f);
+		bdd_free(self->dd, R);
+		bdd_free(self->dd, R_notW);
+		bdd_free(self->dd, P);
+		bdd_free(self->dd, notP);
+
+		// Check if init <= W. If not, return unreal
+		if (!bdd_included(self->dd, self->init, W)){
+			realizable = false;
+			break;
+		}
+	}
+	*win = W;
+	printf("Returned after %d iterations\n", iteration_count);
+	printf("init \\in W: %d\n", bdd_included(self->dd, self->init, W));
+	return realizable;
+}
+
+
+/** Learning without extracting functions 
+ *
+ * Here the idea was to use W as a quasi-strategy,
+ * and iteratively remove the predecessors of R\W.
+ * This is somehow close to UPRE (several iterations are needed for one UPRE)
+ * but it is not clear how the alternation of quantifiers can be implemented.
+ * */
+/*
+static boolean bdd_synth_learnAlgo2(BddSynth_ptr self, bdd_ptr * win){
+	int iteration_count = 0;
+	bdd_ptr allinputs_cube = bdd_and(self->dd, self->uinputs, self->cinputs);
+	bdd_ptr W = bdd_not(self->dd, self->error);
+	bdd_ptr P;
+	bdd_ptr R;
+	boolean realizable = false;
+	while(1){
+		iteration_count++;
+		bdd_ptr pW = bdd_forsome(self->dd, W, allinputs_cube);
+		bdd_ptr B = bdd_not(self->dd, pW);
+		bdd_and_accumulate(self->dd, &B, R);
+
+		R = bdd_synth_constrained_reachable_states(self, f);
+		if ( bdd_included(self->dd, R, W) ){
 			bdd_free(self->dd, f);
 			bdd_free(self->dd, R);
 			realizable = true;
@@ -751,18 +787,18 @@ static boolean bdd_synth_learnAlgo1(BddSynth_ptr self, bdd_ptr * win){
 		bdd_free(self->dd, notP);
 		
 		// Check if init <= W. If not, return unreal
-		bdd_ptr tmp = bdd_and(self->dd, W, self->init);
-		if (bdd_is_false(self->dd, tmp)){
+		if (!bdd_included(self->dd, self->init, W)){
 			realizable = false;
-			bdd_free(self->dd, tmp);
 			break;
-		}		
-		bdd_free(self->dd, tmp);
+		}
 	}
 	*win = W;
+	bdd_free(self->dd, allinputs_cube);
+	printf("Returned after %d iterations\n", iteration_count);
+	printf("init \\in W: %d\n", bdd_included(self->dd, self->init, W));
 	return realizable;
 }
-
+*/
 
 EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_ptr * win){
   boolean ret;
@@ -783,23 +819,17 @@ EXTERN boolean BddSynth_solve(const BddSynth_ptr self, BddSynth_dir mode, bdd_pt
 		case BDD_SYNTH_DIR_LEARNING1:
 			printf("Iterative learning algorithm 1\n");
 			ret = bdd_synth_learnAlgo1(self, win);
+			// printf("Decision realizable: %d\n", bdd_included(self->dd, self->init, *win));
+			// printf("Returned %d\n", ret);
+			break;
 		default:
-			ret = false;
+			fprintf(nusmv_stderr, "Unknown solve mode\n");
+			exit(-1);
 	}
 	return ret;
 }
 
 
-/* TODO Just compute the reachable states using the following function:
- * 
-BddStates
-BddFsm_get_constrained_forward_image(const BddFsm_ptr self,
-                                     BddStates states,
-                                     BddStatesInputsNexts constraints)
- *
- *
- *
- */
 /* The following is an attempt at obtaining a new transition relation by
  * reclustering the transition functions for latches.
  * Is this more efficient than using the constrained_forward_image function ? 

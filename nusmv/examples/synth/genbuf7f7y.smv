@@ -1,0 +1,50 @@
+MODULE main
+VAR
+--inputs
+controllable_DEQ : boolean;
+controllable_ENQ : boolean;
+controllable_BtoS_ACK0 : boolean;
+controllable_BtoS_ACK1 : boolean;
+controllable_BtoS_ACK2 : boolean;
+controllable_BtoS_ACK3 : boolean;
+controllable_BtoS_ACK4 : boolean;
+controllable_BtoS_ACK5 : boolean;
+controllable_BtoR_REQ0 : boolean;
+controllable_BtoS_ACK6 : boolean;
+controllable_BtoR_REQ1 : boolean;
+i_nEMPTY : boolean;
+i_StoB_REQ0 : boolean;
+controllable_SLC0 : boolean;
+i_StoB_REQ1 : boolean;
+controllable_SLC1 : boolean;
+i_StoB_REQ2 : boolean;
+controllable_SLC2 : boolean;
+i_StoB_REQ3 : boolean;
+i_StoB_REQ4 : boolean;
+i_FULL : boolean;
+i_StoB_REQ5 : boolean;
+i_StoB_REQ6 : boolean;
+i_RtoB_ACK1 : boolean;
+i_RtoB_ACK0 : boolean;
+--latches
+n53 : boolean;
+sys_fair5done_out : boolean;
+reg_stateG7_0_out : boolean;
+reg_controllable_BtoR_REQ1_out : boolean;
+reg_i_RtoB_ACK1_out : boolean;
+env_fair1done_out : boolean;
+reg_controllable_BtoS_ACK0_out : boolean;
+sys_fair0done_out : boolean;
+reg_i_nEMPTY_out : boolean;
+sys_fair3done_out : boolean;
+reg_controllable_BtoS_ACK1_out : boolean;
+reg_nstateG7_1_out : boolean;
+sys_fair6done_out : boolean;
+reg_controllable_BtoS_ACK2_out : boolean;
+reg_i_StoB_REQ6_out : boolean;
+reg_controllable_SLC0_out : boolean;
+reg_controllable_BtoS_ACK3_out : boolean;
+reg_i_StoB_REQ5_out : boolean;
+sys_fair1done_out : boolean;
+reg_controllable_SLC1_out : boolean;
+reg_controllable_ENQ_out

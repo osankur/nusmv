@@ -1743,6 +1743,11 @@ boolean bdd_included(DdManager *dd, bdd_ptr a, bdd_ptr b){
 	bdd_ptr implies = bdd_implies(dd, a, b);
 	boolean ret = bdd_is_true(dd, implies);
 	bdd_free(dd, implies);
+	/*
+	bdd_ptr ab = bdd_and(dd, a,b);
+	boolean ret = !bdd_is_false(dd, ab);
+	bdd_free(dd, ab);
+	*/
 	return ret;
 }
 
@@ -3649,12 +3654,12 @@ bdd_ptr bdd_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){
 
 ******************************************************************************/
 bdd_ptr bdd_safe_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){
-  bdd_ptr fr = Cudd_bddRestrict(dd, f, b);
+  bdd_ptr fr = bdd_restrict(dd, f, b);
 	if (Cudd_DagSize(fr) < Cudd_DagSize(b) ){
 		Cudd_Ref(fr);
 		return fr;
 	}
-	return b;
+	return bdd_dup(b);
 }
 
 

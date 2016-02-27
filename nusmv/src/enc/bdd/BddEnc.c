@@ -7638,18 +7638,34 @@ void cpre(bdd_ptr target, bdd_ptr result){
 
 }
 
-int is_varname_uinput(char * s){
+int is_varname_uinput(const char * s){
 	return strstr(s, "i_") == s;
 }
-int is_varname_cinput(char * s){
+int is_varname_cinput(const char * s){
 	return strstr(s, "controllable_") == s;
 }
-int is_varname_latch(char *s){
+int is_varname_latch(const char *s){
 	return !is_varname_cinput(s) && !is_varname_uinput(s);
 }
-int is_varname_error(char *s){
+int is_varname_error(const char *s){
 	return strstr(s, "out_") == s;
 }
+
+
+// FIXME Does not display the correct variable names
+static void dump(BddEnc_ptr self, bdd_ptr S, char * name){
+	char * labels = name;
+	FILE * outfile = fopen(name, "w");
+	if (!outfile){
+		return;
+	}
+	AddArray_ptr ar = AddArray_create(1);
+	AddArray_set_n(ar,0,bdd_to_add(self->dd, S));
+	BddEnc_dump_addarray_dot(self, ar, (const char **)&labels, outfile);
+	fclose(outfile);
+	// while(getchar() != 'c');
+}
+
 /**
 The given fsm is seen as a game in which
               all state variables whose names start with i_ are 
@@ -7686,9 +7702,35 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
   BDD_ENC_CHECK_INSTANCE(self);
   /* Retrieve the vars list from committed layers */
   {
+		/*
+		int nvars = dd_get_size(self->dd);
+		const char * varname = NULL;
+		for(int i = 0; i < nvars; i++){
+			if (BddEnc_has_var_at_index(self, i)) {
+				varname = (const char*) sprint_node(BddEnc_get_var_name_from_index(self, i));
+				bdd_ptr varbdd = bdd_new_var_with_index(self->dd, i);
+				if (is_varname_cinput(varname)){
+					bdd_and_accumulate(self->dd, cinput_cube, varbdd);
+				} else if (is_varname_uinput(varname)){
+					bdd_and_accumulate(self->dd, uinput_cube, varbdd);
+				} else if(is_varname_error(varname)){
+					*error = bdd_dup(varbdd);
+					bdd_and_accumulate(self->dd, latch_cube, *error);
+				} else {
+					bdd_and_accumulate(self->dd, latch_cube, varbdd);
+				}
+				bdd_free(self->dd, varbdd);
+			}
+		}
+		//printf("Count: %d. First node: %d. Added var %s\n", dump_count, Cudd_NodeReadIndex(*cinput_cube), varname);
+		//sprintf(filename, "/tmp/a%d.dot", dump_count++);
+		dump(self, *uinput_cube, "/tmp/a.dot");
+		*/
     const array_t* layer_names;
     const char* layer_name;
     int i;
+		int dump_count = 0;
+		char filename[128];
 
     SymbTableIter sfiter;
     SymbTable_ptr st;
@@ -7696,31 +7738,24 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
     layer_names = BaseEnc_get_committed_layer_names(BASE_ENC(self));
     st = BaseEnc_get_symb_table(BASE_ENC(self));
 
-    /* Retrieve ALL state frozen symbols */
-    SYMB_TABLE_FOREACH_FILTER(st, sfiter, STT_DEFINE | STT_VAR,
-                              SymbTable_iter_filter_sf_symbols, NULL) {
-      node_ptr symbol = SymbTable_iter_get_symbol(st, &sfiter);
+		SYMB_TABLE_FOREACH_FILTER(st, sfiter, STT_VAR,
+				SymbTable_iter_filter_sf_symbols, NULL) {
+			node_ptr symbol = SymbTable_iter_get_symbol(st, &sfiter);
 
-      arrayForEachItem(const char*, layer_names, i, layer_name) {
-        SymbLayer_ptr layer;
+			arrayForEachItem(const char*, layer_names, i, layer_name) {
+				SymbLayer_ptr layer;
 
-        layer = SymbTable_get_layer(BASE_ENC(self)->symb_table, layer_name);
+				layer = SymbTable_get_layer(BASE_ENC(self)->symb_table, layer_name);
 
-        if (SymbLayer_is_symbol_in_layer(layer, symbol)) {
-          if (!SymbTable_is_symbol_define(st, symbol)) {
-            BoolEnc_ptr bool_enc;
+				if (SymbLayer_is_symbol_in_layer(layer, symbol)) {
+					BoolEnc_ptr bool_enc;
+					nusmv_assert(SymbTable_is_symbol_var(st, symbol));
+					bool_enc = BoolEncClient_get_bool_enc(BOOL_ENC_CLIENT(self));
 
-            nusmv_assert(SymbTable_is_symbol_var(st, symbol));
-						// print_node(file, symbol);
-
-            bool_enc = BoolEncClient_get_bool_enc(BOOL_ENC_CLIENT(self));
-			
-            /* Append everything but bits */
-            if (!BoolEnc_is_var_bit(bool_enc, symbol)) {
-              NodeList_append(*committed_vars, symbol);
+					if (!BoolEnc_is_var_bit(bool_enc, symbol)) {
+							NodeList_append(*committed_vars, symbol);
 							char * varname = sprint_node(symbol);
-              bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil); 
-							// printf("Read variable: %s\n", varname);
+							bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil); 
 							if (is_varname_cinput(varname)){
 								NodeList_append(*cinputs, symbol);
 								bdd_and_accumulate(self->dd, cinput_cube, curr);
@@ -7732,20 +7767,20 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 								NodeList_append(*outputs, symbol);
 								*error = bdd_dup(curr);
 								bdd_and_accumulate(self->dd, latch_cube, *error);
-              } else {
+							} else {
 								NodeList_append(*latches, symbol);
 								bdd_and_accumulate(self->dd, latch_cube, curr);
 							}
-              bdd_free(self->dd, curr);
+							// printf("Count: %d. First node: %d. Added var %s\n", dump_count, Cudd_NodeReadIndex(*cinput_cube), varname);
+							// sprintf(filename, "/tmp/a%d.dot", dump_count++);
+							// dump(self, *cinput_cube, filename);
+							bdd_free(self->dd, curr);
 							free(varname);
-            }
-          } else {
-            // Defines go here.
 					}
-        }
-      }
-    }
-  }
+				}
+			}
+		}
+	}
 	if (error == NULL){
 		fprintf(nusmv_stderr, "The model contains no error output \"o0\" required for synthesis\n");
 		exit(-1);
@@ -7755,13 +7790,17 @@ void BddEnc_synth_get_game(BddEnc_ptr self, bdd_ptr states,
 	NODE_LIST_FOREACH(*latches, iter){
 		node_ptr symbol = NodeList_get_elem_at(*latches,iter);
 		print_node(file, symbol);
-		printf(" ");
+		printf(" " );
 	}
 	printf("\nPrinting cinputs (%d)\n\t", NodeList_get_length(*cinputs));
 	NODE_LIST_FOREACH(*cinputs, iter){
+		printf("\t");
 		node_ptr symbol = NodeList_get_elem_at(*cinputs,iter);
 		print_node(file, symbol);
+		bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil); 
 		printf(" ");
+		// printf("(%d)\n", Cudd_NodeReadIndex(curr));
+		bdd_free(self->dd, curr);
 	}
 	printf("\nPrinting uinputs (%d)\n\t", NodeList_get_length(*uinputs));
 	NODE_LIST_FOREACH(*uinputs, iter){

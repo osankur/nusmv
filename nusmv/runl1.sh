@@ -1,5 +1,5 @@
  #!/bin/bash          
-DEFAULTDIR="/home/sankur/ulb/syntcomp/nusmv/nusmv/examples/synth/"
+DEFAULTDIR="/home/sankur/work/ulb/syntcomp/bench-syntcomp14/smv/"
 if [ -f $1 ]
 then
   FILE=$1
@@ -11,7 +11,7 @@ flatten_hierarchy\n
 encode_variables\n
 dynamic_var_ordering -e sift\n
 build_model -m Iwls95CP\n
-check_realizable -b\n
+check_realizable -l1\n
 quit" > /tmp/sauce
 ./NuSMV -source /tmp/sauce
 exit $?

@@ -10,7 +10,7 @@ printf "read_model -i $FILE\n
 flatten_hierarchy\n
 encode_variables\n
 dynamic_var_ordering -e sift\n
-build_model\n
+build_model -m Iwls95CP\n
 check_realizable -f\n
 quit" > /tmp/sauce
 ./NuSMV -source /tmp/sauce

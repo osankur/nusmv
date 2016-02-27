@@ -830,7 +830,6 @@ ClusterList_apply_iwls95_partition(const ClusterList_ptr self,
   CLUSTER_OPTIONS_CHECK_INSTANCE(cl_options);
 
   if (ClusterOptions_is_iwls95_preorder(cl_options)) {
-
     /* (pre)Ordering , clustering, reordering */
     if (opt_verbose_level_gt(OptsHandler_get_instance(), 1)) {
       fprintf(nusmv_stderr, "...Performing clusters preordering...");

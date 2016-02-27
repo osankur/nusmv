@@ -10,7 +10,7 @@ COMMAND="read_model -i $FILE\n
 flatten_hierarchy\n
 encode_variables\n
 dynamic_var_ordering -e sift\n
-build_model\n
+build_model -m Iwls95CP\n
 check_realizable -bwr\n
 quit"
 echo -e $COMMAND | ./NuSMV -int 
