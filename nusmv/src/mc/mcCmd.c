@@ -66,6 +66,7 @@ static char rcsid[] UTIL_UNUSED = "$Id: mcCmd.c,v 1.23.2.18.2.1.2.12.4.14 2009-1
 /* prototypes of the command functions */
 int CommandCheckCtlSpec ARGS((int argc, char **argv));
 int CommandCheckInvar ARGS((int argc, char **argv));
+int CommandCheckEventuallyInvar ARGS((int argc, char **argv));
 int CommandCheckCompute ARGS((int argc, char **argv));
 int CommandCheckPslSpec ARGS((int argc, char **argv));
 int CommandLanguageEmptiness ARGS((int argc, char **argv));
@@ -107,6 +108,7 @@ void Mc_Init(void){
   Cmd_CommandAdd("check_spec", CommandCheckSpec, 0, true);
   Cmd_CommandAdd("check_ctlspec", CommandCheckCtlSpec, 0, true);
   Cmd_CommandAdd("check_invar", CommandCheckInvar, 0, true);
+  Cmd_CommandAdd("check_eventually_invar", CommandCheckEventuallyInvar, 0, true);
   Cmd_CommandAdd("check_compute", CommandCheckCompute, 0, true);
   Cmd_CommandAdd("check_pslspec", CommandCheckPslSpec, 0, true);
   Cmd_CommandAdd("_language_emptyness", CommandLanguageEmptiness, 0, true);
@@ -367,6 +369,26 @@ static int UsageCheckCtlSpec()
   fprintf(nusmv_stderr, "   -p \"ctl-expr\"\tChecks only the given CTL formula.\n");
   fprintf(nusmv_stderr, "   -P \"name\"\t\tChecks only the SPEC with the given name\n");
   return 1;
+}
+
+
+/* Check (FG invar) after given bound k */
+int CommandCheckEventuallyInvar(int argc, char **argv)
+{
+	int result = -1;
+  if (Compile_check_if_model_was_built(nusmv_stderr, false)) return 1;
+  if (argc > 2){
+    if (strcmp(argv[1], "-k") == 0){
+			int k = atoi(argv[2]);
+			Prop_ptr p = PropDb_get_prop_at_index(PropPkg_get_prop_database(), 0);
+			Prop_ptr countp = PropDb_get_prop_at_index(PropPkg_get_prop_database(), 1);
+  		BddFsm_ptr fsm = PropDb_master_get_bdd_fsm(PropPkg_get_prop_database());
+			printf("Checking eventually invariant with k=%d, for property: %d\n", k, 0);
+			result = check_eventually_invariant(fsm, p, countp, k);
+			printf("Result: %d\n", result);
+    }
+  }
+	return result;
 }
 
 /**Function********************************************************************
@@ -641,7 +663,7 @@ int CommandCheckInvar(int argc, char **argv)
   else {
     strategy = old_strategy;
   }
-
+	
   if (used_e) {
     if ((FORWARD_BACKWARD != strategy) && (BDD_BMC != strategy)) {
       fprintf(nusmv_stderr, "Unable to use an heuristic without forward-backward or bdd-bmc strategy.\n");
@@ -702,7 +724,9 @@ int CommandCheckInvar(int argc, char **argv)
                                         formula, Prop_Invar);
     if (prop_no == -1) { status = 1; goto check_invar_exit; /* error */ }
     CATCH {
+			///
       PropDb_verify_prop_at_index(PropPkg_get_prop_database(), prop_no);
+			///
     }
     FAIL {
       status = 1;

@@ -3676,6 +3676,7 @@ bdd_ptr bdd_safe_restrict(DdManager * dd, bdd_ptr f, bdd_ptr b){
 
 bdd_ptr bdd_over_approx(DdManager* mgr, bdd_ptr f, int numVars, int threshold, int safe, double quality)
 {
+	//extern DdNode * Cudd_RemapOverApprox (DdManager *dd, DdNode *f, int numVars, int threshold, double quality);
 	bdd_ptr aprf = Cudd_OverApprox(mgr, f, numVars, threshold, safe, quality);
 	Cudd_Ref(aprf);
 	return aprf;

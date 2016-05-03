@@ -138,6 +138,7 @@ EXTERN int
 eval_compute ARGS((BddFsm_ptr, BddEnc_ptr enc, node_ptr, node_ptr));
 
 EXTERN int      check_invariant_forward     ARGS((BddFsm_ptr, Prop_ptr));
+EXTERN int      check_eventually_invariant 						ARGS((BddFsm_ptr, Prop_ptr, Prop_ptr, int));
 
 EXTERN void     free_formula_list ARGS((DdManager *, node_ptr));
 

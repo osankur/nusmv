@@ -1,5 +1,5 @@
  #!/bin/bash          
-DEFAULTDIR="/home/sankur/ulb/syntcomp/nusmv/nusmv/examples/synth/"
+DEFAULTDIR="~/ulb/syntcomp/nusmv/nusmv/examples/synth/"
 if [ -f $1 ]
 then
   FILE=$1
