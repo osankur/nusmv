@@ -378,16 +378,26 @@ int CommandCheckEventuallyInvar(int argc, char **argv)
 	int result = -1;
   if (Compile_check_if_model_was_built(nusmv_stderr, false)) return 1;
   if (argc > 2){
+    if (strcmp(argv[1], "-n") == 0){
+			int pindex = atoi(argv[2]);
+			Prop_ptr p = PropDb_get_prop_at_index(PropPkg_get_prop_database(), pindex);
+  		BddFsm_ptr fsm = PropDb_master_get_bdd_fsm(PropPkg_get_prop_database());
+			printf("Checking eventually invariant with k=0, for property: %d\n", pindex);
+			result = check_eventually_invariant(fsm, p, NULL, 0);
+    }
+  }
+	/*
+  if (argc > 2){
     if (strcmp(argv[1], "-k") == 0){
 			int k = atoi(argv[2]);
 			Prop_ptr p = PropDb_get_prop_at_index(PropPkg_get_prop_database(), 0);
-			Prop_ptr countp = PropDb_get_prop_at_index(PropPkg_get_prop_database(), 1);
   		BddFsm_ptr fsm = PropDb_master_get_bdd_fsm(PropPkg_get_prop_database());
 			printf("Checking eventually invariant with k=%d, for property: %d\n", k, 0);
-			result = check_eventually_invariant(fsm, p, countp, k);
+			result = check_eventually_invariant(fsm, p, NULL, k);
 			printf("Result: %d\n", result);
     }
   }
+	*/
 	return result;
 }
 
