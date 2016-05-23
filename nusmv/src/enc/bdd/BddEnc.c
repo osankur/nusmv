@@ -7665,7 +7665,65 @@ static void dump(BddEnc_ptr self, bdd_ptr S, char * name){
 	fclose(outfile);
 	// while(getchar() != 'c');
 }
+/*
+bdd_ptr get_var(BddEnc_ptr self){
+    const array_t* layer_names;
+    const char* layer_name;
+    int i;
+		int dump_count = 0;
+		char filename[128];
 
+    SymbTableIter sfiter;
+    SymbTable_ptr st;
+
+    layer_names = BaseEnc_get_committed_layer_names(BASE_ENC(self));
+    st = BaseEnc_get_symb_table(BASE_ENC(self));
+
+		SYMB_TABLE_FOREACH_FILTER(st, sfiter, STT_VAR,
+				SymbTable_iter_filter_sf_symbols, NULL) {
+			node_ptr symbol = SymbTable_iter_get_symbol(st, &sfiter);
+
+			arrayForEachItem(const char*, layer_names, i, layer_name) {
+				SymbLayer_ptr layer;
+
+				layer = SymbTable_get_layer(BASE_ENC(self)->symb_table, layer_name);
+
+				if (SymbLayer_is_symbol_in_layer(layer, symbol)) {
+					BoolEnc_ptr bool_enc;
+					nusmv_assert(SymbTable_is_symbol_var(st, symbol));
+					bool_enc = BoolEncClient_get_bool_enc(BOOL_ENC_CLIENT(self));
+
+					if (!BoolEnc_is_var_bit(bool_enc, symbol)) {
+							NodeList_append(*committed_vars, symbol);
+							char * varname = sprint_node(symbol);
+							bdd_ptr curr = BddEnc_expr_to_bdd(self, symbol, Nil); 
+							if (is_varname_cinput(varname)){
+								NodeList_append(*cinputs, symbol);
+								bdd_and_accumulate(self->dd, cinput_cube, curr);
+							} else if (is_varname_uinput(varname)){
+								NodeList_append(*uinputs, symbol);
+								bdd_and_accumulate(self->dd, uinput_cube, curr);
+							} else if(is_varname_error(varname)){
+								NodeList_append(*latches, symbol);
+								NodeList_append(*outputs, symbol);
+								*error = bdd_dup(curr);
+								bdd_and_accumulate(self->dd, latch_cube, *error);
+							} else {
+								NodeList_append(*latches, symbol);
+								bdd_and_accumulate(self->dd, latch_cube, curr);
+							}
+							// printf("Count: %d. First node: %d. Added var %s\n", dump_count, Cudd_NodeReadIndex(*cinput_cube), varname);
+							// sprintf(filename, "/tmp/a%d.dot", dump_count++);
+							// dump(self, *cinput_cube, filename);
+							bdd_free(self->dd, curr);
+							free(varname);
+					}
+				}
+			}
+		}
+	}
+
+*/
 /**
 The given fsm is seen as a game in which
               all state variables whose names start with i_ are 

@@ -1579,7 +1579,41 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 	return result;
 }
 */
+#define COMPTE_BITS 5
+int get_max_compte(DdManager * dd, bdd_ptr compte[COMPTE_BITS], bdd_ptr S){
+	bdd_ptr tmp = bdd_dup(S);
+	int c = 0;
+	//for(int i = COMPTE_BITS-1; i>=0; i--){
+	for (int i = 0 ; i < COMPTE_BITS; i++){
+		if (compte[i] == NULL) continue;
+		bdd_ptr ci = bdd_and(dd, compte[i], tmp);
+		if ( bdd_isnot_false(dd, ci) ){
+			// printf("\tSeen compte.%d\n", i);
+			int power = 1;
+			for(int j = 0; j < COMPTE_BITS -i - 1; j++){
+			//for(int j = 0; j < COMPTE_BITS-i-1; j++){
+				power *= 2;
+			}
+			c += power;
+			bdd_free(dd, tmp);
+			tmp = ci;
+		} else {
+			bdd_free(dd, ci);
+		}
+	}
+	bdd_free(dd, tmp);
+	return c;
+}
 
+/*
+ * Quite ad-hoc for the moment.
+ * Assumes a variable compte is given over at most 8 bits.
+ * At the end, it outputs the greatest value of compte that appears in the
+ * final frontier.
+ * Will output 0 if no such variable is present. 
+ * Terminates with error if no INVARSPEC is given.
+ *
+ */
 int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count_prop, int steps){
   int result = 1;
   bdd_ptr last_reachable_states, bad_states;
@@ -1592,6 +1626,27 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
   BddEnc_ptr enc = BddFsm_get_bdd_encoding(fsm);
   DdManager* dd = BddEnc_get_dd_manager(enc);
 
+	bdd_ptr compte[COMPTE_BITS];
+	char compte_names[COMPTE_BITS][128];
+	for(int i =0; i < COMPTE_BITS; i++){
+		compte[i] = NULL;
+		sprintf(compte_names[i], "compte.%d", i);
+	}
+	SymbTableIter sfiter;
+	SymbTable_ptr st = BaseEnc_get_symb_table(BASE_ENC(BddFsm_get_bdd_encoding(fsm)));
+	SYMB_TABLE_FOREACH_FILTER(st, sfiter, STT_VAR,
+			SymbTable_iter_filter_sf_symbols, NULL) {
+		node_ptr symbol = SymbTable_iter_get_symbol(st, &sfiter);
+		char * varname = sprint_node(symbol);
+		// printf("var: %s\n", varname);
+		for(int i = 0; i < COMPTE_BITS; i++){
+			if ( strcmp(varname, compte_names[i]) == 0){
+				printf("Reading compte.%d\n", i);
+				compte[i] = BddEnc_expr_to_bdd(BddFsm_get_bdd_encoding(fsm), symbol, Nil); 
+			} 
+		}
+		free(varname);
+	}
 	bdd_ptr count_bdd = bdd_false(dd);
 	if (count_prop){
 		Expr_ptr count_expr = Prop_get_expr_core(count_prop);
@@ -1639,6 +1694,7 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 	}
 
 	bdd_ptr reached = bdd_dup(reachable_frontier);
+	bdd_ptr final_frontier = NULL;
 
 	printf("Computing reach fixpoint\n");
 	int fp_bigsteps = steps; // bigsteps done during the fp computation
@@ -1649,11 +1705,12 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 		// Check the invariant 
 		tmp = bdd_and(dd, bad_states, reachable_frontier);
 		if ( bdd_isnot_false(dd, tmp) ){
-			printf("Bad states seen, restarting fp from next frontier\n");
+			printf("Bad states seen, restarting fp from next frontier (compte=%d)\n", get_max_compte(dd,compte,reachable_frontier));
 			bdd_free(dd, reached);
 			reached = bdd_false(dd);
 			// Add all bigsteps traversed since the last time.
 			fp_bigsteps = i;
+			final_frontier = NULL;
 			// break;
 		} // else printf("\tGood states\n");
 		bdd_free(dd, tmp);
@@ -1668,6 +1725,9 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 		bdd_free(dd, notreached);
 		// Set the new frontier
 		reachable_frontier = tmp;
+		if (final_frontier == NULL){
+			final_frontier = bdd_dup(reachable_frontier);
+		}
 		// Add the new frontier to reachable states
 		bdd_or_accumulate(dd, &reached, reachable_frontier);
 
@@ -1683,9 +1743,14 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 	}
 	if (result){
 		printf("Invariant holds after %d steps\n", fp_bigsteps);
+		assert(final_frontier);
+		printf("Compte is %d\n", get_max_compte(dd, compte, final_frontier));
+		bdd_free(dd, final_frontier);
+		printf("Max. encountered compte is %d\n", get_max_compte(dd, compte, reached));
 	} else {
 		printf("Invariant does not hold\n");
 	}
+	bdd_free(dd, reached);
 	return result;
 }
 
