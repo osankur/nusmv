@@ -398,7 +398,7 @@ int CommandCheckEventuallyInvar(int argc, char **argv)
     }
   }
 	*/
-	return result;
+	return 0;
 }
 
 /**Function********************************************************************

@@ -14,6 +14,7 @@ build_model -m Iwls95CP\n
 time\n
 check_eventually_invar -n $2\n
 time\n
+quit\n
 " > /tmp/sauce
 ./NuSMV -source /tmp/sauce
-exit $?
+#exit $?

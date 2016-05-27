@@ -1,0 +1,21 @@
+FTSP Model for the FM'16 submission 
+Ocan Sankur <ocan.sankur@irisa.fr>
+
+Type make to generate the models in the generated directory.
+Use the check.sh script in the nusmv directory to verify the models.
+For example:
+
+./check.sh examples/ftsp/generated/ftsp-incr-3.smv 0
+
+The last argument refers to the spec number to be verified.
+
+Warning: Note that the script checks if the given INVARSPEC is satisfied *eventually*.
+In other terms, it checks F(G(inv)) where inv is the invariant.
+Moreover, it reads the value of the counter compte and outputs its maximal
+value after which G(inv) holds.
+This check is a semi-algorithm and can be replaced with the standard invariant check for the property:
+
+INVARSPEC (compte >= 20 -> inv)
+
+where 20 is a guess, and inv is the invariant from the current files.
+This is slower in general.

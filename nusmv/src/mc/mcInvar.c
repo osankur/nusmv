@@ -1579,7 +1579,7 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 	return result;
 }
 */
-#define COMPTE_BITS 5
+#define COMPTE_BITS 6
 int get_max_compte(DdManager * dd, bdd_ptr compte[COMPTE_BITS], bdd_ptr S){
 	bdd_ptr tmp = bdd_dup(S);
 	int c = 0;
@@ -1700,12 +1700,18 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 	int fp_bigsteps = steps; // bigsteps done during the fp computation
 	/* Compute Reach*(reachable_frontier) */
 	while (bdd_isnot_false(dd, reachable_frontier) ){
-		printf("Computing reach fixpoint. Step %d -- BDD size: %d \n", i, Cudd_DagSize(reached));
+		if (i % 10 == 0) {
+			printf("Computing reach fixpoint. Step %d -- BDD size: %d \n", i, Cudd_DagSize(reached));
+			fflush(stdout);
+		}
 		i++;
 		// Check the invariant 
 		tmp = bdd_and(dd, bad_states, reachable_frontier);
 		if ( bdd_isnot_false(dd, tmp) ){
-			printf("Bad states seen, restarting fp from next frontier (compte=%d)\n", get_max_compte(dd,compte,reachable_frontier));
+			if (i % 10 == 1) {
+				printf("\tBad states seen, restarting fp from next frontier (compte=%d)\n", get_max_compte(dd,compte,reachable_frontier));
+				fflush(stdout);
+			}
 			bdd_free(dd, reached);
 			reached = bdd_false(dd);
 			// Add all bigsteps traversed since the last time.

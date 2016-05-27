@@ -11,7 +11,10 @@ flatten_hierarchy\n
 encode_variables\n
 dynamic_var_ordering -e sift\n
 build_model -m Iwls95CP\n
+time\n
 check_invar -n $2\n
+time\n
+quit\n
 " > /tmp/sauce
 ./NuSMV -source /tmp/sauce
 exit $?
