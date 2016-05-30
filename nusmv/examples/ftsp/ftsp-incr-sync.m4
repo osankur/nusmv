@@ -13,7 +13,7 @@
 --
 define(`ROOT_TIMEOUT',8)dnl
 define(`NUMENTRIES_LIMIT', 3)dnl
-define(`IGNORE_ROOT', 3)dnl
+define(`IGNORE_ROOT', 2)dnl
 define(`MAXSEQ',7)dnl
 define(`ROOTID',1)dnl
 define(`compteMAX',63)dnl
