@@ -1,24 +1,44 @@
--- Root Election of FTSP (Sensys04)
+-- ``Incremental'' model checking:
+--================================
+--			 The convergence with K=3 implies convergence of the first three nodes when K=4.
+--       In fact, the effect of the 4th node is already captured by Others. 
+-- 			 So to check K=4, we can start from a non-det state where the first three nodes have myroot=ROOT.
+--			 There is a simulation relation that can be proven by hand though.
 --
--- Abstract model with asynchronous communication for incremental verification.
--- 
--- The model contains N nodes on a line starting at the future root.
--- The effect of other nodes are included via non-determinism.
--- See FM'16 submission for the details.
+-- IDEA: Simplify the updates of myseq due to OTHERS 
+--			 Only keep spontaneous updates to the value of the previous node
+--			 This is justified in absence of link and node failures
 --
--- The specified INVARSPEC are meant to be satisfied *eventually*.
--- Either use the check_eventually_invar command or replace them with an LTLSPEC FG.
---
--- Author: Ocan Sankur
+-- TODO Use the shortest path abstraction: myseq can only spontaneously increase to that of the previous neighbor
+-- This is justified in absence of link and node failures
+-- Otherwise ROOT_TIMEOUT must increase with N, which is not OK. In other terms, the current abstraction is too coarse.
 --
 define(`ROOT_TIMEOUT',8)dnl
 define(`NUMENTRIES_LIMIT', 3)dnl
 define(`IGNORE_ROOT', 2)dnl
 define(`MAXSEQ',7)dnl
 define(`ROOTID',1)dnl
+-- CAS IGNORE=3
+-- For K=4, (30min,)compte+=(15,)
+-- For K=3, (6s-17s) compte+=(9,13)
+-- For K=2, (1s) compte=(7,10)
+
+-- CAS IGNORE=2
+-- For K=5, 65mins, compte+=(18,28)
+-- For K=4, 130s, compte+=(10,16)
+-- For K=3, 28s, compte+=(8,12)
+-- FOr K=2, 1s, compte+=(6,9)
 define(`compteMAX',63)dnl
 define(`for',`ifelse($#,0,``$0'',`ifelse(eval($2<=$3),1,`pushdef(`$1',$2)$4`'popdef(`$1')$0(`$1',incr($2),$3,`$4')')')')dnl
 define(`STABLE_HB',7)
+-- Stable_HB: N=2 -> 3
+-- Stable_HB: N=3 -> 5
+-- Stable_HB: N=4 -> ??
+--
+-- FTSP algorithm with a line topology represented concretely + the effect of other nodes represented very abstractly
+--
+-- Init: arbitrary offsets
+-- 
 MODULE main
 VAR
 	state : {select, wait, norm, offincr};
@@ -42,6 +62,7 @@ for(`i',1,N,dnl
 	esac;
 for(`i',1,N,dnl
 ` 
+	-- init(offset[i]) := 0;
 	next(offset[i]) := case
 		state = offincr & (round = i) & p`'i.finishedSending & (offset[i]<DELTA) :  offset[i] + 1;
 		state = norm & (offset[1] >= 1 for(`j',2,N,` & offset[j] >= 1')) : offset[i] - 1;
@@ -67,6 +88,9 @@ for(`i',1,N,dnl
 DEFINE
 	root_seqn := p1.myseq;
 	root_myroot := ROOT;
+	-- Is it time to decrement myseq variables (for normalization)?
+	-- Here, the only tracked myseq are those that belong to procs with myroot=ROOT.
+	-- Others have an arbitrary value, here 0.
 	decrement_myseq := case
 		-- Case where all relevant myseq >= 1
 		state = norm & ( (p1.myroot = NONROOT | p1.myseq >= 1) for(`j',2,N,` & (p`'j.myroot = NONROOT | p`'j.myseq >= 1)')) 
@@ -78,6 +102,8 @@ DEFINE
 										 : TRUE;
 		TRUE: FALSE;
 	esac;
+	-- Is someone currently broadcasting? If broadcasting is true, then bc_target is the target node,
+	-- and (ROOT, bc_seqn) is the message.
 	broadcasting := next(p1.broadcasting) for(`i',2,N,`| next(p`'i.broadcasting)');
 	bc_seqn := case
 for(`i',1,N,dnl
@@ -94,6 +120,16 @@ for(`i',1,N,dnl
 	esac;
 	bounded_myseq := TRUE for(`i',1,N,`& p`'i.myseq < MAXSEQ & p`'i.bc_myseq < MAXSEQ');
 	stabilized := (p1.myroot = ROOT for(`j',2,N,`& p`'j.myroot = ROOT '));
+-- INVARSPEC (p1.myroot = ROOT for(`j',2,N,`& p`'j.myroot = ROOT '))
+-- LTLSPEC F(G(p`'N.myroot = ROOT))
+-- INVARSPEC (p`'N.myroot = ROOT)
+-- LTLSPEC F(G(p`'N.myroot = ROOT & p`'N.hb <= 4))
+-- INVARSPEC (p`'N.myroot = ROOT )
+--LTLSPEC F (G((compte >= 6 & (p`'N.myroot = ROOT & p`'N.hb <= STABLE_HB & p`'N.numentries >= NUMENTRIES_LIMIT & !p`'N.imroot))));
+--LTLSPEC F(compte = 12 & !(p`'N.myroot = ROOT & p`'N.hb <= STABLE_HB & p`'N.numentries >= NUMENTRIES_LIMIT & !p`'N.imroot));
+--INVARSPEC (compte >= 6 -> (p`'N.myroot = ROOT & p`'N.hb <= STABLE_HB & !p`'N.imroot));
+--INVARSPEC (bounded_myseq & (compte >= 12 -> (p`'N.myroot = ROOT & p`'N.hb <= STABLE_HB & p`'N.numentries >= NUMENTRIES_LIMIT & !p`'N.imroot)));
+--
 INVARSPEC (p`'N.myroot = ROOT & p`'N.hb <= STABLE_HB);
 INVARSPEC (p`'N.myroot = ROOT & p`'N.hb <= STABLE_HB & p`'N.numentries >= NUMENTRIES_LIMIT & !p`'N.imroot);
 
@@ -134,15 +170,20 @@ ASSIGN
 		state = update & !imroot & hb >= ROOT_TIMEOUT : {0,hb}; -- Becoming root by timeout
 		state = update & hb < ROOT_TIMEOUT : hb + 1; -- Regular tick
 		id != ROOTID & receiving & next(myroot) = ROOT & main.bc_seqn > myseq : 0;
+		-- Reset hb on discovering ROOT
 		id != ROOTID & myroot = NONROOT & next(myroot) = ROOT : 0;
+		-- 
+		-- If OTHERS send us a newer message
 		state = idle & id != ROOTID & myroot = ROOT & next(myseq) > myseq : 0;
 		TRUE : hb;
 	esac;
 	next(myroot) := case
+		-- Declaration of root by timeout
 		state = update & hb >= ROOT_TIMEOUT & id != ROOTID : NONROOT;
 		state = update & hb >= ROOT_TIMEOUT & id = ROOTID : ROOT;
 		receiving & imroot & hb < IGNORE_ROOT : myroot;
 		receiving : ROOT;
+		-- Simultaneous switch to ROOT during idle due to OTHERS
 		state = idle & id != ROOTID & myroot = NONROOT : {myroot, main.root_myroot};
 		TRUE : myroot;
 	esac;
@@ -165,8 +206,14 @@ ASSIGN
 		myroot = ROOT & main.decrement_myseq & (myseq >= 1) : myseq - 1; -- Normalization
 -- Switch to myseq of the previous node:
 for(`i',2,N-1,dnl
-	`id = i & myroot = ROOT & state=idle & myseq < main.p`'eval(i-1).myseq : {myseq, main.p`'eval(i-1).myseq};
+	`main.state = select & id = i & myroot = ROOT & state=idle & myseq < main.p`'eval(i-1).myseq : {myseq, main.p`'eval(i-1).myseq};
 	')dnl
+-- Switch to arbitrary values:
+--for(`i',0,MAXSEQ,dnl
+--`for(`j',i,MAXSEQ,dnl
+--`		myroot = ROOT & id != ROOTID & state = idle & myseq = i & main.root_seqn = j : {i`'for(`k',eval(i+1),j,`,k')};
+--')dnl
+--')dnl
 		myroot = NONROOT : 0;
 		TRUE : myseq;
 	esac;
@@ -183,7 +230,8 @@ for(`i',2,N-1,dnl
 		TRUE : bc_leftdone;
 	esac;
 INIT
-	myroot = ROOT -> myseq <= main.root_seqn;
+	myroot = ROOT -> myseq <= main.root_seqn
+	& (myroot = NONROOT -> myseq = 0);
 DEFINE
 	receiving := state = idle & main.broadcasting & main.bc_target = id;
 	finishedSending := bc_leftdone;
@@ -232,8 +280,13 @@ ASSIGN
 		receiving & main.bc_seqn > myseq : main.bc_seqn;
 		myroot = ROOT & main.decrement_myseq & (myseq >= 1) : myseq - 1; -- Normalization
 		-- Spontaneous increase in myseq due to OTHERS (up to main.root_seqn)
+--for(`i',0,MAXSEQ,dnl
+--`for(`j',i,MAXSEQ,dnl
+--`		myroot = ROOT & id != ROOTID & state = idle & myseq = i & main.root_seqn = j : {i`'for(`k',eval(i+1),j,`,k')};
+--')dnl
+--')dnl
 for(`i',2,N-1,dnl
-	`id = i & myroot = ROOT & state=idle & myseq < main.p`'eval(i-1).myseq : {myseq, main.p`'eval(i-1).myseq};
+	`main.state = select & id = i & myroot = ROOT & state=idle & myseq < main.p`'eval(i-1).myseq : {myseq, main.p`'eval(i-1).myseq};
 	')dnl
 		myroot = NONROOT : 0;
 		TRUE : myseq;
@@ -248,6 +301,7 @@ for(`i',2,N-1,dnl
 		id = 1 : TRUE;
 		id > 1 & state = sending : FALSE;
 		state = broadcasting_left : TRUE;
+		-- main.decrement_myseq & myroot = ROOT & bc_myseq = 0 : TRUE; -- Will be ignored anyway
 		TRUE : bc_leftdone;
 	esac;
 	next(bc_rightdone) := case
