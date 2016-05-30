@@ -383,7 +383,7 @@ int CommandCheckEventuallyInvar(int argc, char **argv)
 			Prop_ptr p = PropDb_get_prop_at_index(PropPkg_get_prop_database(), pindex);
   		BddFsm_ptr fsm = PropDb_master_get_bdd_fsm(PropPkg_get_prop_database());
 			printf("Checking eventually invariant with k=0, for property: %d\n", pindex);
-			result = check_eventually_invariant(fsm, p, NULL, 0);
+			result = check_eventually_invariant(fsm, p);
     }
   }
 	/*

@@ -1614,11 +1614,11 @@ int get_max_compte(DdManager * dd, bdd_ptr compte[COMPTE_BITS], bdd_ptr S){
  * Terminates with error if no INVARSPEC is given.
  *
  */
-int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count_prop, int steps){
+int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop){
   int result = 1;
-  bdd_ptr last_reachable_states, bad_states;
+  bdd_ptr bad_states;
   bdd_ptr invar_bdd, init_bdd;
-  bdd_ptr reachable_frontier, tmp;
+  bdd_ptr reachable_frontier, tmp, ump;
 	// We should do some clean-up
 	assert(inv_prop);
   Expr_ptr inv_expr = Prop_get_expr_core(inv_prop);
@@ -1647,15 +1647,16 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 		}
 		free(varname);
 	}
+	/*
 	bdd_ptr count_bdd = bdd_false(dd);
 	if (count_prop){
 		Expr_ptr count_expr = Prop_get_expr_core(count_prop);
 		count_bdd = BddEnc_expr_to_bdd(enc, count_expr, Nil);
 	} else {
-		printf("Warning: count_prop is empty. Canno count bigsteps\n");
+		printf("Warning: count_prop is empty. Cannot count bigsteps\n");
 	}
+	*/
 
-	// printf("check_event_invar: 0\n"); fflush(stdout);
   /* Compute the bad states negating the property */
   tmp = BddEnc_expr_to_bdd(enc, inv_expr, Nil);
   bad_states = bdd_not(dd, tmp);
@@ -1663,41 +1664,20 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 
   /* the invariants for this FSM */
   invar_bdd = BddFsm_get_state_constraints(fsm);
-
   /* the initial state */
   init_bdd = BddFsm_get_init(fsm);
-
-	/* the first frontier is the init states intersected the invar conditions */
-	last_reachable_states = bdd_and(dd, init_bdd, invar_bdd);
-
-	/* The initial reachable frontier is the init state itself */
-	reachable_frontier = bdd_dup(last_reachable_states);
-
-	/* Get the k-th iterate of reachable states */
-	int i = 0;
-	for (; i < steps; i++){
-		/* Generate forward image (NOTE: the generated image is
-			 already intersected with invars) */
-		printf("Early step: %d -- BDD size: %d \n", i, Cudd_DagSize(reachable_frontier));
-		tmp = BddFsm_get_forward_image(fsm, reachable_frontier);
-		bdd_free(dd, reachable_frontier);
-		reachable_frontier = tmp;
-		/*
-		if (count_prop){
-			tmp = bdd_and(dd, count_bdd, reachable_frontier);
-			if (bdd_isnot_false(dd, tmp)){
-				bigsteps++;
-			}
-			bdd_free(dd, tmp);
-		}
-		*/
-	}
+	/* The initial reachable frontier is the init state itself & invariants */
+	reachable_frontier = bdd_and(dd, init_bdd, invar_bdd);
+	/* All states reachable with i iterations exactly. Contains the
+	 * reachable_frontier and more. */
+	bdd_ptr iterate = bdd_dup(reachable_frontier);
 
 	bdd_ptr reached = bdd_dup(reachable_frontier);
 	bdd_ptr final_frontier = NULL;
+	int i = 0;
 
 	printf("Computing reach fixpoint\n");
-	int fp_bigsteps = steps; // bigsteps done during the fp computation
+	int fp_bigsteps = 0; // bigsteps done during the fp computation
 	/* Compute Reach*(reachable_frontier) */
 	while (bdd_isnot_false(dd, reachable_frontier) ){
 		if (i % 10 == 0) {
@@ -1705,7 +1685,7 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 			fflush(stdout);
 		}
 		i++;
-		// Check the invariant 
+		// Check the property
 		tmp = bdd_and(dd, bad_states, reachable_frontier);
 		if ( bdd_isnot_false(dd, tmp) ){
 			if (i % 10 == 1) {
@@ -1714,38 +1694,31 @@ int check_eventually_invariant(BddFsm_ptr fsm, Prop_ptr inv_prop, Prop_ptr count
 			}
 			bdd_free(dd, reached);
 			reached = bdd_false(dd);
-			// Add all bigsteps traversed since the last time.
 			fp_bigsteps = i;
-			final_frontier = NULL;
-			// break;
-		} // else printf("\tGood states\n");
+			if(final_frontier){
+				bdd_free(dd, final_frontier);
+				final_frontier = NULL;
+			}
+		} 
 		bdd_free(dd, tmp);
 
-		// Fwd image of the last frontier
-		tmp = BddFsm_get_forward_image(fsm, reachable_frontier);
+		// Compute the next iterate
+		tmp = BddFsm_get_forward_image(fsm, iterate);
+		bdd_free(dd, iterate);
+		iterate = tmp;
+		//
+		// Extract the reachable_frontier
 		bdd_ptr notreached = bdd_not(dd, reached);
-		// Get the newly seen states
-		bdd_and_accumulate(dd, &tmp, notreached);
-		// Free old frontier
 		bdd_free(dd, reachable_frontier);
+		reachable_frontier = bdd_and(dd, iterate, notreached);
 		bdd_free(dd, notreached);
-		// Set the new frontier
-		reachable_frontier = tmp;
+		//
 		if (final_frontier == NULL){
 			final_frontier = bdd_dup(reachable_frontier);
 		}
 		// Add the new frontier to reachable states
 		bdd_or_accumulate(dd, &reached, reachable_frontier);
 
-		/*
-		if (count_prop){
-			tmp = bdd_and(dd, count_bdd, reachable_frontier);
-			if (bdd_isnot_false(dd, tmp)){
-				fp_bigsteps++;
-			}
-			bdd_free(dd, tmp);
-		}
-		*/
 	}
 	if (result){
 		printf("Invariant holds after %d steps\n", fp_bigsteps);
