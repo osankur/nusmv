@@ -1,17 +1,38 @@
 FTSP Model for the FM'16 submission 
 Ocan Sankur <ocan.sankur@irisa.fr>
 
-Type make to generate the models in the generated directory.
+Type make to generate the models in the directory 'generated'.
 Use the check.sh script in the nusmv directory to verify the models.
 For example:
 
 ./check.sh examples/ftsp/generated/ftsp-incr-3.smv 0
 
 The last argument refers to the spec number to be verified.
+Here ftsp-incr-K.smv is the asynchronous model with given K,
+while ftsp-incr-sync-K.smv is the synchronous version.
+
+E.g. to check ftsp-incr-5.smv using incremental verification as described in the
+submission, you should do
+
+./check.sh examples/ftsp/generated/ftsp-incr-2.smv 1
+./check.sh examples/ftsp/generated/ftsp-incr-3.smv 1
+./check.sh examples/ftsp/generated/ftsp-incr-4.smv 1
+./check.sh examples/ftsp/generated/ftsp-incr-5.smv 0
+
+Here the property 1 is the reinforced property Q which means that all nodes have
+stabilized. Property 0 says that the future root is elected by the last node.
+To obtain the bound after which the property holds in ftsp-incr-5, you should
+sum all the counter values obtained (+8 for the case K=1, not shown here).
+
+The semi-algorithm outputs the value of the counter 'compte' at the end. This is
+the number of steps after which the propery always holds, that is, this is the
+max number of times any process can execute its 'send' event before the verified 
+property will always hold.
 
 Warning: Note that the script checks if the given INVARSPEC is satisfied *eventually*.
-In other terms, it checks F(G(inv)) where inv is the invariant.
-Moreover, it reads the value of the counter compte and outputs its maximal
+In other terms, it checks F(G(inv)) where inv is specified as an invariant with
+the keyword INVARSPEC.
+It also reads the value of the counter 'compte' and outputs its maximal
 value after which G(inv) holds.
 This check is a semi-algorithm and can be replaced with the standard invariant check for the property:
 
