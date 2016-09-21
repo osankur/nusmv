@@ -1,4 +1,4 @@
-FTSP Model for the FM'16 submission 
+FTSP Model for the TACAS'16 submission 
 Ocan Sankur <ocan.sankur@irisa.fr>
 
 Type make to generate the models in the directory 'generated'.
@@ -12,7 +12,7 @@ Here ftsp-incr-K.smv is the asynchronous model with given K,
 while ftsp-incr-sync-K.smv is the synchronous version.
 
 E.g. to check ftsp-incr-5.smv using incremental verification as described in the
-submission, you should do
+paper, you should do
 
 ./check.sh examples/ftsp/generated/ftsp-incr-2.smv 1
 ./check.sh examples/ftsp/generated/ftsp-incr-3.smv 1
